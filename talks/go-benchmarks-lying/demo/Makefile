@@ -1,4 +1,4 @@
-# Demo Makefile — GopherCon UK 2026
+# Demo Makefile — GoLab 2026
 # "Why Your Go Benchmarks Are Lying (And How to Stop Them)"
 #
 # Requirements: Go 1.24+, benchstat (golang.org/x/perf)
@@ -9,7 +9,7 @@ BENCH_TIME   ?= 1s
 # Timer benchmarks need fixed iterations — see the bench-timer target.
 TIMER_ITERS  ?= 50000x
 TIMER_COUNT  ?= 3
-BENCH_OUTPUT := /tmp/gopherconuk26-bench.txt
+BENCH_OUTPUT := /tmp/golab26-bench.txt
 BENCHSTAT    := $(shell go env GOPATH)/bin/benchstat
 BENCHDIFF    := $(shell go env GOPATH)/bin/benchdiff
 
@@ -89,13 +89,13 @@ asm-dce:
 # stdlib and module paths are trimmed so the table fits the code-panel width
 # (the panel clips horizontal overflow silently) — same trimming principle as
 # asm-dce, applied to the function-name column only.
-PPROF_PROF := /tmp/gopherconuk26-cpu.prof
+PPROF_PROF := /tmp/golab26-cpu.prof
 
 bench-pprof:
 	go test -bench=BenchmarkHash_BLoop -benchmem -count=1 -benchtime=2s \
 		-cpuprofile=$(PPROF_PROF) .
 	go tool pprof -top $(PPROF_PROF) \
-		| sed -E 's|crypto/internal/fips140/||g; s|github.com/kakkoyun/gopherconuk-26/||g' \
+		| sed -E 's|crypto/internal/fips140/||g; s|github.com/kakkoyun/golab-26/||g' \
 		> results/pprof-top.txt
 	@echo "==> results/pprof-top.txt"
 
