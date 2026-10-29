@@ -45,7 +45,7 @@ talks/go-benchmarks-lying/slides/assets/
 talks/go-benchmarks-lying/slides/fonts/
 talks/without-a-single-line/slides/assets/
 talks/without-a-single-line/slides/fonts/
-themes/gophercon-datadog/.theme-check.pdf
+themes/golab/.theme-check.pdf
 
 # Agent runtime artifacts
 .pi-subagents/

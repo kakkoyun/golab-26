@@ -24,7 +24,7 @@ def coordinate(value: str) -> float | None:
 
 
 def footer_overflow(pdf: Path) -> dict[int, list[str]]:
-    """Return unexpected words inside the bottom 55 points of each page."""
+    """Return unexpected words inside the bottom 70 points of each page."""
     result = subprocess.run(
         ["pdftotext", "-bbox-layout", str(pdf), "-"],
         check=True,
@@ -42,8 +42,8 @@ def footer_overflow(pdf: Path) -> dict[int, list[str]]:
             if page_height is None:
                 continue
             page += 1
-            # ponytail: footer-zone heuristic; use pixel-level checks if layout geometry changes.
-            footer_start = page_height - 55
+            # The 93px theme footer is 70 PDF points on a 1280x720 slide.
+            footer_start = page_height - 70
             continue
 
         word_match = WORD_RE.search(line)
@@ -54,15 +54,13 @@ def footer_overflow(pdf: Path) -> dict[int, list[str]]:
             continue
 
         word: str = html.unescape(re.sub(r"<.*?>", "", word_match.group(2)))
-        if (
-            word == "Kemal"
-            or word == "Akkoyun"
-            or word == "·"
-            or word == "Datadog"
-            or word == "/"
-            or word.isdecimal()
-        ):
+        # The theme owns these footer words. Deck content cannot use this band.
+        if word in {
+            "GOLAB", "the", "international", "conference", "on", "go", "in",
+            "italy", "|", "November", "1st", "-", "3rd,", "2026",
+        } or word.isdecimal():
             continue
+
         overflows.setdefault(page, []).append(word)
 
     return overflows

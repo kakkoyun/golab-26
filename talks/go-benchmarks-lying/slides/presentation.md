@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: gophercon-datadog-minimal
+theme: golab
 # fragment-floor: 60. `*` is the ONLY list marker allowed on slides. Every list
 # is an intentional Marp reveal; a `-` bullet here is a bug. `make check/fragments`
 # guards the count against formatters that rewrite markers.

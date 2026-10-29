@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: gophercon-datadog-minimal
+theme: golab
 # fragment-floor: 21. Six lists use `*` fragment bullets for selective
 # progressive reveal. Lists inside .columns are excluded on purpose. MD004 is
 # disabled, so a mixed `*`/`-` deck lints clean. Reveals animate only in
