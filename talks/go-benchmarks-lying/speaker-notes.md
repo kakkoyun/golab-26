@@ -4,7 +4,7 @@ GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. 105 pages.
 Intermediate Go audience.
 
 **How to use this.** `SAY` lines are the words. They are written to be spoken,
-not read — short sentences, one idea each. You do not need them verbatim; learn
+not read. Use short sentences, with one idea each. You do not need them verbatim. Learn
 the **beat** (the bold line before each block) and the numbers, and the words
 will come. `DO` lines are delivery, not content.
 
@@ -31,7 +31,7 @@ stories → the numbers. Everything else is recoverable on stage.
 | 12 | Macrobenchmark Design | Representative is the hard part |
 | 13 | CI Environment | Three sysfs writes buy 100× |
 | 14 | Change Over Time | A/B cannot see drift |
-| 15 | Wiring Into CI | Detect, don't measure |
+| 15 | Wiring Into CI | Detect, do not measure |
 | 16 | Wire It Up | Under an hour |
 
 **Checkpoints:** §05 by 9:00 · §06 by 12:00 · §11 by 25:00 · §16
@@ -48,9 +48,9 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 ### Title slide
 
-> **SAY:** Every benchmark you have ever written is a measurement system, and
-> most of them are lying to you. Not on purpose — by default. I want to give you
-> three questions that turn a number into something you can trust.
+> **SAY:** Every benchmark you have ever written is a measurement system.
+> Most of them are lying to you by default, not on purpose. I want to give
+> you three questions that turn a number into something you can trust.
 
 `DO` Do not introduce yourself yet. The personal context is §02.
 
@@ -58,12 +58,11 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 **Beat: the frame for the whole section.**
 
-> **SAY:** One frame before we start. The number you are chasing is not CPU
+> **SAY:** I start with the user. The number you are chasing is not CPU
 > usage, or allocations, or requests per second. It is whether your user is
-> happy. Everything else is a proxy. A benchmark measures the proxy. The point
-> of the proxy is the user.
+> happy. Everything else is a proxy. A benchmark measures the proxy.
 
-`DO` Land it, then straight into "is it actually slow".
+`DO` Emphasize this point, then continue directly to "is it actually slow".
 
 ### Is it actually slow?
 
@@ -78,32 +77,32 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 **Beat: slow ≠ improvable.**
 
-> **SAY:** So you found it is slow. Next question: can it actually go faster?
-> Slow does not mean improvable. There is a ceiling — memory bandwidth,
-> instruction latency, the physics of the machine. Headroom is the gap between
-> where you are and that ceiling. No headroom, and the "is it worth it"
-> question is moot — you cannot optimize past the physics.
+> **SAY:** So you found it is slow. Next question: can it actually go
+> faster? Slow does not mean improvable. The ceiling is memory bandwidth,
+> instruction latency, the physics of the machine. Headroom is the gap
+> between where you are and that ceiling. Without headroom, skip "is it
+> worth it". You cannot optimize past the physics.
 
 ### Is it worth optimizing? (reveal)
 
-> **SAY:** And decide what done looks like, or you will never stop.
+> **SAY:** Decide what done looks like, or you will never stop.
 >
 > An SLO is a target, not a wish. If you are inside your error budget,
-> optimizing is optional — go fix something else. And Amdahl: only the hot path
-> pays. Ten percent off code that runs one percent of the time is nothing.
+> optimizing is optional. Go fix something else. And Amdahl: only the hot
+> path pays. Ten percent off code that runs one percent of the time is
+> nothing.
 
 ### Latency and throughput (two-step reveal)
 
-> **SAY:** Two words, quickly, because people use them interchangeably and they
-> are not.
+> **SAY:** Two words that people use interchangeably.
 >
-> *(reveal 1)* Latency is one operation, start to finish. That is what a user
-> feels.
+> *(reveal 1)* Latency is one operation, start to finish. That is what a
+> user feels.
 >
 > *(reveal 2)* Throughput is operations per second. That is your ceiling.
 >
-> They are not the same, and this matters: you can improve one and damage the
-> other. Batching is the classic — throughput up, latency worse.
+> You can improve one and damage the other. Batching raises throughput and
+> makes latency worse.
 
 ### The cost of slowness
 
@@ -120,9 +119,10 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 ### Finding what to optimize
 
-> **SAY:** If you want the "what to optimize" half properly, Daniel Martí gave
-> it at GopherCon 2019 and it is still the best talk on it. He covers what to
-> optimize. I am covering whether you can believe the number when you get there.
+> **SAY:** If you want the "what to optimize" half properly, Daniel Martí
+> gave it at GopherCon 2019 and it is still the best talk on it. He covers
+> what to optimize. I cover whether you can believe the number when you get
+> there.
 
 ---
 
@@ -132,46 +132,46 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 `DO` Thirty seconds. Consequences, not achievements. No titles, no counts.
 
-> **SAY:** Quick word on why I care. I maintained `client_golang` — every
-> allocation I added landed in somebody's scrape budget. Then Parca, where a
-> profiler that costs five percent CPU is a profiler nobody deploys. Now Go
-> instrumentation at Datadog, where our SDKs run inside *your* process.
+> **SAY:** I maintained `client_golang`. Every allocation I added landed in
+> somebody's scrape budget. Then Parca, where a profiler that costs five
+> percent CPU is a profiler nobody deploys. Now Go instrumentation at
+> Datadog, where our SDKs run inside *your* process.
 >
-> Every one of those jobs punished me for trusting a benchmark I had not
-> questioned.
+> Every one of those jobs punished me for trusting a benchmark I did not
+> question.
 
 ### Why Datadog cares
 
-> **SAY:** That last one is the sharp version. Our code runs in your process.
-> Every nanosecond we spend comes out of your budget, not ours. So measurement
-> is not an engineering hobby for us, it is product correctness.
+> **SAY:** Our code runs in your process. Every nanosecond we spend comes
+> out of your budget, not ours. Measurement is product correctness for us.
 >
-> One public number: profile-guided optimization took three point four percent
-> off production CPU. You only get to claim that if you can measure it.
+> One public number: profile-guided optimization took three point four
+> percent off production CPU. You only get to claim that if you can measure
+> it.
 
 `DO` The SpeedLab logo is on screen as proof of investment. Say the name once
-and the framing line — that Datadog invests in performance testing internally
-and this talk is the spillover — then move. Do NOT ad-lib hardware, budgets,
-archetypes, gating, or scale. Ledger row 30 is scope-limited to name and
-existence; row 23 (internal macro practice) stays `pending` and out of scope.
+and the framing line: Datadog invests in performance testing internally,
+and this talk is the spillover. Then continue. Do not ad-lib hardware, budgets,
+archetypes, gating, or scale. Ledger row 30 permits only the name and
+existence. Row 23 (internal macro practice) stays `pending` and out of scope.
 
 ---
 
 ## 03 · A Loose Cable — 2:45
 
-`DO` This is the story beat. It sets up the three questions, so it stays welded
-to them — do not let the §02 bio bleed into it.
+`DO` Keep this story connected to the three questions. Keep the §02 biography
+separate from the story.
 
 ### September 2011 (headline image)
 
 **Beat: a careful team, an extraordinary result.**
 
-> **SAY:** In 2011 a team of physicists announced they had broken the speed of
-> light. The OPERA collaboration fired neutrinos from CERN to a detector in
-> Italy, 730 kilometres away. The neutrinos arrived early. Faster than light.
-> They did not publish immediately. They spent months rechecking. The maths.
-> The sensors. The calibration. Then they published, and asked the world for
-> help.
+> **SAY:** In 2011 a team of physicists announced that neutrinos travelled
+> faster than light. The OPERA collaboration fired neutrinos from CERN to a
+> detector in Italy, 730 kilometres away. The neutrinos arrived early.
+> Faster than light. They did not publish immediately. They spent months
+> rechecking the maths, the sensors, and the calibration. Then they
+> published, and asked the world for help.
 
 ### The cause (connector photo)
 
@@ -179,12 +179,12 @@ to them — do not let the §02 bio bleed into it.
 
 `DO` Let them look at the photo for a beat before you speak.
 
-> **SAY:** It was this. A fibre-optic connector, not quite seated, in the GPS
-> timing chain. Seventy-three nanoseconds of bias. That was the whole result.
+> **SAY:** It was this. A fibre-optic connector, not quite seated, in the
+> GPS timing chain. Seventy-three nanoseconds of bias. That was the whole
+> result.
 >
-> And here is the part I love. There was a *second* fault — an oscillator —
-> pushing the other way. The two errors partially cancelled. The bug was hiding
-> behind another bug.
+> I love this part. A *second* fault, an oscillator, pushed the other way.
+> The two errors partially cancelled. The bug hid behind another bug.
 
 `DO` Do not put a number on the oscillator. Ledger row 9.
 
@@ -192,9 +192,9 @@ to them — do not let the §02 bio bleed into it.
 
 **Beat: the lesson, stated plainly.**
 
-> **SAY:** The point is not that physicists were careless. They were the
-> opposite. The point is that a precise instrument can be confidently wrong,
-> and stay wrong, through months of expert review.
+> **SAY:** The physicists were not careless. They were the opposite. A
+> precise instrument can be confidently wrong, and stay wrong, through
+> months of expert review.
 
 ### Your cables
 
@@ -205,8 +205,8 @@ to them — do not let the §02 bio bleed into it.
 
 ### systematic error survives expert review
 
-`DO` Meme. Say the one line, let them laugh, move. **Ten seconds, not thirty.**
-If you start explaining the joke you have lost the time you just bought.
+`DO` Show the meme. Say the one line, let them laugh, then continue.
+**Ten seconds, not thirty.** If you explain the joke, you lose the time you save.
 
 > **SAY:** Which brings us to the only rule that matters today.
 
@@ -214,8 +214,8 @@ If you start explaining the joke you have lost the time you just bought.
 
 **Beat: the contract for the next fifty minutes.**
 
-`DO` Pause after each one. This is the spine — they should hear it four times
-today.
+`DO` Pause after each question. These questions connect the talk. The audience
+should hear them four times today.
 
 > **SAY:** Three questions. Is the benchmark measuring real work? Is my sample
 > stable enough? And is the difference big compared to the noise?
@@ -230,8 +230,8 @@ today.
 >
 > Same questions, different answers, because they fail differently.
 > Microbenchmarks usually fail on being *representative*. Macrobenchmarks
-> usually fail on being *repeatable*. You will leave with the checks for both,
-> and three small tools that automate them.
+> usually fail on being *repeatable*. You will leave with the checks for
+> both, and three small tools that automate them.
 
 ---
 
@@ -241,24 +241,21 @@ today.
 
 **Beat: the frame for the whole talk.**
 
-> **SAY:** Two properties. Representative — it does what production does.
-> Repeatable — run it again, get the same answer.
+> **SAY:** Two properties. Representative: it does what production does.
+> Repeatable: run it again, get the same answer.
 >
-> Hold those two words. Almost every failure in this talk is one of them
-> breaking.
+> Hold those two words. Almost every failure in this talk breaks one of
+> these properties.
 
 ### Micro vs macro (two-step reveal)
 
 > **SAY:** *(reveal 1)* Microbenchmarks isolate a function. Nanosecond
 > precision. Very easy for the compiler to cheat. Their risk is being *not
-> representative* — beautifully precise measurement of something that never
+> representative*: beautifully precise measurement of something that never
 > happens.
 >
-> *(reveal 2)* Macrobenchmarks run the real workflow. Realistic. Their risk is
-> attribution — something moved, good luck finding out what.
->
-> This talk covers both, because they fail differently and need different
-> checks.
+> *(reveal 2)* Macrobenchmarks run the real workflow. Realistic. Their risk
+> is attribution. Something moved, good luck finding out what.
 
 `DO` This replaces the old "this talk is only microbenchmarks" line. Do not
 reintroduce it.
@@ -267,48 +264,46 @@ reintroduce it.
 
 **Beat: the concrete answer to "so what do I do".**
 
-> **SAY:** Here is the order that works. Macro first: does the workload
-> actually move? Then profile to find which component. Then micro on that
-> component, where you can iterate in seconds. Then macro again to confirm it
-> survived.
+> **SAY:** Macro first: does the workload actually move? Then profile to
+> find which component. Then micro on that component, where you can iterate
+> in seconds. Then macro again to confirm it survived.
 >
-> And the order that wastes a fortnight: make a function forty percent faster,
-> ship it, watch nothing change, and never find out why.
+> And the order that wastes a fortnight: make a function forty percent
+> faster, ship it, watch nothing change, and never find out why.
 
 ---
 
 ## 05 · Benchmarking, Quickly — 3:00
 
-**Beat: shared vocabulary for an advanced room — here is the instrument we are
+**Beat: shared vocabulary for the room. Here is the instrument we are
 about to distrust.**
 
-`DO` This is a fast pass, not a tutorial. The room is advanced; do not teach
-`testing.B` from scratch. Name the parts, flag the default mistake, move.
+`DO` Give a short review, not a tutorial. Most of the room has written a
+benchmark. Name the parts, identify the default mistake, then continue.
 
 ### Writing one
 
-> **SAY:** One slide on the shape, because we are about to distrust this
-> instrument and you should know what it looks like. A `testing.B` benchmark
-> is a function. Setup before the loop is excluded from timing. The loop is
-> `b.Loop` — the measured body. And the result has to sink somewhere the
-> compiler can see, or the body vanishes. We will spend the next section on
-> that last part.
+> **SAY:** One slide on the shape, before we distrust this instrument. A
+> `testing.B` benchmark is a function. Setup before the loop is excluded
+> from timing. The loop is `b.Loop`, the measured body. The result has to
+> sink somewhere the compiler can see, or the body vanishes. We spend the
+> next section on that last part.
 
 ### Running one
 
-> **SAY:** The flags that matter. `-bench` picks what runs. `-benchmem` shows
-> allocations — leave it on, always. `-count` is how many times you repeat, and
-> `-count=1` is the default mistake: one run is one draw from a distribution,
-> not a measurement. `-benchtime` is either a duration or a fixed iteration
-> count. We come back to `-count` in the statistics section.
+> **SAY:** `-bench` picks what runs. `-benchmem` shows allocations. Leave it
+> on, always. `-count` is how many times you repeat, and `-count=1` is the
+> default mistake: one run is one draw from a distribution, not a
+> measurement. `-benchtime` is either a duration or a fixed iteration count.
+> We return to `-count` in the statistics section.
 
 ### Reading the output
 
-> **SAY:** Three columns. `ns/op` is nanoseconds per iteration — it has a
-> floor, the timer costs about a quarter of a nanosecond, so it can lie.
+> **SAY:** Three columns. `ns/op` is nanoseconds per iteration. It has a
+> floor: the timer costs about a quarter of a nanosecond, so it can lie.
 > `B/op` and `allocs/op` are bytes and allocations per iteration. An
 > allocation either happened or it did not. Remember this pair: `ns/op` can
-> lie, `allocs/op` cannot. That is the next section's motto.
+> lie, `allocs/op` cannot.
 
 ### Benchmark + pprof
 
@@ -320,11 +315,11 @@ about to distrust.**
 
 ### Reading compiler output
 
-> **SAY:** Last piece of vocabulary: the compiler can tell you what it did.
-> `-gcflags=-S` prints the assembly — each line shows the instruction and the
-> source it came from. `GOSSAFUNC` dumps every SSA rewrite phase to a browser,
-> so you can watch the compiler think. We use `-S` in the next section to
-> prove the compiler deleted our work.
+> **SAY:** The compiler can tell you what it did. `-gcflags=-S` prints the
+> assembly. Each line shows the instruction and its source. `GOSSAFUNC`
+> dumps every SSA rewrite phase to a browser, so you can watch the compiler
+> think. We use `-S` in the next section to prove the compiler deleted our
+> work.
 
 ---
 
@@ -334,8 +329,8 @@ about to distrust.**
 
 > **SAY:** First half. Your laptop.
 >
-> The three questions again, at this scale. Real work — the compiler may have
-> deleted it. Stable sample — one run is a single point. Above the noise — your
+> The three questions again, at this scale. Real work: the compiler may
+> delete it. Stable sample: one run is a single point. Above the noise: your
 > laptop is not a controlled instrument.
 >
 > And the rule for this half: if you cannot trust the number on your own
@@ -345,15 +340,15 @@ about to distrust.**
 
 **Beat: plant the puzzle. Do not solve it.**
 
-> **SAY:** Before that, a real one. June this year, dd-trace-go. I restructure a
-> file, push, and the benchmark bot says `BenchmarkOTLPProtoSize` is six to nine
-> percent slower than main.
+> **SAY:** June this year, dd-trace-go. I restructure a file, push, and the
+> benchmark bot says `BenchmarkOTLPProtoSize` is six to nine percent slower
+> than main.
 >
-> Here is what bothers me. Nothing in my diff goes anywhere near OTLP encoding.
+> Nothing in my diff goes anywhere near OTLP encoding.
 >
-> Hold that thought. We come back to it once we can read a benchmark properly.
+> Hold that thought. We return to it once we can read a benchmark properly.
 
-`DO` Resist solving it. The payoff is §07.
+`DO` Do not solve the puzzle yet. The payoff is §08.
 
 ---
 
@@ -361,10 +356,9 @@ about to distrust.**
 
 ### Stop the compiler deleting your work
 
-> **SAY:** Everything in this section does one job: stop the compiler deleting
-> the work you are trying to time. Four techniques. All four are test
-> scaffolding — none of this belongs in production code. I will say that again
-> when it matters.
+> **SAY:** Every technique here stops the compiler deleting the work you are
+> trying to time. There are four. All four are test scaffolding. None of
+> this belongs in production code. I repeat that when it matters.
 
 ### The compiler is not neutral
 
@@ -399,18 +393,18 @@ about to distrust.**
 
 ### the compiler deleted your benchmark
 
-`DO` Meme, and it is the payoff for the two slides before it. **Ten seconds.**
-The numbers on the dog are the ones they just saw from `make bench-dce`.
+`DO` The meme completes the two previous slides. **Ten seconds.**
+The numbers on the dog are the ones the audience just saw from `make bench-dce`.
 
 > **SAY:** Those are the real numbers from two slides ago.
 
 ### The two-variable sink
 
-> **SAY:** The fix. A package-level variable the compiler cannot prove is never
-> read. Accumulate into a local inside the loop, then publish once after it —
-> that way you are not paying for a global write on every iteration.
+> **SAY:** The fix. A package-level variable the compiler cannot prove is
+> never read. Accumulate into a local inside the loop, then publish once
+> after it. You avoid a global write on every iteration.
 >
-> And to be explicit: this is test-only. Do not put sinks in production code.
+> This is test-only. Do not put sinks in production code.
 
 ### Constant folding
 
@@ -420,8 +414,8 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ### Timer: one-time setup
 
-> **SAY:** Now timers. `ResetTimer` after your setup zeroes the elapsed clock.
-> Note what it does *not* do — it does not stop the timer.
+> **SAY:** Now timers. `ResetTimer` after your setup zeroes the elapsed
+> clock. That call does *not* stop the timer.
 
 ### Timer: per-iteration setup
 
@@ -431,26 +425,26 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ### `make bench-timer`
 
-> **SAY:** Here is the wrong order. Four sixteen versus five fifty. The broken
-> one looks twenty-five percent faster — because it is timing the fixture and
-> excluding the function it claims to measure.
+> **SAY:** Here is the wrong order. Four sixteen versus five fifty. The
+> broken one looks twenty-five percent faster because it times the fixture
+> and excludes the function it claims to measure.
 >
-> That is the thing about a benchmark measuring the wrong thing. It does not
-> look broken. It looks like good news.
+> A benchmark measuring the wrong thing does not look broken. It looks like
+> good news.
 
 ### `b.Loop()` · Go 1.24
 
-> **SAY:** Go 1.24 gave us a much better answer. `b.Loop`. Setup before the loop
-> is excluded automatically. Timing stops at the end automatically. And it
-> prevents dead-code elimination of the loop body.
+> **SAY:** Go 1.24 gave us `b.Loop`. Setup before the loop is excluded
+> automatically. Timing stops at the end automatically. And it prevents
+> dead-code elimination of the loop body.
 
 ### What `b.Loop` removes
 
 `DO` Do not read the table. Point at two rows.
 
-> **SAY:** Setup exclusion, and DCE prevention — those are the two that matter.
-> One catch: the compiler only does this if you write `b.Loop()` literally in
-> the condition. Assign it to a variable first and you lose it.
+> **SAY:** Setup exclusion and DCE prevention are the two that matter. The
+> compiler only does this if you write `b.Loop()` literally in the
+> condition. Assign it to a variable first and you lose it.
 
 ---
 
@@ -460,12 +454,12 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 **Beat: pay off the plant.**
 
-> **SAY:** Back to our bot comment. First thing I did — read the benchmark.
-> That is the entire timed loop. One call, `proto.Size`, on a struct that was
-> built *before* `ResetTimer`.
+> **SAY:** Back to our bot comment. First thing I did: read the benchmark.
+> That is the entire timed loop. One call, `proto.Size`, on a struct built
+> *before* `ResetTimer`.
 >
 > It does not call `ContextWithSpan`. It does not call `SpanFromContext`. It
-> does not call one line of the code I changed. And locally it was rock solid —
+> does not call one line of the code I changed. Locally it was rock solid,
 > under nought point one percent variance.
 
 ### Same machine, both branches
@@ -480,38 +474,37 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ### The mechanism
 
-> **SAY:** What actually happened: restructuring the file moved function
-> addresses across the package. That moved the hot loop relative to cache lines
-> and branch-target-buffer boundaries.
+> **SAY:** Restructuring the file moved function addresses across the
+> package. That moved the hot loop relative to cache lines and
+> branch-target-buffer boundaries.
 >
 > At about three hundred and ninety nanoseconds an iteration, that is worth
-> several percent — in either direction. Enough to flip a verdict on a runner
+> several percent in either direction. Enough to flip a verdict on a runner
 > that cannot pin its clock.
 >
 > Resolution: no code change. Nothing was wrong.
 
 ### A known phenomenon
 
-> **SAY:** This is not folklore. Emery Berger's "Performance Matters" is the
-> canonical talk. Code layout alone — which symbol lands at which address —
-> swings performance by ten percent or more.
+> **SAY:** Emery Berger's "Performance Matters" is the canonical talk. Code
+> layout alone, which symbol lands at which address, swings performance by
+> ten percent or more.
 
 ### A component speedup is not a system speedup
 
 **Beat: the bridge into the second half.**
 
-> **SAY:** And that is the whole reason the second half of this talk exists.
-> Contention, queueing, and dependencies decide how much of a local win
-> survives to the top.
+> **SAY:** Contention, queueing, and dependencies decide how much of a local
+> win survives to the top.
 >
 > A microbenchmark measures the component. Only a macrobenchmark tells you
 > whether it mattered.
 
 ### A noisy result can be directionally wrong
 
-> **SAY:** So the lesson from this story is not "CI is bad". It is that a noisy
-> result is not merely imprecise. It can point the wrong way. It can block a
-> good change, and wave a real regression straight through.
+> **SAY:** The lesson from this story is not "CI is bad". A noisy result can
+> be imprecise and point the wrong way. It can block a good change, and wave
+> a real regression straight through.
 
 ---
 
@@ -533,21 +526,22 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ### Read the output (reveal)
 
-> **SAY:** Four things. The number is the *median*, not the mean. The plus-minus
-> is spread. `p` tells you whether it is distinguishable from noise.
+> **SAY:** Four things. The number is the *median*, not the mean. The
+> plus-minus is spread. `p` tells you whether it is distinguishable from
+> noise.
 >
-> And a tilde means no measurable difference — which is a *result*. It is not an
-> invitation to run it again until you get a delta.
+> A tilde means no measurable difference, which is a *result*. It is not an
+> invitation to rerun until you get a delta.
 
 ### What benchstat won't tell you
 
-> **SAY:** But there is a question benchstat deliberately does not answer. It
-> tells you whether A differs from B. It does not tell you whether this machine
-> is a trustworthy place to be asking.
+> **SAY:** There is a question benchstat deliberately does not answer. It
+> tells you whether A differs from B. It does not tell you whether this
+> machine is a trustworthy place to ask.
 >
-> That is coefficient of variation — standard deviation over mean. One number
-> for how noisy your environment is. Twenty lines of awk, and it is the check
-> most people skip.
+> Coefficient of variation is standard deviation over mean. It gives you one
+> number for how noisy your environment is. Twenty lines of awk, and it is
+> the check most people skip.
 
 ### Rules of thumb
 
@@ -557,16 +551,17 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ### The p-hacking trap
 
-> **SAY:** Last thing. Do not rerun until you like the answer. Every rerun is a
-> fresh draw from the same distribution, and with enough draws any noise looks
+> **SAY:** Do not rerun until you like the answer. Every rerun is a fresh
+> draw from the same distribution, and with enough draws any noise looks
 > like signal.
 >
-> Pick your run count before you look at results. Write it down if you have to.
+> Pick your run count before you look at results. Write it down if you have
+> to.
 
 ### more samples will not fix a noisy machine
 
-`DO` Meme, and it is the bridge into §10. **Ten seconds.** The right-hand button
-is the one everybody presses; the next section is about the left one.
+`DO` Show the meme to introduce §10. **Ten seconds.** The right-hand button
+is the one everybody presses. The next section is about the left one.
 
 > **SAY:** Only one of these buttons works.
 
@@ -584,26 +579,27 @@ is the one everybody presses; the next section is about the left one.
 > in a container: back to the idle noise floor, while the host is still fully
 > saturated.
 
-`DO` If asked about the platform — and you were asked last time — it is on the
-slide: Apple M4 Max, arm64 host, arm64 guest, Apple Virtualization.framework.
+`DO` If someone asks about the platform, use the details on the slide. Someone
+asked last time. Apple M4 Max, arm64 host, arm64 guest, Apple Virtualization.framework.
 No QEMU, no cross-architecture emulation.
 
 ### 5.25% is not a triumph / It is a ceiling
 
-> **SAY:** But be honest about what that is. Five percent is not a good number.
-> It is the *best* number this machine can give you. Bare-metal Linux with SMT
-> off reaches nought point nought five. A hundred times tighter.
+> **SAY:** Five percent is not a good number. It is the *best* number this
+> machine can give you. Bare-metal Linux with SMT off reaches nought point
+> nought five. A hundred times tighter.
 
 ### The macOS caveat
 
 `DO` Do not soften this.
 
-> **SAY:** And on macOS, Docker runs inside a Linux VM. So `--cpuset-cpus=0`
-> pins a *virtual* CPU inside that VM. The VM can still move it across physical
-> cores. Nothing inside that container can disable host SMT or pin the clock.
+> **SAY:** On macOS, Docker runs inside a Linux VM. So `--cpuset-cpus=0`
+> pins a *virtual* CPU inside that VM. The VM can still move it across
+> physical cores. Nothing inside that container can disable host SMT or pin
+> the clock.
 >
-> What you get is isolation from your other processes — that is real, and worth
-> having. What you do not get is controlled hardware.
+> You get isolation from your other processes. That is real, and worth
+> having. You do not get controlled hardware.
 
 ### The inner loop
 
@@ -630,9 +626,9 @@ No QEMU, no cross-architecture emulation.
 
 > **SAY:** Second half. Now it is CI, whole workloads, and time.
 >
-> Same three questions, different shape. Real work becomes: is the *workload*
-> representative? Stable sample becomes: stable across *days*, not runs. And
-> above the noise — now the hardware itself is the variable.
+> Same three questions, different shape. Real work becomes: is the
+> *workload* representative? Stable sample becomes: stable across *days*,
+> not runs. And above the noise: now the hardware itself is the variable.
 
 ### A second bot comment
 
@@ -647,31 +643,31 @@ No QEMU, no cross-architecture emulation.
 
 ### `largeidle` shares zero changed dependencies
 
-> **SAY:** Except. My change touched dependency pinning in `multi`. `largeidle`
-> shares *none* of those dependencies. It runs independent code. It cannot have
-> regressed.
+> **SAY:** My change touched dependency pinning in `multi`. `largeidle`
+> shares *none* of those dependencies. It runs independent code. It cannot
+> have regressed.
 >
 > And yet it moved by the same sixty percent.
 >
-> When something that cannot have changed changes anyway, the common factor is
-> not your code. It is the machine. I had been running parallel builds and
-> integration tests all afternoon. I was benchmarking my own build.
+> When unchanged code gives a different result, the common factor is the
+> machine. I ran parallel builds and integration tests all afternoon, even
+> as I benchmarked my own build.
 
-`DO` The fix was to wait for CI. There is no local target for that job — it is
-CI-only, on a dedicated runner.
+`DO` The fix was to wait for CI. There is no local target for that job. It runs
+only in CI, on a dedicated runner.
 
 ### The mirror image
 
 **Beat: this is why there are two stories.**
 
-> **SAY:** Put the two side by side. First story: CI said slower, the laptop was
-> right, and the cause was code layout. Second story: the laptop said slower, CI
-> was right, and the cause was machine load.
+> **SAY:** Put the two side by side. First story: CI said slower, the laptop
+> was right, and the cause was code layout. Second story: the laptop said
+> slower, CI was right, and the cause was machine load.
 >
 > Neither environment is authoritative by default.
 >
-> And the tell was identical both times: a benchmark moved that could not have
-> moved. That is the single most useful instinct I can give you today.
+> And the tell was identical both times: a benchmark moved that could not
+> have moved.
 
 ---
 
@@ -679,36 +675,35 @@ CI-only, on a dedicated runner.
 
 ### What does your app actually do? (reveal)
 
-> **SAY:** Representative is the hard part, so start here. Is your workload CPU
-> bound, I/O bound, or — like almost everything real — mixed?
+> **SAY:** Representative is the hard part, so start here. Is your workload
+> CPU bound, I/O bound, or mixed, like almost everything real?
 >
-> Your benchmark workload should look like your production workload. Obvious,
-> and almost nobody does it.
+> Your benchmark workload should look like your production workload.
+> Obvious, and almost nobody does it.
 
 ### Workload archetypes
 
-> **SAY:** We use four archetypes. Idle — background workers, barely any load.
-> Latency — microservices, high request rate, little CPU each. Throughput —
-> queues and batch jobs. Enterprise — business apps with databases and API
+> **SAY:** We use four archetypes. Idle: background workers, barely any load.
+> Latency: microservices, high request rate, little CPU each. Throughput:
+> queues and batch jobs. Enterprise: business apps with databases and API
 > calls, mixed.
 
 ### Why `largeidle` falsified `multi`
 
-> **SAY:** And now the earlier story gets sharper. `largeidle` is the Idle
-> archetype. `multi` is Enterprise. Completely different code, completely
-> different shape.
+> **SAY:** `largeidle` is the Idle archetype. `multi` is Enterprise.
+> Completely different code, completely different shape.
 >
-> They moved by the same amount, in the same direction, at the same time. That
-> is not a shared cause. That is a shared *environment*.
+> They moved by the same amount, in the same direction, at the same time.
+> That is not a shared cause. That is a shared *environment*.
 
 ### A macro gate is a budget
 
 > **SAY:** Macro gates work differently from micro gates. Micro compares two
-> commits. Macro compares against a *budget* — a ceiling you are not allowed to
-> cross.
+> commits. Macro compares against a *budget*, a ceiling you are not allowed
+> to cross.
 >
-> That is a product question, not a statistical one: how much of the customer's
-> machine are we allowed to take?
+> That is a product question, not a statistical one: how much of the
+> customer's machine are we allowed to take?
 
 ---
 
@@ -726,10 +721,10 @@ CI-only, on a dedicated runner.
 
 **Beat: the mechanism, not just the assertion.**
 
-> **SAY:** So why does sharing a core produce twenty-three percent variance? A
-> core is a fixed bag of execution units — arithmetic, floating point,
-> load and store. Two threads share that bag. Neither gets the full core; each
-> gets a fraction. And the split is nondeterministic — whoever has
+> **SAY:** So why does sharing a core produce twenty-three percent variance?
+> A core is a fixed bag of execution units: arithmetic, floating point, load
+> and store. Two threads share that bag. Neither gets the full core. Each
+> gets a fraction. And the split is nondeterministic: whoever has
 > instructions ready wins the next slot. Run to run, your thread gets a
 > different fraction, and that fraction swings the runtime. Same code, same
 > core, different share every time. That is the twenty-three percent.
@@ -747,22 +742,22 @@ CI-only, on a dedicated runner.
 
 **Beat: the mechanism, not just the assertion.**
 
-> **SAY:** And the frequency story is the same shape. The clock is not fixed.
-> A governor picks a frequency based on load and how much thermal headroom the
-> chip has. Turbo pushes above base when the chip is cool. So run one — cool
-> chip, high clock, fast result. Run twenty — warm chip, throttled clock,
-> slower result. Same number of cycles, different wall time. The benchmark is
-> not comparable across runs. Pin to base frequency and every run gets the
-> same clock — the mean gets slower, because no turbo, but the variance drops
-> ten times.
+> **SAY:** The frequency story follows the same pattern. The clock is not
+> fixed. A governor picks a frequency based on load and how much thermal
+> headroom the chip has. Turbo pushes above base when the chip is cool. So
+> run one: cool chip, high clock, fast result. Run twenty: warm chip,
+> throttled clock, slower result. Same number of cycles, different wall
+> time. The benchmark is not comparable across runs. Pin to base frequency
+> and every run gets the same clock. The mean gets slower, because no turbo,
+> but the variance drops ten times.
 
 ### What's the impact of disabling DFS?
 
-> **SAY:** Ten times less variance with it off. And look — the mean got
+> **SAY:** Ten times less variance with it off. And look, the mean got
 > *slower*. Turbo is fast and inconsistent.
 >
-> Which is the point. A benchmark's job is to be comparable, not to post the
-> best number you can hit once.
+> A benchmark's job is to be comparable, not to post the best number you can
+> hit once.
 
 ### Three sysfs writes
 
@@ -780,12 +775,11 @@ CI-only, on a dedicated runner.
 
 ### A/B is the wrong model for CI
 
-> **SAY:** One more thing CI gets wrong. `benchstat` compares two
-> distributions. But CI does not have two distributions — it has a time series.
-> One measurement per commit, for months, with hardware changes and dependency
-> bumps in the middle.
+> **SAY:** `benchstat` compares two distributions. CI does not have two
+> distributions. It has a time series. One measurement per commit, for
+> months, with hardware changes and dependency bumps in the middle.
 >
-> Compare each commit to its parent and you re-ask the noise question every
+> Compare each commit to its parent and you ask the noise question every
 > single time, and you miss slow drift completely.
 
 ### What regressions look like
@@ -824,8 +818,8 @@ CI-only, on a dedicated runner.
 ### Two patterns
 
 > **SAY:** Two patterns, and they want opposite things. A PR gate is fast and
-> strict — a curated set of benchmarks that have regressed before, same-machine
-> A/B, tight threshold. A nightly suite is complete and slow — pinned runner,
+> strict: a curated set of benchmarks that regressed before, same-machine
+> A/B, tight threshold. A nightly suite is complete and slow: pinned runner,
 > every control applied, rolling window, change-point detection.
 >
 > Either way: CI *detects*. It is not your primary measurement. That is still
@@ -835,32 +829,31 @@ CI-only, on a dedicated runner.
 
 `DO` Point at the second paragraph, not the first.
 
-> **SAY:** One last thing, because this is the objection I always get: why not
-> just throw more runners at it?
+> **SAY:** Why not just throw more runners at it?
 >
-> Read what the Go project says about its own infrastructure. The normal test
-> bots get tons of capacity and spin up VMs at will. The performance builders get
-> one physical machine, often backlogged with work.
+> Read what the Go project says about its own infrastructure. The normal
+> test bots get tons of capacity and spin up VMs at will. The performance
+> builders get one physical machine, often backlogged with work.
 >
-> Elastic capacity is the right answer for correctness. It is the wrong answer
-> for performance, and the people who maintain Go know it.
+> Elastic capacity is the right answer for correctness. It is the wrong
+> answer for performance, and the people who maintain Go know it.
 
 ### Keep a ledger of false positives
 
-> **SAY:** Last one, and it is the cheapest thing here. That same benchmark
-> fired again eleven days later on an unrelated PR. That time it took one
-> comment to dismiss — because the first investigation was written down.
+> **SAY:** That same benchmark fired again eleven days later on an unrelated
+> PR. That time it took one comment to dismiss because the first
+> investigation was written down.
 >
-> Without that note, the next person re-runs the whole investigation. Or worse,
-> "fixes" it. Documented noise is benchmark hygiene.
+> Without that note, the next person repeats the whole investigation. Or
+> worse, "fixes" it. Documented noise is benchmark hygiene.
 
 ### CI and macro, answered
 
-> **SAY:** Second half. Real work: match the archetype, pin the inputs. Stable
-> sample: think in time series, use change points. Above the noise: bare metal,
-> SMT off, governor pinned.
+> **SAY:** Second half. Real work: match the archetype, pin the inputs.
+> Stable sample: think in time series, use change points. Above the noise:
+> bare metal, SMT off, governor pinned.
 >
-> And the one to remember: a shared runner cannot be fixed with more samples.
+> A shared runner cannot be fixed with more samples.
 
 ---
 
@@ -869,18 +862,18 @@ CI-only, on a dedicated runner.
 ### Three tools
 
 > **SAY:** I built three small things so you do not have to remember all of
-> this. They ship from a separate repo called benchlab — one `go install` gets
-> you all three binaries, and if you use coding agents, one command adds them as
-> skills.
+> this. They ship from a separate repo called benchlab. One `go install`
+> gets you all three binaries. If you use coding agents, one command adds
+> them as skills.
 
-`DO` The tools live in `github.com/kakkoyun/benchlab`, **not** the talk repo.
-The talk repo has the decks and the captured results. Do not conflate them —
-the QR goes to the talk repo.
+`DO` The tools are in `github.com/kakkoyun/benchlab`, **not** the talk repo.
+The talk repo has the decks and the captured results. Keep the two repos distinct.
+The QR goes to the talk repo.
 
 ### `benchenv`
 
-> **SAY:** And this one just tells you what your machine can and cannot do. Run
-> it before a serious session.
+> **SAY:** This one tells you what your machine can and cannot do. Run it
+> before a serious session.
 
 ### Four *unavailable* lines
 
@@ -889,19 +882,18 @@ the QR goes to the talk repo.
 > **SAY:** Look at what it says on my laptop. Four `unavailable`. No SMT
 > control. No frequency control. No turbo control.
 >
-> That is the honest answer. macOS does not expose those, so it says so, instead
-> of printing a green tick I would have believed.
+> That is the honest answer. macOS does not expose those, so it says so,
+> instead of printing a green tick I would believe.
 >
 > Knowing what you cannot control is worth as much as controlling it.
 
 ### The minimum viable discipline
 
 > **SAY:** If you take one slide home, take this one. Add a sink. Run enough
-> samples. Compare with benchstat. Check the environment before you believe the
-> comparison.
+> samples. Compare with benchstat. Check the environment before you believe
+> the comparison.
 >
-> That is under an hour of work, and every benchmark you write after today will
-> tell you the truth.
+> That is under an hour of work to check whether you can trust a benchmark.
 
 ### Three questions, two scales
 
@@ -916,10 +908,11 @@ the QR goes to the talk repo.
 ### Take it with you
 
 > **SAY:** Two links. benchlab has the three tools and the agent skills. The
-> talk repo — that is the QR — has both decks and every captured result in this
-> talk, so you can check my numbers.
+> talk repo, that is the QR, has both decks and every captured result in
+> this talk, so you can check my numbers.
 >
-> And the earlier FOSDEM version is there if you want the language-agnostic take.
+> And the earlier FOSDEM version is there if you want the language-agnostic
+> take.
 
 ### Close
 
