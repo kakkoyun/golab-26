@@ -7,14 +7,10 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. Now 129 pages, 16 sections,
-fragment floor 63, claims ledger 44 `verified` / 1 `dropped` / 0 `pending`. The
-full `make check` surface passes. Everything below is what survived the talk or
-was created by it.
-
-Two slides were added *after* delivery and have never been presented: the
-observer effect and the `perfgo` pointer, both at the end of §07. Rehearse that
-section before the next outing.
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 105
+pages, 16 sections, fragment floor 45. GoLab lists the talk as Intermediate, so
+the cut keeps the basics and both incidents and removes the depth slides. See
+`outline.md` for the cut list. The full `make check` surface passes.
 
 ---
 
@@ -35,17 +31,6 @@ ladder is being applied against a guess.
 
 If the talk was recorded, the recording is the measurement.
 
-### Memes
-
-Never placed. The theme has a `section.meme` class, and the project's
-`memebo.at` MCP server has usable templates: `this-is-fine`, `two-buttons`,
-`guy-pointing-at-mirror`, `distracted-boyfriend`. Candidate beats that can carry
-a joke without losing the thread: after the OPERA reveal, the macOS caveat, the
-p-hacking trap.
-
-Pure jokes make no factual claim and need no ledger row. Attribution only where
-the source requires it.
-
 ### Fold in Scott's marked-up PDF
 
 Still not received. When it lands, diff his notes against what is already
@@ -59,9 +44,25 @@ For marketing to help promote, once published.
 
 ## Blocked
 
-### Re-time the talk to 38 minutes presented for the GoLab 45-minute slot
+### Time the GoLab cut against a clock
 
-**Blocking.** The outline and script still carry the GopherCon UK timings. Re-time the content before delivery at GoLab 2026.
+**Blocking.** The GoLab cut targets 38 minutes. The word-count model in
+`outline.md` gives 39:15 before the prose pass. Read the script aloud at
+delivery pace, record the split at each divider, and write the real numbers
+into `outline.md` and `speaker-notes.md`. If the total is over 38 minutes, apply
+the cut ladder in `outline.md`.
+
+### Re-capture the demo results under the golab-26 module path
+
+`demo/go.mod` now declares `github.com/kakkoyun/golab-26/demo`. The captured
+files in `demo/results/` (`idle.txt`, `noisy.txt`, `pinned.txt`,
+`gcflags-m-m.txt`) still print the old `gopherconuk-26` path. Re-capture them
+in the experiments phase, on a quiet machine, together with the CV re-measure
+below. Do not edit captured output by hand.
+
+The `payload` string in `demo/bloop_bench_test.go` still says "GopherCon UK
+2026". It is benchmark input. A change alters its byte length and invalidates
+the captured results, so change it only in the same re-capture.
 
 ### Re-measure the Docker and macOS CV experiment on an idle machine
 
@@ -107,6 +108,20 @@ The three CLIs and the agent skills live in
   notices. This bit once already: see the `benchenv` entry below. Re-check all
   three panels against freshly built binaries before any future delivery, and
   record the result in ledger row 25.
+
+---
+
+## Nice to have
+
+### Decide what to do with the assets that the GoLab cut orphaned
+
+No slide references these files now: `bp-feedback-flow.png`,
+`brendan-gregg-shouting-at-datacenter.png`,
+`fosdem26_ka_how_to_reliabliy_measure_performance.png`,
+`go1.26_b_loop_change.png`, `golang_perf_dashboard_charts.png`,
+`golang_performance_dashboard.png`, `golang_performance_monitoring.png`,
+`golang_slowbot.png`. Some are the uncropped originals that the "Done" list
+keeps on purpose. Delete the others, or put them back on a slide.
 
 ---
 

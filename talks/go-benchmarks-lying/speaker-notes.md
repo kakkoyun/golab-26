@@ -1,13 +1,14 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. 110 slides.
+GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. 105 pages.
+Intermediate Go audience.
 
 **How to use this.** `SAY` lines are the words. They are written to be spoken,
 not read — short sentences, one idea each. You do not need them verbatim; learn
 the **beat** (the bold line before each block) and the numbers, and the words
 will come. `DO` lines are delivery, not content.
 
-**Memorise in this order:** the 15 beats → the three questions → the two
+**Memorise in this order:** the 16 beats → the three questions → the two
 stories → the numbers. Everything else is recoverable on stage.
 
 ---
@@ -33,17 +34,17 @@ stories → the numbers. Everything else is recoverable on stage.
 | 15 | Wiring Into CI | Detect, don't measure |
 | 16 | Wire It Up | Under an hour |
 
-**Checkpoints:** §05 by 17:00 · §06 by 22:00 · §11 by 39:00 · §16
-by 53:00 · finish by 57:00.
-If §11 has not started by 40:00, start cutting (ladder in `outline.md`).
+**Checkpoints:** §05 by 9:00 · §06 by 12:00 · §11 by 25:00 · §16
+by 35:00 · finish by 38:00.
+If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
-> **Note.** Section numbers reflect the 16-section deck; the per-section timing
-> is provisional pending the timed read-through (see `TODO.md`) and is rebased
-> in the final commit.
+> **Note.** The section times are a word-count model: SAY words at 130 words
+> per minute, plus 25% for reveals, pauses, and visuals. Nobody has timed this
+> cut yet. The timed read-through in `TODO.md` replaces the model.
 
 ---
 
-## 01 · Why Benchmark? — 6 min
+## 01 · Why Benchmark? — 3:45
 
 ### Title slide
 
@@ -117,32 +118,15 @@ If §11 has not started by 40:00, start cutting (ladder in `outline.md`).
 
 `DO` Attribute to "the Google search team". Not Marissa Mayer.
 
-### Lütke quote
-
-`DO` Let them read it. Say one line, then move.
-
-> **SAY:** Not all fast software is world-class. But all world-class software
-> is fast.
-
 ### Finding what to optimize
 
 > **SAY:** If you want the "what to optimize" half properly, Daniel Martí gave
 > it at GopherCon 2019 and it is still the best talk on it. He covers what to
 > optimize. I am covering whether you can believe the number when you get there.
 
-### Finding what is worth optimizing
-
-**Beat: plant Berger, paid off at the arc bridge.**
-
-> **SAY:** And the talk that pairs with Martí's is Emery Berger's "Performance
-> Matters". Same shelf, different question. Berger's point for us: in a
-> concurrent workflow, the component that looks hot on a profile is not
-> necessarily the one holding the wall time. We come back to that idea at the
-> bridge between the two halves.
-
 ---
 
-## 02 · Why I Care — 3 min
+## 02 · Why I Care — 1:15
 
 ### How I got here
 
@@ -171,18 +155,9 @@ and this talk is the spillover — then move. Do NOT ad-lib hardware, budgets,
 archetypes, gating, or scale. Ledger row 30 is scope-limited to name and
 existence; row 23 (internal macro practice) stays `pending` and out of scope.
 
-### This talk builds on
-
-**Beat: tie the bio to the data that comes later.**
-
-> **SAY:** One more piece of context. An earlier version of this material —
-> the FOSDEM talk Augusto and I gave — is where the SMT and DFS numbers you
-> will see later actually come from. So when those charts show up, they are
-> not new; they are the foundation this talk builds on.
-
 ---
 
-## 03 · A Loose Cable — 4 min
+## 03 · A Loose Cable — 2:45
 
 `DO` This is the story beat. It sets up the three questions, so it stays welded
 to them — do not let the §02 bio bleed into it.
@@ -260,7 +235,7 @@ today.
 
 ---
 
-## 04 · Before You Measure — 4 min
+## 04 · Before You Measure — 1:30
 
 ### Every benchmark needs
 
@@ -288,13 +263,6 @@ today.
 `DO` This replaces the old "this talk is only microbenchmarks" line. Do not
 reintroduce it.
 
-### When to use which
-
-`DO` Do not read the table. Point at two rows.
-
-> **SAY:** Comparing two algorithms — micro. Capacity planning — macro.
-> Regression detection needs both.
-
 ### Start macro, then drill
 
 **Beat: the concrete answer to "so what do I do".**
@@ -309,7 +277,7 @@ reintroduce it.
 
 ---
 
-## 05 · Benchmarking, Quickly — 5 min
+## 05 · Benchmarking, Quickly — 3:00
 
 **Beat: shared vocabulary for an advanced room — here is the instrument we are
 about to distrust.**
@@ -360,7 +328,7 @@ about to distrust.**
 
 ---
 
-## 06 · Local and Micro — 17 min total
+## 06 · Local and Micro — 13:00 total
 
 ### The three questions, micro scale
 
@@ -389,7 +357,7 @@ about to distrust.**
 
 ---
 
-## 07 · Making the Compiler Honest — ~10 min
+## 07 · Making the Compiler Honest — 4:15
 
 ### Stop the compiler deleting your work
 
@@ -444,37 +412,11 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 >
 > And to be explicit: this is test-only. Do not put sinks in production code.
 
-### Escape analysis
-
-> **SAY:** Now see *why* the sink works. `-m -m` prints the escape-analysis
-> flow. In the broken benchmark, the discarded result `does not escape` — so the
-> compiler is free to delete it, and `allocs/op` is zero. In the fixed one, the
-> result flows to the package-level sink, so it `escapes to heap` — the
-> allocation must happen, and `allocs/op` is one. The sink is not magic; it is
-> the thing that forces the escape.
-
 ### Constant folding
 
 > **SAY:** Second trick. Every input here is a literal, so the compiler just
 > computes the answer at build time. You are now benchmarking how fast your CPU
 > can load a constant.
-
-### `make asm-dce`
-
-> **SAY:** And there it is. Left, the literal three. Right, real instructions.
-> Fix is the same shape as before: route your inputs through a package-level
-> variable so the compiler cannot see them.
-
-### Inlining feeds DCE
-
-> **SAY:** Inlining is good — in production. In a benchmark it makes things
-> worse, because once your function body is pasted into the loop, the compiler
-> can see the result is unused and delete the whole thing.
->
-> `-gcflags=-m` tells you what is inlinable. And you need *both* fixes: a
-> non-constant input and a captured result. Either one alone is not enough.
->
-> `//go:noinline` is a diagnostic tool. Not production style.
 
 ### Timer: one-time setup
 
@@ -496,14 +438,6 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 > That is the thing about a benchmark measuring the wrong thing. It does not
 > look broken. It looks like good news.
 
-### `StopTimer` with no `StartTimer`
-
-> **SAY:** One more. Stop the timer and never restart it. The framework waits
-> for enough timed duration. The timer never runs, so duration never
-> accumulates. So it doubles `b.N` and tries again. And again. Forever.
-
-`DO` Straight face, then move. Do not editorialise.
-
 ### `b.Loop()` · Go 1.24
 
 > **SAY:** Go 1.24 gave us a much better answer. `b.Loop`. Setup before the loop
@@ -518,68 +452,9 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 > One catch: the compiler only does this if you write `b.Loop()` literally in
 > the condition. Assign it to a variable first and you lose it.
 
-### How the keepalive works
-
-`DO` Slow down. This is the honest footnote and it pays off the whole thesis.
-
-> **SAY:** So how does it actually stop the compiler? It keeps your call
-> arguments, your results, and your assigned variables alive inside the loop.
->
-> In 1.24 and 1.25 it did that by refusing to inline anything in the loop body.
-> That worked. It also meant your benchmark could allocate on the heap where the
-> same code in production would not. The tool protecting your measurement was
-> quietly changing it.
->
-> Go 1.26 keeps the protection and allows inlining again.
->
-> I am telling you this because it is the whole talk in one detail. The thing you
-> trust to keep your benchmark honest is itself code, and it has been wrong.
-
-### The observer effect
-
-`DO` Point at the left column first. Let the 50% land before you kill it.
-
-> **SAY:** One last way to measure nothing. This is Teiva Harsanyi's, from the
-> P99 CONF post and *100 Go Mistakes*.
->
-> Same function both rows. Sum the first eight columns of a matrix. Only the
-> column count differs, 512 against 513, and we only ever touch eight columns.
-> 513 comes out about fifty percent faster. That should be impossible.
->
-> It is the matrix. It was built once, outside the loop, and then reused for
-> thousands of iterations. So we are not timing the function on fresh input, we
-> are timing it on input that is already sitting in cache, and the two column
-> counts cache differently.
->
-> Build the matrix inside each iteration and the gap disappears. Look at the
-> right column: thirty-three and thirty-five. Not identical, but the fifty
-> percent is gone.
->
-> Note both numbers got *bigger*, because now we are also timing the allocation.
-> That is the honest reading: the gap was the artefact. These are not the
-> function's true timings either.
->
-> Physics calls this the observer effect. Measuring the thing changed the thing.
-> Which, if you have been listening for the last forty minutes, is the entire
-> talk.
-
-### Seeing the hardware
-
-`DO` Short. This is a pointer, not a tutorial. Thirty seconds.
-
-> **SAY:** Both of the last two problems were cache problems, and `ns/op` cannot
-> see a cache miss. If you want to look at that layer, `perfgo` wraps Linux
-> `perf` and the CPU's own performance counters around a Go benchmark. It gives
-> you cache-miss hotspots instead of just wall time, and it will flag
-> cache-to-cache line transfers, which is usually how you find false sharing.
->
-> Linux only, because it needs `perf`.
->
-> `ns/op` tells you how long. The counters tell you why.
-
 ---
 
-## 08 · The Regression That Was a Speedup — ~5 min
+## 08 · The Regression That Was a Speedup — 2:30
 
 ### Read the benchmark first
 
@@ -621,19 +496,6 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 > canonical talk. Code layout alone — which symbol lands at which address —
 > swings performance by ten percent or more.
 
-### Causal profiling
-
-> **SAY:** Berger's other idea is worth stealing. A normal profiler tells you
-> where time is spent. It does not tell you what happens if you make that part
-> faster.
->
-> Causal profiling answers the second question directly — it applies a *virtual*
-> speedup to one component and measures the effect on the whole program. So
-> instead of "encode is thirty percent of CPU", you get "making encode twenty
-> percent faster moves end-to-end by two".
-
-`DO` Those numbers are illustrative of the mechanism, not measured. Ledger 19.
-
 ### A component speedup is not a system speedup
 
 **Beat: the bridge into the second half.**
@@ -653,7 +515,7 @@ The numbers on the dog are the ones they just saw from `make bench-dce`.
 
 ---
 
-## 09 · Statistical Interpretation — ~5 min
+## 09 · Statistical Interpretation — 2:30
 
 ### One number is a point sample
 
@@ -710,7 +572,7 @@ is the one everybody presses; the next section is about the left one.
 
 ---
 
-## 10 · Local Reproduction — ~5 min
+## 10 · Local Reproduction — 2:30
 
 ### What does isolation actually buy?
 
@@ -743,22 +605,6 @@ No QEMU, no cross-architecture emulation.
 > What you get is isolation from your other processes — that is real, and worth
 > having. What you do not get is controlled hardware.
 
-### The Linux toolbox
-
-> **SAY:** On Linux you have actual controls. Affinity, core isolation,
-> priority, and a frequency lock. Different tools for different noise sources.
-
-### "Is there a Go tool for this?"
-
-> **SAY:** Somebody asked me exactly this last time, so: yes. `perflock`, by
-> Austin Clements from the Go team. It serialises benchmark runs so two never
-> overlap, and it pins CPU frequency.
->
-> One caveat I only found by reading the source: on macOS the mutual-exclusion
-> lock works, but frequency pinning does not — the default governor flag reads
-> Linux sysfs and errors out. Pass `-governor=none` and you get serialisation
-> and nothing else.
-
 ### The inner loop
 
 > **SAY:** Day to day, this is the loop. `benchdiff` stashes your change, runs
@@ -778,7 +624,7 @@ No QEMU, no cross-architecture emulation.
 
 ---
 
-## 11 · CI and Macro — 14 min total
+## 11 · CI and Macro — 11:30 total
 
 ### The three questions, macro scale
 
@@ -829,7 +675,7 @@ CI-only, on a dedicated runner.
 
 ---
 
-## 12 · Designing a Macrobenchmark — ~5 min
+## 12 · Designing a Macrobenchmark — 1:30
 
 ### What does your app actually do? (reveal)
 
@@ -864,30 +710,9 @@ CI-only, on a dedicated runner.
 > That is a product question, not a statistical one: how much of the customer's
 > machine are we allowed to take?
 
-### What a macro gate needs at scale (reveal)
-
-> **SAY:** To gate a release on it, you need dedicated hardware, a budget per
-> component, several archetypes rather than one workload, and gating on the
-> release rather than just the PR.
->
-> Worth it when your code runs inside someone else's process — then an overhead
-> regression is not an internal metric, it is a customer-visible defect. That is
-> every SDK, every agent, every sidecar in this room.
-
-`DO` Keep this generic. Ledger row 23 — do not ad-lib Datadog internals.
-
-### Two macro traps
-
-> **SAY:** Two traps worth naming. Coordinated omission: your system falls
-> behind, your load generator stops issuing requests, and therefore stops
-> recording the latency it caused. Your p99 improves because you measured less.
->
-> And non-deterministic inputs. Random fixtures, live dependencies. If the input
-> moved too, you cannot attribute the delta to your code.
-
 ---
 
-## 13 · Controlling the CI Environment — ~5 min
+## 13 · Controlling the CI Environment — 3:15
 
 ### Why shared runners lie
 
@@ -896,19 +721,6 @@ CI-only, on a dedicated runner.
 > phantom ten percent appears out of it.
 >
 > That is an environment problem. You cannot fix it with statistics.
-
-### What SMT actually is
-
-> **SAY:** Two acronyms, because I used them last time without explaining them.
->
-> SMT — simultaneous multithreading, Hyper-Threading on Intel. Two hardware
-> threads share one physical core's execution units. The bet is that most code
-> stalls on memory, so a second thread can use the idle slots. Great for
-> throughput.
->
-> Terrible for benchmarking. Two CPU-bound threads on one core fight for the
-> same units, so your runtime now depends on what some other process is doing.
-> A co-tenant you cannot see and did not schedule.
 
 ### Why SMT breaks benchmarks
 
@@ -930,15 +742,6 @@ CI-only, on a dedicated runner.
 > *(next slide)* Twenty-four percent CV sharing a core. Nought point nought four
 > when they are not. About a hundred times less variance. And notice it is also
 > twice as fast, because the core stopped being shared.
-
-### What DFS is
-
-> **SAY:** Second one. Dynamic frequency scaling — the CPU changing its own
-> clock. Turbo when there is thermal headroom, throttle when there is not, with
-> the kernel picking a governor.
->
-> Why that ruins a benchmark: run one boosts. Run twenty is warm and throttles.
-> Same code, different clock, different answer.
 
 ### Why DFS breaks benchmarks
 
@@ -971,31 +774,9 @@ CI-only, on a dedicated runner.
 > and the write may succeed and be silently ignored — which is worse than
 > failing.
 
-### Noise goes all the way down
-
-**Beat: the deflating punchline. Earn the laugh, then bank the point.**
-
-`DO` Let the picture land before saying anything. It is Brendan Gregg shouting
-into a disk array. Do not over-explain it.
-
-> **SAY:** And once you have done all of that — pinned the governor, killed
-> turbo, disabled SMT — there is still one more source of noise.
->
-> That is Brendan Gregg shouting at a disk array. The vibration alone is enough
-> to spike disk latency. Someone filmed it.
->
-> So: don't shout in the datacenter.
-
-`DO` Beat. Then the real point, quieter:
-
-> **SAY:** Which is only funny until you realise it generalises. There is always
-> another layer of noise underneath the one you just fixed. The job is not to
-> eliminate it — you cannot. The job is to know how much is left, and whether
-> your effect is bigger than that.
-
 ---
 
-## 14 · Detecting Change Over Time — ~5 min
+## 14 · Detecting Change Over Time — 2:15
 
 ### A/B is the wrong model for CI
 
@@ -1024,16 +805,6 @@ into a disk array. Do not over-explain it.
 >
 > It needs history, so it belongs in nightly trending, not a PR gate.
 
-### Go runs this on Go
-
-`DO` Let them look for a beat before you say anything.
-
-> **SAY:** You do not have to take my word for any of this. This is the Go
-> project's own performance dashboard. Every commit into the main repository, per
-> builder shape, with a confidence interval on each series.
->
-> That is a time series. Not a pair of runs.
-
 ### Why a baseline, not a pair
 
 `DO` Read the quote aloud. It is the strongest line in the talk and it is not mine.
@@ -1048,7 +819,7 @@ into a disk array. Do not over-explain it.
 
 ---
 
-## 15 · Wiring It Into CI — ~5 min
+## 15 · Wiring It Into CI — 2:15
 
 ### Two patterns
 
@@ -1074,12 +845,6 @@ into a disk array. Do not over-explain it.
 > Elastic capacity is the right answer for correctness. It is the wrong answer
 > for performance, and the people who maintain Go know it.
 
-### Existing tools
-
-> **SAY:** You do not have to build this. bencher.dev if you want hosted and
-> Go-native. github-action-benchmark for a simple first gate. Apache Otava if
-> you want real change-point detection. Full survey is in the repo.
-
 ### Keep a ledger of false positives
 
 > **SAY:** Last one, and it is the cheapest thing here. That same benchmark
@@ -1099,7 +864,7 @@ into a disk array. Do not over-explain it.
 
 ---
 
-## 16 · Wire It Up — 4 min
+## 16 · Wire It Up — 2:30
 
 ### Three tools
 
@@ -1111,22 +876,6 @@ into a disk array. Do not over-explain it.
 `DO` The tools live in `github.com/kakkoyun/benchlab`, **not** the talk repo.
 The talk repo has the decks and the captured results. Do not conflate them —
 the QR goes to the talk repo.
-
-### `honestbench`
-
-> **SAY:** Static analysis over your benchmark source. It finds discarded
-> results, timer ordering mistakes, `b.N` loops that should be `b.Loop`. Nothing
-> has to run — it reads the AST. Seventeen findings across twelve functions in
-> our demo package.
-
-### `benchgate`
-
-> **SAY:** Runs your benchmark N times and fails if the variance is too high to
-> trust. Same benchmark, two thresholds — fails at five percent, passes at
-> eight.
->
-> The point is not that eight is a good default. The point is that the policy is
-> explicit and a machine enforces it, instead of living in your head.
 
 ### `benchenv`
 
@@ -1204,12 +953,9 @@ the QR goes to the talk repo.
 
 - Do not attribute the Google number to Marissa Mayer — "the Google search team".
 - Do not put a figure on the OPERA oscillator fault.
-- The datacenter demo is Brendan Gregg's; the video lives on Bryan Cantrill's
-  channel. Credit Gregg for the demo, and do not quote a latency number for it.
 - Do not call Docker Desktop on macOS hardware isolation.
 - Do not claim statistical significance proves practical importance.
 - Do not describe Datadog's internal benchmarking setup — ledger row 23 is unresolved.
-- Do not present causal profiling's 30%/2% as measured results.
 
 ## If challenged
 
