@@ -1,4 +1,4 @@
-# AGENTS.md — gopherconuk-26
+# AGENTS.md — golab-26
 
 Conventions for agents working on the talks in this repository. The user's
 global `~/AGENTS.md` still applies; this file adds what is specific to building
