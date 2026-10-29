@@ -173,7 +173,7 @@ These must never appear on a slide.
 | USDT probes upstream in Go | Not in the Go tree; that work lives in Datadog's agent |
 | A lines-of-Go or Go-service count for Datadog | No public figure exists. Do not compute one from the internal monorepo |
 | Datadog's numeric contributor rank in OpenTelemetry | devstats denies anonymous API queries; no citable number |
-| Datadog sponsored GopherCon 2024 / sponsors GoLab 2026 | First is aggregator-only, second is false — and sponsorship is out of scope anyway |
+| Datadog sponsored GopherCon 2024 / sponsors GopherCon UK 2026 | First is aggregator-only, second is false — and sponsorship is out of scope anyway |
 
 ---
 
