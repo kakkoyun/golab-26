@@ -411,9 +411,8 @@ today unconditionally requires external linking and therefore the C-adjacent
 toolchain; this is the same wall the mobile community described in #81450
 (kolkov: every Go framework with Android support "carries a cgo layer for
 exactly this reason"). Internal linking for c-shared on android/arm64 is
-declared in scope of the #81450 project by cherrymui (2026-10-09), tracked in
-
-# 82111
+declared in scope of the #81450 project by cherrymui (2026-10-09), tracked
+in golang/go#82111.
 
 ### `plugin` package limits
 
