@@ -603,8 +603,11 @@ section.dark .chip.caution { background: #6b0039; color: #ffe4f3; }
 @media print { section { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
 /* Scale external diagrams inside the content area above the footer band. */
 .center img[src^="https://kroki.io/mermaid/"] {
+    /* Kroki SVGs have a small native size. Fill the width, keep the aspect ratio. */
+    width: 100%;
+    height: auto;
     max-height: 435px;
-    width: auto;
+    object-fit: contain;
     margin-left: auto;
     margin-right: auto;
 }
