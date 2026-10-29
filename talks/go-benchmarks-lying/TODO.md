@@ -46,8 +46,7 @@ For marketing to help promote, once published.
 
 ### Time the GoLab cut against a clock
 
-**Blocking.** The GoLab cut targets 38 minutes. The word-count model in
-`outline.md` gives 39:15 before the prose pass. Read the script aloud at
+**Blocking.** The GoLab cut targets 38 minutes. The word-count model in `outline.md` gives 36:00. Read the script aloud at
 delivery pace, record the split at each divider, and write the real numbers
 into `outline.md` and `speaker-notes.md`. If the total is over 38 minutes, apply
 the cut ladder in `outline.md`.

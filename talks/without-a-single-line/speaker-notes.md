@@ -31,7 +31,7 @@ Memorise the beat (the bold line before each block), then let the words follow.
 The times in `outline.md` are a word-count model: 3,422 SAY words at 130 words
 per minute, plus 25% for pauses and visuals, gives about 33 minutes. The
 cuttable static-PIE anecdote adds about 1:25. The rest of the 38 minutes is
-buffer for the silent beats. Nobody has timed this version yet.
+buffer for the silent beats. This version still needs a timed read-through.
 
 Checkpoints: open the primer by ~4:00, OBI by ~11:30, otelc by ~16:00, the
 injector by ~19:30, live debugging by ~25:00, the decision section by ~28:30.
@@ -259,8 +259,7 @@ later.
 
 **SAY**
 
-Two of the three paths in this talk run on eBPF. So before we use it, let us
-build it up from the bottom. Nine short steps. Each step needs the one before
+OBI, the profiler, and the live debugger in this talk all run on eBPF. So before we use it, let us build it up from the bottom. Nine short steps. Each step needs the one before
 it.
 
 **DO**
@@ -278,13 +277,12 @@ field-offset slides in one sentence each.
 eBPF lets you attach a small program to an event in Linux.
 
 A loader sends the program to the kernel. The verifier checks every memory
-access and every operation before the program can run. A JIT turns the
-bytecode into native instructions.
+access and every operation before the program can run. A supported JIT can turn the bytecode into native instructions.
 
 The program calls helpers for kernel services. It keeps state in maps. User
 space reads the maps.
 
-The work happens once, at load time. After that, the program runs each time
+Loading, verification, and JIT compilation happen once, at load time. After that, the program runs each time
 the event occurs.
 
 **DO**
@@ -298,13 +296,11 @@ whole system safe. It checks this program.
 
 **SAY**
 
-A field in a kernel struct can move between kernel builds. BTF describes the
-types of the kernel that is running. CO-RE uses BTF to adjust the field reads
-in the program before it loads. One compiled object then works across kernels.
+A field in a kernel struct can move between kernel builds. BTF describes the types of the current kernel. CO-RE uses BTF to adjust the field reads
+in the program before it loads. One compiled object can then work across supported kernel layouts.
 
 Remember the limit. CO-RE knows kernel types. It knows nothing about a Go HTTP
-request. For Go, we need a separate source of layouts. We come back to that in
-two slides.
+request. For Go, we need a separate source of layouts. We solve that later in this primer.
 
 **DO**
 
@@ -359,8 +355,7 @@ numbers in the research are for an empty probe, not for a real handler.
 **SAY**
 
 Now the Go part. Go does not pass arguments the way C does. On amd64, since Go
-1.17, the first integer arguments go in AX, BX, and CX. A string takes two
-registers. A tracer that expects the C order reads garbage.
+1.17, the first integer arguments go in AX, BX, and CX. When enough registers remain, a string uses two of them. Otherwise Go passes it on the stack. A tracer that expects the C order reads garbage.
 
 Second problem. The goroutine can start a function on one thread and finish it
 on another. So the thread ID cannot tie entry and exit together. OBI uses the
@@ -420,8 +415,7 @@ Thirty-five seconds. Link back to the CO-RE slide.
 
 **SAY**
 
-All of that is guesswork from the outside. USDT is the opposite: the program
-declares its own probes.
+USDT lets the program declare its own probes.
 
 The producer puts a NOP at the probe site and writes an ELF note. The note
 names the probe and gives a recipe for each argument: which register, which
@@ -442,7 +436,7 @@ separate kernel mechanism.
 
 **SAY**
 
-Upstream Go emits no USDT probes today. Salp and libstapsdt let an application
+The Go 1.26.0 source that we checked emits no native USDT probes. Salp and libstapsdt let an application
 add them through cgo. Polar Signals builds the other side, a Go tracer that
 reads USDT notes.
 
@@ -886,7 +880,7 @@ the dynamic loader, ld.so.
 The loader reads LD_PRELOAD. It maps those libraries before all others. The
 ELF rules say that their initializers run before the program gains control.
 
-So the injector runs first. It sets one environment variable. The language
+So the injector runs first. It sets startup environment variables. The language
 runtime does the rest: Java loads an agent, Node.js loads a module, .NET loads
 a profiler.
 
@@ -896,11 +890,11 @@ The two quotes in the footer are the evidence. Read neither aloud.
 
 ---
 
-## Every injector ships the same runtimes
+## Runtime hooks that injectors use
 
 **SAY**
 
-Every runtime on this table has a designed entry point for an agent. The
+Each non-Go runtime on this table has a designed entry point for an agent. The
 injector only has to find it.
 
 The OpenTelemetry injector is a small shared library. It covers Java, Node.js,
@@ -1163,8 +1157,7 @@ captures. Say so if someone asks why it is not instant.
 
 This is the same uprobe from the primer, with one new input: DWARF.
 
-The DWARF line table maps file and line to machine addresses. The tool picks a
-statement row for that line and gets a PC. It turns the PC into a file offset
+The DWARF line table maps file and line to machine addresses. The tool prefers a statement row for that line. If only other rows match, it uses the first one. That gives a PC. It turns the PC into a file offset
 and attaches the uprobe there.
 
 When the probe hits, DWARF location lists say where each variable lives at that
@@ -1202,16 +1195,13 @@ A debugger in production needs hard limits.
 
 A logpoint that captures variables runs at most once per second. Without
 capture, the limit is five thousand per second per service instance.
-Logpoints expire when the debug session ends. Values that match sensitive
-names, such as password, are redacted before the data leaves the host.
+Logpoints expire when the debug session ends. The system probe redacts values with sensitive names, such as password, before the data leaves the host.
 
-For Go, you need Linux 5.17 or newer, Agent 7.73 or newer, and the Go SDK 2.9
-or newer.
+For Go, you need Linux 5.17 or newer and Agent 7.73 or newer on the same host. The docs strongly recommend the Go SDK 2.9 or newer.
 
 **DO**
 
-Every number on this slide is from the public docs in the footer. Do not add
-an overhead percentage. No public overhead number exists.
+Every number on this slide is from the public docs in the footer. Do not add an overhead percentage. The public docs give no measured overhead figure for Go.
 
 ---
 
@@ -1219,12 +1209,11 @@ an overhead percentage. No public overhead number exists.
 
 **SAY**
 
-There are other ways. A Delve breakpoint reads every variable, but it stops
-the program. The Go 1.25 flight recorder does not stop anything, but you must
+There are other ways. A Delve breakpoint shows the available variables, but it stops the program. The Go 1.25 flight recorder does not stop anything, but you must
 add it to the code, and it records an execution trace, not variable values. A
 hand-written uprobe works, but you do the DWARF work yourself.
 
-A logpoint is the only row with no code change, no pause, and variable values.
+A logpoint gives bounded variable snapshots with no code change and no pause. You decode nothing by hand.
 
 **DO**
 
@@ -1298,20 +1287,18 @@ Section bridge. This is where the arc lands.
 
 **SAY**
 
-One more thing to watch. Today, a Go program that calls C needs a C compiler
-at build time.
+One more thing to watch. Today, a standard cgo build needs a C compiler at build time.
 
 Proposal 81450 removes that need for prebuilt C libraries. You write the
 bindings in Go syntax. The cgo tool generates the glue in Go and assembly.
-runtime/cgo itself is rewritten without C. And the internal linker learns to
+The proposal also rewrites runtime/cgo in Go and assembly. And the internal linker learns to
 reference shared libraries on Linux.
 
 The Go team accepted the experiment, so the code can land behind a flag. The
 design itself is still in review.
 
 Why do I care? The injector section showed that a Go binary without a dynamic
-loader gives an injector nothing to attach to. Watch how this changes which
-Go binaries link shared libraries.
+loader gives an injector nothing to attach to. This work teaches the internal linker to import shared libraries. It does not promise new linking defaults or preload support.
 
 **DO**
 

@@ -1,6 +1,6 @@
 # GoLab theme
 
-Use `golab.css` for the GoLab 2026 slides. The theme uses the GoLab 2026 speaker template as its visual source.
+Use `golab.css` for the GoLab 2026 slides. The GoLab 2026 speaker template is its visual source.
 The theme includes Rubik and JetBrains Mono fonts. It does not load fonts
 from the network.
 
@@ -27,15 +27,14 @@ images and slide XML. The theme uses the following text colours on light slides:
 | Reading | deep violet `#6200CE` | Measurements and output rails |
 | Caution | deep pink `#B00060` | Warnings about code that must not ship |
 
-The text shades give at least 4.5:1 contrast on the light background. The
-code panel has a white background and a dark syntax palette. The template
-accents can fill a slide. White text uses the violet background. Dark text
+These text colours give a contrast ratio of at least 4.5:1 against the light background. The
+code panel has a white background and a dark syntax palette. You can use an accent colour as the background of a full slide. White text uses the violet background. Dark text
 uses the other accent backgrounds. The yellow footer always uses dark text.
 
 ## Layouts
 
 Set a layout with `<!-- _class: section -->` before the slide content.
-The class names and Markdown structure match the earlier theme.
+The class names and Markdown structure match the earlier GopherCon theme.
 
 | Class | Content |
 | --- | --- |
@@ -64,7 +63,7 @@ The other layouts default to light grey.
 The title and end layouts also accept `gopher-hero`, `gopher-rocket`,
 `gopher-network`, `gopher-sage`, `gopher-hiking`, `gopher-balloon`, and
 `gopher-none`. The default title uses the template hamster gopher. The rocket
-and balloon modifiers use the template cocktail gopher. The hero, sage, and network modifiers use the template hamster gopher.
+and balloon modifiers use the template cocktail gopher. On title slides, the hero, sage, and network modifiers show the template hamster gopher. On end slides, they show the cocktail gopher.
 The hiking modifier uses a CC0 gopher. The speaker layout uses the template
 tree gopher.
 
@@ -72,8 +71,7 @@ tree gopher.
 
 A `######` heading is a utility slot. It is a number on a section slide.
 It is the delta label on a compare slide. Place it before a code fence to
-make a filename tab. Put the source file name in the tab. Put the source of
-captured output in the tab when you have it.
+make a filename tab. Put the source file name in the tab. When the panel shows captured output, put the name of the file that produced it in the tab.
 
 The code fence language selects its rail:
 
@@ -97,7 +95,6 @@ stays visible in the yellow footer band.
 
 ## Licences
 
-Rubik and JetBrains Mono use the SIL Open Font License. The Rubik licence
-is in `fonts/OFL-Rubik.txt`. The gopher art credit is in
+Rubik and JetBrains Mono are under the SIL Open Font License. The licences are in `fonts/OFL-Rubik.txt` and `fonts/OFL-JetBrainsMono.txt`. The gopher art credit is in
 `assets/ATTRIBUTION.md`. The SVG gophers use CC0. The GoLab template supplies
 the other art. Contact the conference before you reuse its art elsewhere.

@@ -31,35 +31,30 @@ Microbenchmarks usually fail **representative**. Macrobenchmarks usually fail
 GoLab gives the talk a 45-minute slot. The target is 38 minutes presented and
 7 minutes of Q&A.
 
-The GopherCon UK version ran about 55 minutes of material at 129 pages. The
-GoLab cut removes 24 pages and about 1,400 spoken words. The cut keeps the
+By the model below, the GopherCon UK script held about 53 minutes of spoken material at 129 pages. The GoLab cut removes 24 pages and about 1,400 SAY words. The prose pass removes 330 more. The cut keeps the
 basics and both incidents, because GoLab lists the talk as Intermediate. It
 removes the mechanism explainers and the advanced side paths.
 
 The times below are a word-count model: SAY words at 130 words per minute, plus
-25% for reveals, pauses, and visuals. Earlier constructions in this repository
-were wrong three times. A timed read-through must replace this model before
+25% for reveals, pauses, and visuals. Three earlier timing estimates in this repository were wrong. A timed read-through must replace this model before
 delivery (see `TODO.md`).
 
 ## Beat sheet
 
 | Part | Section | Purpose | Target | Cumulative |
 | --- | --- | --- | ---: | ---: |
-| 1 | **01 Why Benchmark?** | Is it slow, could it go faster, is it worth it. Latency and throughput, cost of slowness, Martí | 3:45 | 3:45 |
-| 1 | **02 Why I Care** | How I got here, why Datadog cares | 1:15 | 5:00 |
-| 1 | **03 A Loose Cable** | OPERA, the three questions, the two-scales roadmap | 2:45 | 7:45 |
-| 1 | **04 Before You Measure** | Representative and repeatable, micro vs macro, start macro | 1:30 | 9:15 |
-| 1 | **05 Benchmarking, Quickly** | Write, run, read, profile, read compiler output | 3:00 | 12:15 |
-| 2 | **06–10 Local and micro** | Bot-comment plant, DCE, constant folding, timers, `b.Loop`, code layout, statistics, local environment, recap | 13:00 | 25:15 |
-| 3 | **11–15 CI and macro** | #643 opener, macro design, SMT and DFS impact, change-point detection, baseline, CI patterns, false-positive ledger, recap | 11:30 | 36:45 |
-| 4 | **16 Wire It Up** | Three CLIs, `benchenv`, minimum discipline, 3×2 recap, take-home | 2:30 | 39:15 |
+| 1 | **01 Why Benchmark?** | Is it slow, could it go faster, is it worth it. Latency and throughput, cost of slowness, Martí | 3:30 | 3:30 |
+| 1 | **02 Why I Care** | How I got here, why Datadog cares | 1:00 | 4:30 |
+| 1 | **03 A Loose Cable** | OPERA, the three questions, the two-scales roadmap | 2:30 | 7:00 |
+| 1 | **04 Before You Measure** | Representative and repeatable, micro vs macro, start macro | 1:15 | 8:15 |
+| 1 | **05 Benchmarking, Quickly** | Write, run, read, profile, read compiler output | 2:30 | 10:45 |
+| 2 | **06–10 Local and micro** | Bot-comment plant, DCE, constant folding, timers, `b.Loop`, code layout, statistics, local environment, recap | 12:00 | 22:45 |
+| 3 | **11–15 CI and macro** | #643 opener, macro design, SMT and DFS impact, change-point detection, baseline, CI patterns, false-positive ledger, recap | 10:45 | 33:30 |
+| 4 | **16 Wire It Up** | Three CLIs, `benchenv`, minimum discipline, 3×2 recap, take-home | 2:30 | 36:00 |
 
-The model total is 39:15. The prose pass on the script must take out about one
-more minute.
+The model total is 36:00 for 3,756 SAY words. The remaining 2 minutes to 38:00 are buffer.
 
-**Rehearsal checkpoints:** §05 by 9:00 · §06 by 12:00 · §11 by 25:00 · §16 by
-35:00 · finish by 38:00. If §11 has not started by 26:00, apply the cut ladder
-live.
+**Rehearsal checkpoints:** §05 by 8:15 · §06 by 10:45 · §11 by 22:45 · §16 by 33:30 · finish by 36:00. If §11 has not started by 25:00, apply the cut ladder live.
 
 ## Narrative order
 
@@ -113,7 +108,7 @@ noise, and a shared runner cannot be fixed with more samples.
 
 ## Cut ladder
 
-The GoLab cut spent most of the previous ladder. It removed "what a macro gate
+The GoLab cut already removed most of the previous ladder. It removed "what a macro gate
 needs at scale", "Go runs this on Go", "Seeing the hardware", "How the
 keepalive works", the macro traps, and the SMT and DFS mechanism slides. It
 also removed the observer effect, escape analysis, `make asm-dce`, inlining,

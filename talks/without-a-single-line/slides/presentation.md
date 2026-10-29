@@ -391,8 +391,6 @@ flowchart LR
 
 The producer names the probe and says where each value lives.
 
-The tracer does not have to guess.
-
 ---
 
 ## Go needs a USDT producer
@@ -405,7 +403,7 @@ The tracer does not have to guess.
 </div>
 <div>
 
-* Upstream Go emits no USDT probes today.
+* Go 1.26.0 emits no native USDT probes.
 * Salp and libstapsdt add them through cgo.
 * Polar Signals builds a Go tracer that reads them.
 
@@ -873,7 +871,7 @@ sequenceDiagram
 
 ---
 
-## Every injector ships the same runtimes
+## Runtime hooks that injectors use
 
 | Runtime | The hook the injector sets |
 | --- | --- |
@@ -1156,7 +1154,7 @@ Some lines have no safe place for a probe.
 
 <div class="small">
 
-Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ · [Live Debugger docs](https://docs.datadoghq.com/tracing/live_debugger/) · [Sensitive data scrubbing](https://docs.datadoghq.com/tracing/live_debugger/sensitive-data-scrubbing/)
+Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ recommended · [Live Debugger docs](https://docs.datadoghq.com/tracing/live_debugger/) · [Sensitive data scrubbing](https://docs.datadoghq.com/tracing/live_debugger/sensitive-data-scrubbing/)
 
 </div>
 

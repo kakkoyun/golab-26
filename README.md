@@ -1,7 +1,6 @@
 # golab-26
 
-Talks for GoLab 2026, the international conference on Go in Italy, held
-November 1st to 3rd, 2026. Each talk has an outline, a spoken script, a deck,
+Talks for GoLab 2026, the international conference on Go in Italy. It takes place from November 1st to 3rd, 2026. Each talk has an outline, a spoken script, a deck,
 and a list of open work.
 
 ## Talks

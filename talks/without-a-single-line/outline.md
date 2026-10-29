@@ -11,10 +11,7 @@ the rebuild out of it: build, process start, kernel. A live debugger then reads
 production state with no redeploy. Then the agent, holding the framework, closes
 the loop.
 
-GoLab lists the talk as Intermediate. The GoLab version therefore builds eBPF up
-from first principles before it uses it, and it explains the process-start path
-and live debugging in depth. Those two topics are the differentiators of this
-version.
+GoLab lists the talk as Intermediate. The GoLab version builds eBPF up from the ground up before it uses it. It explains the process-start path and live debugging in depth. Those two topics are what this version adds.
 
 ## Beat sheet
 
@@ -25,7 +22,7 @@ version.
 | 02 eBPF, from the ground up | 7:20 | 11:20 | Nine steps: checked program, CO-RE, hooks, one uprobe hit, Go registers and goroutine identity, RET-site probes, instruction and field offsets, USDT, the missing Go producer. |
 | 03 OBI | 4:35 | 15:55 | OBI as the primer applied. Coverage, signals, platform contract, privileges, uprobe costs, Usama reference. Meme A. |
 | 04 otelc | 3:30 | 19:25 | Three-org convergence, -toolexec, production adoption, portability, signal depth, GLS, variable-linkname fragility. Meme B. |
-| 05 Injector | 3:05 | 22:30 | The loader sequence, the runtimes every injector ships, why a static Go binary has no loader, the teaser. |
+| 05 Injector | 3:05 | 22:30 | The loader sequence, the runtime hooks that injectors use, why a static Go binary has no loader, the teaser. |
 | 06 Profiles | 2:40 | 25:10 | The fourth signal. The `.gopclntab` unwind path, deployment cost, OTEP 4947 correlation bridge. |
 | 07 Live debugging | 3:25 | 28:35 | Probe a running process. Line to address, unavailable variables, public limits, other ways. |
 | 08 When to reach for what | 1:00 | 29:35 | Decision table, practical combination, 20% adoption. |
@@ -34,7 +31,7 @@ version.
 Timing is a **word-count model**, not a measurement: 3,422 SAY words at 130
 words per minute, plus 25% for pauses and visuals, gives 32:55. The cuttable
 static-PIE anecdote adds about 1:25. This deck has more silent beats than the
-benchmarks talk (two jokes, three memes, five punchline pages), so the real
+benchmarks talk (two jokes, two memes, eleven punchline pages), so the real
 overhead is probably higher. The remaining 3-4 minutes to 38:00 are buffer, not
 missing content. The timed read-through in `TODO.md` replaces the model.
 
@@ -43,7 +40,7 @@ injector by ~19:30, live debugging by ~25:00, the decision section by ~28:30.
 
 ## Cut ladder
 
-Nothing is cut up front. In order, with why each is safe:
+Nothing is cut up front. Cut in this order. Each rung says why it is safe.
 
 1. **Convergence timeline** (-0:40). The three-organisations slide carries the
    argument. The dates corroborate.
@@ -89,7 +86,7 @@ Because Go compiled away the attachment point.
 
 ### 01 to 02 (eBPF primer)
 
-Two of the three paths run on eBPF. Build it from the bottom before using it.
+Two of the three paths run on eBPF. Build it from the ground up before you use it.
 Each step needs the one before it.
 
 ### 02 to 03 (OBI)
@@ -106,8 +103,7 @@ structure is still available. The cost is owning the build.
 
 ### 04 to 05 (Injector)
 
-Build and kernel are two legs. The third is process start. Every other runtime
-gives the dynamic loader an agent entry point. A static Go binary never starts
+Build and kernel are two legs. The third is process start. Every other runtime has a designed entry point for an agent. A static Go binary never starts
 the loader. The binary is the constraint.
 
 ### 05 to 06 (Profiles)

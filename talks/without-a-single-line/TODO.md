@@ -64,7 +64,7 @@ recorded here.
   injection in general from public sources only. Never add the Datadog Go
   injector's linking model, entry path, or binary-compatibility detail to any
   slide or script line. If asked, defer to next year's talk.
-- **The primer replaces five old pages.** "How OBI works", the two `.gopclntab`
+- **The primer replaces four old pages.** "How OBI works", the two `.gopclntab`
   slides, and the old USDT slide became primer steps or the "OBI turns
   observations into spans" and unwind-path slides. Do not add them back next to
   the primer.

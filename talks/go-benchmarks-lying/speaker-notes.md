@@ -34,9 +34,7 @@ stories → the numbers. Everything else is recoverable on stage.
 | 15 | Wiring Into CI | Detect, do not measure |
 | 16 | Wire It Up | Under an hour |
 
-**Checkpoints:** §05 by 9:00 · §06 by 12:00 · §11 by 25:00 · §16
-by 35:00 · finish by 38:00.
-If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
+**Checkpoints:** §05 by 8:15 · §06 by 10:45 · §11 by 22:45 · §16 by 33:30 · finish by 36:00. If §11 has not started by 25:00, apply the cut ladder in `outline.md`.
 
 > **Note.** The section times are a word-count model: SAY words at 130 words
 > per minute, plus 25% for reveals, pauses, and visuals. Nobody has timed this
@@ -44,7 +42,7 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 ---
 
-## 01 · Why Benchmark? — 3:45
+## 01 · Why Benchmark? — 3:30
 
 ### Title slide
 
@@ -126,7 +124,7 @@ If §11 has not started by 26:00, apply the cut ladder in `outline.md`.
 
 ---
 
-## 02 · Why I Care — 1:15
+## 02 · Why I Care — 1:00
 
 ### How I got here
 
@@ -157,7 +155,7 @@ existence. Row 23 (internal macro practice) stays `pending` and out of scope.
 
 ---
 
-## 03 · A Loose Cable — 2:45
+## 03 · A Loose Cable — 2:30
 
 `DO` Keep this story connected to the three questions. Keep the §02 biography
 separate from the story.
@@ -235,7 +233,7 @@ should hear them four times today.
 
 ---
 
-## 04 · Before You Measure — 1:30
+## 04 · Before You Measure — 1:15
 
 ### Every benchmark needs
 
@@ -273,7 +271,7 @@ reintroduce it.
 
 ---
 
-## 05 · Benchmarking, Quickly — 3:00
+## 05 · Benchmarking, Quickly — 2:30
 
 **Beat: shared vocabulary for the room. Here is the instrument we are
 about to distrust.**
@@ -323,7 +321,7 @@ benchmark. Name the parts, identify the default mistake, then continue.
 
 ---
 
-## 06 · Local and Micro — 13:00 total
+## 06 · Local and Micro — 12:00 total
 
 ### The three questions, micro scale
 
@@ -352,7 +350,7 @@ benchmark. Name the parts, identify the default mistake, then continue.
 
 ---
 
-## 07 · Making the Compiler Honest — 4:15
+## 07 · Making the Compiler Honest — 4:00
 
 ### Stop the compiler deleting your work
 
@@ -448,7 +446,7 @@ The numbers on the dog are the ones the audience just saw from `make bench-dce`.
 
 ---
 
-## 08 · The Regression That Was a Speedup — 2:30
+## 08 · The Regression That Was a Speedup — 2:15
 
 ### Read the benchmark first
 
@@ -508,7 +506,7 @@ The numbers on the dog are the ones the audience just saw from `make bench-dce`.
 
 ---
 
-## 09 · Statistical Interpretation — 2:30
+## 09 · Statistical Interpretation — 2:15
 
 ### One number is a point sample
 
@@ -620,7 +618,7 @@ No QEMU, no cross-architecture emulation.
 
 ---
 
-## 11 · CI and Macro — 11:30 total
+## 11 · CI and Macro — 10:45 total
 
 ### The three questions, macro scale
 
@@ -771,7 +769,7 @@ only in CI, on a dedicated runner.
 
 ---
 
-## 14 · Detecting Change Over Time — 2:15
+## 14 · Detecting Change Over Time — 2:00
 
 ### A/B is the wrong model for CI
 
@@ -813,7 +811,7 @@ only in CI, on a dedicated runner.
 
 ---
 
-## 15 · Wiring It Into CI — 2:15
+## 15 · Wiring It Into CI — 2:00
 
 ### Two patterns
 
