@@ -46,9 +46,8 @@ Closed items are deleted, not archived. Git history is the archive.
 Planning scaffolding — "arc", phase names, section codes like `1A`/`2B` — is for
 the outline, never the deck. The audience did not read the plan.
 
-The section divider number block in `gophercon-datadog` is a fixed 230×230px box
-with a 128px font: **it fits exactly two characters.** Anything longer clips and
-wraps. Use two-digit numbers.
+The section divider in `golab` uses a 43% left panel for the number and title.
+The number has no fixed two-character box. Use a short label so the title still fits.
 
 ## `*` is the only list marker on slides
 
