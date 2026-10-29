@@ -259,3 +259,100 @@
 - **Verdict:** CONFIRMED
 - **Source(s):** S-UP-06 (FOSDEM 2026 public page)
 - **Notes:** Title, speaker, and abstract scope as cited on the slide. The talk covers kprobe performance across kernel versions, a fentry kernel bug, and the pain of scaling uprobes. Twenty-eight minutes, public. URL: <https://fosdem.org/2026/schedule/event/H3LM7G-performance_and_reliability_pitfalls_of_ebpf/>
+
+---
+
+## GoLab expansion (2026-10-29)
+
+Public sources only. Full quotes, pins, and access dates are in
+`08-ebpf-primer.md` (E-numbers), `09-process-start-injection.md` (I-numbers),
+and `10-live-debugger.md` (S-DD and S-GO keys). Rows marked "owner review"
+appear on a slide only after the owner approves them (see the talk `TODO.md`).
+
+### [C-060] The verifier checks a BPF program before it runs. A JIT can translate it. Maps hold state. Helpers supply kernel services
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S01, S02 (ebpf.io "What is eBPF", kernel verifier docs)
+- **Notes:** Load-time checks. A hit does not re-verify. The loader diagram on the slide is eBPF.io "Loader", CC BY 4.0, credited on the slide.
+
+### [C-061] BTF and CO-RE adapt kernel field reads at load time. They do not describe Go library layouts
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S02 (E05, E06)
+
+### [C-062] A uprobe places a breakpoint in the mapped code of the process. The kernel runs the handler, then emulates or single-steps the original instruction
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S03, S04 (E08, E10, E11)
+- **Notes:** Conventional x86 path. Newer kernels improve scaling (S05, S06). Do not quote a per-hit nanosecond number: the kernel benchmark measures an empty probe.
+
+### [C-063] On amd64, Go ABIInternal (Go 1.17+) passes the first integer arguments in AX, BX, CX. A goroutine can change threads between entry and exit, so OBI keys state by PID and the g pointer
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S07, S08, S11 (E15, E16, E20, E21)
+
+### [C-064] Conventional uretprobes are unsafe for Go. OBI attaches ordinary uprobes at RET instructions instead
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S09, S10 (E17, E18, E19), OBI v0.10.0
+- **Notes:** The saved-return-address replacement conflicts with Go stack copying and frame metadata.
+
+### [C-065] OBI reads field offsets from DWARF when present, otherwise from build versions and a prepared offset database
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S12 (E22, E23), OBI v0.10.0
+
+### [C-066] USDT is a NOP plus an ELF note with a name and argument recipe. A tracer attaches an ordinary uprobe at the site. An optional semaphore signals a present tracer
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S14 (E24, E25)
+
+### [C-067] Upstream Go emits no USDT probes. Salp and libstapsdt add them through cgo. Polar Signals builds a Go tracer that consumes USDT notes
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 08-ebpf-primer.md S15–S18 (E26–E30)
+- **Notes:** Polar Signals' work is a consumer, not Go compiler support. The speaker's fork is a proof of concept that this research did not build.
+
+### [C-068] ld.so maps LD_PRELOAD objects before all others, and shared-object initializers run before the executable gains control
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 09-process-start-injection.md I-04 (man7 ld.so(8)), I-05 (System V ABI)
+
+### [C-069] A CGO_ENABLED=0 Go binary has no PT_INTERP, so ld.so never runs and LD_PRELOAD is never read. The internal linker runs no shared-object constructors
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 09-process-start-injection.md I-04, I-08 (golang/go#28909, Ian Lance Taylor)
+
+### [C-070] The OpenTelemetry injector ships Java, Node.js, .NET, Ruby, and Python (Python off by default). It does not inject Go
+
+- **Verdict:** CONFIRMED
+- **Source(s):** 09-process-start-injection.md I-06 (README at commit 22a9aa877)
+- **Notes:** Supersedes the C-024 language list, which lacked Ruby.
+
+### [C-071] Datadog SSI uses LD_PRELOAD on Linux and lists Java, Python, Ruby, Node.js, .NET, and PHP. Go is not in the list
+
+- **Verdict:** CONFIRMED (public docs), owner review
+- **Source(s):** 09-process-start-injection.md I-12, I-13 (docs.datadoghq.com SSI overview, injector guide, compatibility page)
+
+### [C-072] golang/go#81450 proposes cgo without a C toolchain for prebuilt C libraries. golang/go#81662 adds GOEXPERIMENT=cgobindings and is accepted. The design proposal is still in review
+
+- **Verdict:** CONFIRMED (re-checked 2026-10-29 with `gh api`)
+- **Source(s):** 09-process-start-injection.md I-01, I-02
+- **Notes:** #81662 labelled Proposal-Accepted on 2026-10-01 (aclements). #81450 labels: Proposal, cgo. Re-check before delivery. Any claim about which binaries an injector can reach afterwards is inference and stays off the slides.
+
+### [C-073] Live Debugger logpoints collect data without pausing the application. Logpoints expire with the debug session
+
+- **Verdict:** CONFIRMED (public docs), owner review
+- **Source(s):** 10-live-debugger.md S-DD-L1 (docs.datadoghq.com/tracing/live_debugger/)
+
+### [C-074] Live Debugger for Go needs Linux 5.17+, Agent 7.73+, and Go SDK 2.9+. Capture logpoints run at most 1 per second. Logpoints without capture run at most 5000 per second per service instance. Sensitive identifiers are redacted before data leaves the host
+
+- **Verdict:** CONFIRMED (public docs), owner review
+- **Source(s):** 10-live-debugger.md S-DD-L1, S-DD-SCRUB
+- **Notes:** No public overhead number exists. Do not state one.
+
+### [C-075] Live Debugger maps a source line to a PC through the DWARF line table, attaches a uprobe, and reads variables through DWARF location lists. A variable with no location at that PC is reported unavailable
+
+- **Verdict:** CONFIRMED (public code), owner review
+- **Source(s):** 10-live-debugger.md, datadog-agent `pkg/dyninst` at fd1f089014df9e80e6949323f7349041deadff5c
+- **Notes:** Mechanism from public code, not a product guarantee. The sequence diagram simplifies the backend-to-system-probe hop, which the public docs do not describe.
