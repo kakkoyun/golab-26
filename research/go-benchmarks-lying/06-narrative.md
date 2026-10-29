@@ -1,7 +1,7 @@
 # Narrative and Framing Guide
 
 **Talk:** "Why Your Go Benchmarks Are Lying (And How to Stop Them)"
-**Venue:** GoLab 2026 — 45-minute slot: 38 minutes presented, 7 minutes Q&A, advanced audience
+**Venue:** GoLab 2026 — 45-minute slot: 38 minutes presented, 7 minutes Q&A, intermediate audience
 **Verification date:** 2026-07-22
 
 ---
@@ -149,12 +149,12 @@ machines. CI makes it worse by design (shared compute, noisy neighbours, power t
 
 **CI reproducibility:**
 
-6. Why CI benchmarks are worse: shared runners, bursty neighbours, no frequency lock.
-7. The right model: CI detects regressions (statistical significance across N runs), not absolute
+1. Why CI benchmarks are worse: shared runners, bursty neighbours, no frequency lock.
+2. The right model: CI detects regressions (statistical significance across N runs), not absolute
    performance. Use `benchstat -delta-test=utest` for Mann-Whitney U.
-8. `benchdiff` and the GitHub Actions workflow pattern — run benchmark on PR branch and base,
+3. `benchdiff` and the GitHub Actions workflow pattern — run benchmark on PR branch and base,
    compare, comment. Show the workflow YAML skeleton.
-9. Dedicated bare-metal or pinned-instance benchmark runners: the cost is low, the signal
+4. Dedicated bare-metal or pinned-instance benchmark runners: the cost is low, the signal
    improvement is large.
 
 **Demo (3 min):** Same benchmark run 10 times on a noisy shared CI machine vs 10 times with
@@ -179,7 +179,7 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 - **Verified fact:** Loose fibre-optic cable connecting GPS receiver to electronic card caused
   apparent faster-than-light neutrino result (2011). Corrected result (2012) consistent with
   speed of light.
-- **Source:** Wikipedia, "OPERA experiment," https://en.wikipedia.org/wiki/OPERA_experiment
+- **Source:** Wikipedia, "OPERA experiment," <https://en.wikipedia.org/wiki/OPERA_experiment>
   (fetched 2026-07-22). For the 73 ns figure, cite OPERA erratum arXiv:1109.4897v4 directly.
 - **730 km distance:** [PARTIALLY VERIFIED] — confirm from OPERA paper before stating on stage.
 - **73 ns timing error:** [VERIFIED] — approved stage wording: "An improperly seated fibre-optic
@@ -194,7 +194,7 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 - **Verified fact:** "The page with 10 results took 0.4 seconds to generate. The page with 30
   results took 0.9 seconds. Half a second delay caused a 20% drop in traffic."
 - **Source:** Cited on Jeff Atwood's Coding Horror blog, "Performance is a Feature"
-  (https://blog.codinghorror.com/performance-is-a-feature/), attributed broadly to Google
+  (<https://blog.codinghorror.com/performance-is-a-feature/>), attributed broadly to Google
   with no named individual. Atwood's post is the secondary citation; the primary is a Google
   internal experiment on search result page sizes, often attributed to Marissa Mayer at Web 2.0
   Conference 2006, but [UNVERIFIED — the Mayer attribution could not be confirmed from primary
@@ -216,8 +216,8 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 ### 4. Tobi Lütke — "All World-Class Software Is Fast"
 
 - **Verified quote** (2026-08-03, claims-ledger #12): "Not all fast software is world-class, but
-  all world-class software is fast. Performance is _the_ killer feature."
-- **Source:** Tobi Lütke (@tobi), X, 5 May 2024 — https://x.com/tobi/status/1787139157078188180.
+  all world-class software is fast. Performance is *the* killer feature."
+- **Source:** Tobi Lütke (@tobi), X, 5 May 2024 — <https://x.com/tobi/status/1787139157078188180>.
   Note this is **not** the October 2018 tweet ID (1052495816956358657) recorded in earlier drafts;
   that attribution was wrong. The wording above was corroborated across independent excerpts.
 - **Context:** the post argued that "premature optimization is the root of all evil" has been
@@ -229,7 +229,7 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 
 ### 5. Gil Tene — "How NOT to Measure Latency"
 
-- **Verified:** YouTube video exists at https://www.youtube.com/watch?v=lJ8ydIuPFeU, titled
+- **Verified:** YouTube video exists at <https://www.youtube.com/watch?v=lJ8ydIuPFeU>, titled
   "How NOT to Measure Latency," speaker Gil Tene. (Fetched 2026-07-22.)
 - **Key concept:** Coordinated omission — when a system falls behind, a naive load generator
   stops issuing requests, hiding latency. The benchmark measures the system at its best, not
@@ -240,7 +240,7 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 
 ### 6. Brendan Gregg — Frequency Trails and Outlier Detection
 
-- **Verified:** Page exists at https://www.brendangregg.com/FrequencyTrails/outliers.html
+- **Verified:** Page exists at <https://www.brendangregg.com/FrequencyTrails/outliers.html>
   (fetched 2026-07-22).
 - **Key facts from the page:**
   - Outlier test: `maxσ = (max(x) − μ) / σ`. If maxσ > 6, outliers are present.
@@ -254,7 +254,7 @@ Answer: `-count=10` + `benchstat`. Everything else is compounding on top of that
 ### 7. Denis Bakhvalov — "Performance Analysis and Tuning on Modern CPUs"
 
 - **Verified:** Book title confirmed, author Denis Bakhvalov et al., repository at
-  https://github.com/dendibakh/perf-book (fetched 2026-07-22). CC0 licence.
+  <https://github.com/dendibakh/perf-book> (fetched 2026-07-22). CC0 licence.
 - **How to use:** Layer 3 (reproducibility), ~45:00. Mention as the definitive reference for
   CPU-level measurement methodology (PMU counters, TMA, frequency scaling). The audience can
   read it for free. One slide: "If you want to go deeper than `go test -bench`, this is the
@@ -321,41 +321,41 @@ Post 1 goes out the week before the conference as a teaser. Posts 2–5 publish 
 
 ## Sources
 
-1. Wikipedia, "OPERA experiment" — https://en.wikipedia.org/wiki/OPERA_experiment
+1. Wikipedia, "OPERA experiment" — <https://en.wikipedia.org/wiki/OPERA_experiment>
    (fetched 2026-07-22). Confirms loose fibre-optic cable root cause. 73 ns figure not present;
    confirm from OPERA erratum arXiv:1109.4897v4.
 
 2. Jeff Atwood, "Performance is a Feature," Coding Horror blog —
-   https://blog.codinghorror.com/performance-is-a-feature/
+   <https://blog.codinghorror.com/performance-is-a-feature/>
    (fetched 2026-07-22). Secondary citation for Google 500ms/20% stat. No named individual
    attributed on the page.
 
-3. Gil Tene, "How NOT to Measure Latency" — https://www.youtube.com/watch?v=lJ8ydIuPFeU
+3. Gil Tene, "How NOT to Measure Latency" — <https://www.youtube.com/watch?v=lJ8ydIuPFeU>
    (fetched 2026-07-22). Title and speaker confirmed.
 
 4. Brendan Gregg, "Frequency Trails: Outliers" —
-   https://www.brendangregg.com/FrequencyTrails/outliers.html
+   <https://www.brendangregg.com/FrequencyTrails/outliers.html>
    (fetched 2026-07-22). Six-sigma outlier formula and 100%/98%/96% server outlier rates
    confirmed from page content.
 
 5. Denis Bakhvalov et al., "Performance Analysis and Tuning on Modern CPUs" —
-   https://github.com/dendibakh/perf-book (fetched 2026-07-22). Title, author, CC0 licence
+   <https://github.com/dendibakh/perf-book> (fetched 2026-07-22). Title, author, CC0 licence
    confirmed.
 
-6. Tobi Lütke (@tobi), X, 5 May 2024 — https://x.com/tobi/status/1787139157078188180
+6. Tobi Lütke (@tobi), X, 5 May 2024 — <https://x.com/tobi/status/1787139157078188180>
    [VERIFIED 2026-08-03 — exact wording corroborated across independent excerpts. Supersedes the
    October 2018 tweet ID previously cited here, which was the wrong post.]
 
-9. CERN, "OPERA experiment reports anomaly in flight time of neutrinos from CERN to Gran Sasso,"
-   press release, 22 February 2012 — https://home.cern/news/press-release/cern/opera-experiment-reports-anomaly-flight-time-neutrinos-cern-gran-sasso
+7. CERN, "OPERA experiment reports anomaly in flight time of neutrinos from CERN to Gran Sasso,"
+   press release, 22 February 2012 — <https://home.cern/news/press-release/cern/opera-experiment-reports-anomaly-flight-time-neutrinos-cern-gran-sasso>
    [VERIFIED 2026-08-03 — names both faults and their directions; gives no nanosecond figures.]
 
-10. Edwin Cartlidge, "Loose cable may unravel faster-than-light result," *Science* 335(6072):1027
+8. Edwin Cartlidge, "Loose cable may unravel faster-than-light result," *Science* 335(6072):1027
     (2012), doi:10.1126/science.335.6072.1027 [VERIFIED 2026-08-03 — source for the ~73 ns figure].
 
-7. Yahoo YUI Blog, Stoyan Stefanov, "Performance Research, Part 2" (2007) —
-   http://yuiblog.com/blog/2007/01/04/performance-research-part-2/ [UNVERIFIED — page defunct;
+9. Yahoo YUI Blog, Stoyan Stefanov, "Performance Research, Part 2" (2007) —
+   <http://yuiblog.com/blog/2007/01/04/performance-research-part-2/> [UNVERIFIED — page defunct;
    archive.org blocked during fetch. Confirm via Internet Archive Wayback Machine manually].
 
-8. OPERA collaboration erratum — arXiv:1109.4897v4 [UNCHECKED — cited as primary source for
+10. OPERA collaboration erratum — arXiv:1109.4897v4 [UNCHECKED — cited as primary source for
    73 ns figure; fetch independently before using the number on stage].

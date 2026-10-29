@@ -1,6 +1,6 @@
 # Outline: Zero-Touch Go Instrumentation
 
-> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Advanced Go audience.
+> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
 > **Deck:** `slides/presentation.md` (~60 slides)
 > **Script:** `speaker-notes.md` (SAY/DO format)
 

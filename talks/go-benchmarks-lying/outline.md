@@ -1,6 +1,6 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
-> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Advanced Go audience.
+> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
 > **Deck:** `slides/presentation.md` (129 pages, including progressive-reveal steps)
 > **Demonstrations:** no live demos; every command and captured result stays in the repository
 
