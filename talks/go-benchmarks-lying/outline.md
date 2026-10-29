@@ -1,6 +1,6 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
-> **Format:** 60 minutes presented, Q&A opportunistic · advanced Go audience
+> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Advanced Go audience.
 > **Deck:** `slides/presentation.md` (129 pages, including progressive-reveal steps)
 > **Demonstrations:** no live demos; every command and captured result stays in the repository
 
@@ -178,7 +178,7 @@ version back, that row has to move to `verified` first.
 
 ## Audience resources
 
-- Talk repository: <https://github.com/kakkoyun/gopherconuk-26>
+- Talk repository: <https://github.com/kakkoyun/golab-26>
 - Benchmark tools and skills: <https://github.com/kakkoyun/benchlab>
 - Binaries: `go install github.com/kakkoyun/benchlab/cmd/...@latest`
 - Agent Skills: `npx skills add kakkoyun/benchlab --all`

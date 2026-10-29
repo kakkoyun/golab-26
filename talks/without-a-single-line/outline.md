@@ -1,6 +1,6 @@
 # Outline: Zero-Touch Go Instrumentation
 
-> **Format:** 30-minute keynote, advanced Go audience
+> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Advanced Go audience.
 > **Deck:** `slides/presentation.md` (~60 slides)
 > **Script:** `speaker-notes.md` (SAY/DO format)
 
@@ -148,7 +148,7 @@ has the framework.
 
 ## Public audience resources
 
-- Talk repository: <https://github.com/kakkoyun/gopherconuk-26>
+- Talk repository: <https://github.com/kakkoyun/golab-26>
 - zeroins toolkit: <https://github.com/kakkoyun/zeroins>
 - opentelemetry-agent-skills: <https://github.com/ollygarden/opentelemetry-agent-skills>
 - Prior FOSDEM version: <https://youtu.be/0TvrSebuDPk>

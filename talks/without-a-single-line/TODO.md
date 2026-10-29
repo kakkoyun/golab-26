@@ -16,6 +16,7 @@ Count `---` separators minus one to get pages.
 
 ## TODO
 
+- [ ] **Blocking:** Re-time the talk to 38 minutes presented for the GoLab 45-minute slot.
 - [ ] **Timed read-through.** Read the SAY content aloud at delivery pace against
   a clock. Record splits at each divider. Write the real number into `outline.md`
   and `speaker-notes.md`. The word-count estimate is ~22:30 but on talk one the

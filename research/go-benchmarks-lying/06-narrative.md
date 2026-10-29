@@ -1,7 +1,7 @@
 # Narrative and Framing Guide
 
 **Talk:** "Why Your Go Benchmarks Are Lying (And How to Stop Them)"
-**Venue:** GopherCon UK 2026 — 60 min, advanced audience
+**Venue:** GoLab 2026 — 45-minute slot: 38 minutes presented, 7 minutes Q&A, advanced audience
 **Verification date:** 2026-07-22
 
 ---

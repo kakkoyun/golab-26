@@ -59,6 +59,10 @@ For marketing to help promote, once published.
 
 ## Blocked
 
+### Re-time the talk to 38 minutes presented for the GoLab 45-minute slot
+
+**Blocking.** The outline and script still carry the GopherCon UK timings. Re-time the content before delivery at GoLab 2026.
+
 ### Re-measure the Docker and macOS CV experiment on an idle machine
 
 **This is the last factual soft spot in the deck.** Ledger row 8 claims roughly

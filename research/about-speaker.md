@@ -1,6 +1,6 @@
 # About the Speaker — Evidence Ledger
 
-Kemal Akkoyun · GopherCon UK 2026
+Kemal Akkoyun · GoLab 2026
 Verified against public endpoints: 2026-08-10
 
 Every number on the ethos slide resolves to a public URL in this file.
@@ -146,7 +146,7 @@ Source: `kakkoyun/me` `content/talks/*.md`
 Plus: KubeCon NA 2020/2021, KubeCon EU 2022, PromCon EU 2022, FOSDEM 2020, GoDays Berlin 2020,
 Cloud-Native eBPF Day EU 2022, PrometheusDay NA 2022.
 
-Both 2026 GopherCon UK decks are the FOSDEM 2026 versions revisited — each deck can point at its
+Both 2026 GoLab decks are the FOSDEM 2026 versions revisited — each deck can point at its
 own earlier recording as the strongest "not my first pass at this material" signal.
 
 ---
