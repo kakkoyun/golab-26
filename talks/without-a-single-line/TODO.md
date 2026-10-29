@@ -1,14 +1,14 @@
 # TODO: Zero-Touch Go Instrumentation
 
-Pre-delivery record for the keynote restructure (2026-08-13).
+GoLab 2026 version (expanded from the GopherCon UK keynote).
 
 Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** ~60 pages, 30-minute keynote, 23 fragment reveals, 7 sections.
-Timing is a word-count construction (~22:30), not a measurement. The actual
-read-through against a clock is still required before delivery.
+**State:** 84 pages, 38-minute target, 27 fragment reveals, 9 sections. The
+word-count model gives about 33 minutes plus a 1:25 cuttable anecdote. The
+actual read-through against a clock is still required before delivery.
 
 Count `---` separators minus one to get pages.
 
@@ -16,18 +16,31 @@ Count `---` separators minus one to get pages.
 
 ## TODO
 
-- [ ] **Blocking:** Re-time the talk to 38 minutes presented for the GoLab 45-minute slot.
+- [ ] **Blocking: owner review of the new public-source claims.** The GoLab
+  expansion adds ledger rows C-060 to C-075 from public sources. The owner
+  approves each injector and Live Debugger row before delivery, as agreed. The
+  full research and quotes are in `research/without-a-single-line/08-ebpf-primer.md`,
+  `09-process-start-injection.md`, and `10-live-debugger.md`. Open points:
+  - The Live Debugger sequence diagram simplifies the hop from the backend to
+    `system-probe`. The public docs do not describe that hop.
+  - Bits Live Debugger needs Targeted redaction mode. The close slide does not
+    say so. Decide whether to add it.
+  - The public docs do not label Go Live Debugger itself as GA or Preview. Only
+    Bits Live Debugger is labelled Preview.
+- [ ] **Blocking: re-check golang/go#81450 and #81662 the week of the talk.** The
+  slide says the GOEXPERIMENT is accepted and the design is in review. Both can
+  change before 2 November 2026.
 - [ ] **Timed read-through.** Read the SAY content aloud at delivery pace against
   a clock. Record splits at each divider. Write the real number into `outline.md`
-  and `speaker-notes.md`. The word-count estimate is ~22:30 but on talk one the
-  construction was wrong three times running.
+  and `speaker-notes.md`. The word-count model is about 33 minutes.
+- [ ] **Diagram legibility pass.** Kroki renders Mermaid at a small native size.
+  The theme now scales each diagram to the content width, but long
+  left-to-right chains still have small labels. Check every diagram from the
+  back of a room. Prefer fewer nodes or a top-down layout over a smaller font.
 - [ ] **Visual inspection of every changed page.** `make build/pdf` then
-  `pdftoppm -f N -l N -r 60 -png` on every changed page. Specifically confirm:
-  the prompt line on both joke slides is legible and clear of the footer band;
-  the two joke slides are pixel-identical except the prompt; the Usama crop is
-  readable at width:480; neither meme's caption strip covers its punchline; the
-  injector code panel does not clip horizontally; all seven dividers show two
-  digits; the USDT and OTel agent skills screenshots are readable.
+  `pdftoppm -f N -l N -r 60 -png` on every changed page. Confirm that the
+  eBPF.io loader diagram is readable at width 860 and that its CC BY 4.0
+  credit is legible.
 - [ ] **Rehearse the cut ladder.** If running long, follow the eight-rung
   ladder in `outline.md`. Never cut anything on the never-cut list.
 
@@ -45,10 +58,16 @@ recorded here.
   close and at the take-home skill. Do not move or cut it for time. It is two
   slides, full-bleed, no title, no caption. The beat is spoken: deadpan fake-out,
   then the turn. Ten seconds total.
-- **The injector is a teaser.** The mechanism is deliberately undisclosed, and
-  the apparent contradiction with the LD_PRELOAD slide is the device, not a bug.
-  Never add linking model, entry path, or binary-compatibility detail to any
+- **The injector is a teaser.** The Datadog Go injector mechanism is
+  deliberately undisclosed, and the apparent contradiction with the LD_PRELOAD
+  slide is the device, not a bug. The GoLab version explains process-start
+  injection in general from public sources only. Never add the Datadog Go
+  injector's linking model, entry path, or binary-compatibility detail to any
   slide or script line. If asked, defer to next year's talk.
+- **The primer replaces five old pages.** "How OBI works", the two `.gopclntab`
+  slides, and the old USDT slide became primer steps or the "OBI turns
+  observations into spans" and unwind-path slides. Do not add them back next to
+  the primer.
 - **The static-PIE account is script depth.** It lives in the uprobe-cost
   section of `speaker-notes.md`, marked cuttable. Not Kemal's incident, not a
   slide. It is the maintenance cost of inferring a layout you did not compile.

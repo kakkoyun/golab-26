@@ -1,7 +1,7 @@
 ---
 marp: true
 theme: golab
-# fragment-floor: 21. Six lists use `*` fragment bullets for selective
+# fragment-floor: 27. Eight lists use `*` fragment bullets for selective
 # progressive reveal. Lists inside .columns are excluded on purpose. MD004 is
 # disabled, so a mixed `*`/`-` deck lints clean. Reveals animate only in
 # bespoke HTML; the PDF handout shows everything at once.
@@ -189,7 +189,7 @@ flowchart LR
 ## Runtime injection is a narrower route
 
 * Dynatrace OneAgent supports eligible dynamically linked Go binaries.
-* The OpenTelemetry host injector ships Java, .NET, Node.js, and Python agents. It does not inject Go.
+* The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.
 * Datadog is working on a Go path for Single-Step Instrumentation.
 
 <br>
@@ -223,6 +223,209 @@ The projects did not collapse into one agent. They learned to compose.
 
 ###### 02
 
+# eBPF, from the ground up
+
+---
+
+## A checked program runs at an event
+
+<div class="center">
+
+![width:860](../assets/ebpf-io-loader.png)
+
+</div>
+
+Load once. The verifier checks it. It runs when the event occurs.
+
+<div class="tiny">
+
+Diagram: eBPF.io authors, "Loader", [ebpf.io/what-is-ebpf](https://ebpf.io/what-is-ebpf/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+</div>
+
+---
+
+## CO-RE adapts kernel layouts, not Go layouts
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[BPF object + relocations] --> C[loader]
+    B[target kernel BTF] --> C
+    C --> D[adjusted field reads]
+    D --> E[verifier]
+    F[Go library layouts] -.->|separate resolver| G[Go field offsets]
+```
+
+</div>
+
+BTF describes the kernel's types. CO-RE fixes field reads at load time.
+
+**A Go HTTP request is not a kernel type.**
+
+---
+
+## Choose the place to observe
+
+| Hook | Observes |
+| --- | --- |
+| tracepoint | a named kernel event |
+| kprobe | a kernel function or instruction |
+| fentry / fexit | a kernel or BPF function, through a BPF trampoline |
+| **uprobe** | **an instruction in a user-space binary** |
+| uretprobe | a function return, through a return trampoline |
+
+<br>
+
+The hook decides what you can see. For Go code, the hook is a **uprobe**.
+
+---
+
+## A uprobe hit enters the kernel
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[Go instruction] -->|breakpoint trap| B[BPF handler in the kernel]
+    B --> C[emulate or single-step the original]
+    C --> D[Go code resumes]
+```
+
+</div>
+
+<div class="small">
+
+Conventional x86 path. The kernel patches the mapped code, not the file on disk. Every active hit has a cost.
+
+</div>
+
+---
+
+## Read Go values, not C arguments
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[goroutine g] --> B[thread A at entry]
+    A --> C[thread B at exit]
+    B --> D[key: PID + g]
+    C --> D
+    D --> E[one request]
+```
+
+</div>
+
+A goroutine is the identity. A thread is only the carrier.
+
+<div class="small">
+
+amd64 ABIInternal (Go 1.17+): the first integer arguments go in `AX`, `BX`, `CX`, not in the C order.
+
+</div>
+
+---
+
+## Probe the RET, not the return address
+
+<div class="columns">
+<div>
+
+### Conventional uretprobe
+
+Replaces the saved return address with a trampoline.
+
+Go copies the stack when it grows. The runtime can reject the foreign frame.
+
+<span class="chip caution">crash risk in Go</span>
+
+</div>
+<div>
+
+### What OBI does
+
+Finds every `RET` instruction in the function.
+
+Attaches an ordinary uprobe at each one.
+
+The caller address stays untouched.
+
+</div>
+</div>
+
+---
+
+## Find the instruction and the field
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[Go ELF] -->|symbols, runtime tables| B[where to attach]
+    A -->|DWARF, or versions + offset database| C[where the fields are]
+    B --> D[attach and read]
+    C --> D
+```
+
+</div>
+
+A function address is not a type layout.
+
+---
+
+## User Statically-Defined Tracing (USDT)
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    N[ELF note] -->|name + argument recipe| T[tracer]
+    T -->|attach uprobe| P[NOP at the probe site]
+    T -.->|optional| S[semaphore]
+    S -.->|tracer present| P
+```
+
+</div>
+
+The producer names the probe and says where each value lives.
+
+The tracer does not have to guess.
+
+---
+
+## Go needs a USDT producer
+
+<div class="columns">
+<div>
+
+![width:480](../assets/github_kakkoyun_usdt_poc.png)
+
+</div>
+<div>
+
+* Upstream Go emits no USDT probes today.
+* Salp and libstapsdt add them through cgo.
+* Polar Signals builds a Go tracer that reads them.
+
+```bash
+# github.com/kakkoyun/go/tree/poc_usdt
+go tool usdt list ./...
+```
+
+<span class="chip caution">proof of concept</span>
+
+</div>
+</div>
+
+---
+
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 03
+
 # OBI: observe from the kernel
 
 ---
@@ -242,18 +445,24 @@ The projects did not collapse into one agent. They learned to compose.
 
 ---
 
-## How OBI works
+## OBI turns observations into spans
 
 <div class="center">
 
 ```mermaid
-flowchart TD
-    A[Go service] -->|uprobes + network probes| B[Linux kernel]
-    B -->|events + context| C[OBI DaemonSet]
-    C -->|OTLP traces + metrics| D[OpenTelemetry Collector]
+flowchart LR
+    A[HTTP entry uprobe] --> D[state keyed by PID + g]
+    B[SQL and gRPC uprobes] --> D
+    C[RET-site uprobes] --> D
+    D --> E[ring buffer]
+    E --> F[OBI user space]
+    F --> G[OTLP spans + metrics]
+    D -.-> H[outgoing trace header]
 ```
 
 </div>
+
+Probe sites give events. Correlation turns them into spans.
 
 ---
 
@@ -459,7 +668,7 @@ somehow, it works
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 03
+###### 04
 
 # otelc: instrument during the build
 
@@ -631,17 +840,75 @@ No root access and no kernel version gate, but the binary must be rebuilt.
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 04
+###### 05
 
 # Process start: the injector
 
 ---
 
-## What the injector is
+## How process-start injection works
 
-A shared library loaded at process start. No source change, no rebuild.
+<div class="center">
 
-Datadog Single-Step Instrumentation and the OpenTelemetry host injector both live here. Today they ship Java, .NET, Node.js, and Python.
+```mermaid
+sequenceDiagram
+    participant K as kernel exec
+    participant L as ld.so
+    participant P as preloaded library
+    participant R as language runtime
+    K->>L: start the dynamic loader
+    L->>P: map LD_PRELOAD first
+    L->>P: run its initializers
+    P->>R: set one environment variable
+    R->>R: load the agent before main
+```
+
+</div>
+
+<div class="tiny">
+
+[ld.so(8)](https://man7.org/linux/man-pages/man8/ld.so.8.html): preloaded objects load "before all others" · System V ABI: shared-object initializers run "before the executable file gains control"
+
+</div>
+
+---
+
+## Every injector ships the same runtimes
+
+| Runtime | The hook the injector sets |
+| --- | --- |
+| Java | `JAVA_TOOL_OPTIONS=-javaagent:…` |
+| Node.js | `NODE_OPTIONS=--require …` |
+| .NET | CLR profiler and startup-hook variables |
+| Python | `sitecustomize` on `PYTHONPATH` |
+| Ruby | `RUBYOPT=-r …` |
+| **Go** | **none** |
+
+<div class="small">
+
+[OpenTelemetry injector](https://github.com/open-telemetry/opentelemetry-injector): Java, Node.js, .NET, Ruby, Python · [Datadog SSI](https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/single-step-apm/): Java, Python, Ruby, Node.js, .NET, PHP
+
+</div>
+
+---
+
+## A static Go binary has no loader
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[kernel exec] --> B[no PT_INTERP]
+    B --> C[no ld.so]
+    C --> D[LD_PRELOAD never read]
+    D --> E[runtime.main]
+```
+
+</div>
+
+`CGO_ENABLED=0` gives no dynamic loader and no libc. Nothing reads the variable.
+
+Even with cgo, the internal linker runs no shared-object constructors ([golang/go#28909](https://github.com/golang/go/issues/28909)).
 
 ---
 
@@ -691,7 +958,7 @@ DD_TRACE_DEBUG=1 \
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 05
+###### 06
 
 # Profiles complete the four signals
 
@@ -728,25 +995,19 @@ Originated as Elastic Universal Profiling and joined OpenTelemetry in June 2024.
 
 ---
 
-## Go stacks survive stripped binaries
+## Go metadata tells the profiler how to unwind
 
 <div class="center">
 
 ```mermaid
-flowchart TD
-    A[Go binary] -->|.gopclntab| B[OpenTelemetry eBPF Profiler]
-    B -->|unwind + symbolize| C[Named Go function stacks]
+flowchart LR
+    A[.gopclntab] -->|prepared once| B[unwind rules in BPF maps]
+    C[CPU sample] --> D[BPF unwinder]
+    B --> D
+    D -->|symbolize with .gopclntab| E[named Go stack]
 ```
 
 </div>
-
-`.gopclntab` remains in fully static, stripped executables because the Go runtime needs it too.
-
----
-
-<!-- _class: vcenter -->
-
-## Stripping does not erase `.gopclntab`
 
 > "The information remains present even for fully static and stripped executables."
 >
@@ -810,7 +1071,112 @@ threadlocal.schema_version: "go_pprof_labels_v1"
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 06
+###### 07
+
+# Live debugging: probe a running process
+
+---
+
+## The probe goes to the running process
+
+<div class="center">
+
+```mermaid
+sequenceDiagram
+    participant D as developer
+    participant B as Datadog backend
+    participant S as system-probe
+    participant A as Go service
+    D->>B: pick a line, write a message
+    B->>S: logpoint definition
+    S->>A: find the line, attach a uprobe
+    Note over A: the service keeps running
+    A->>S: probe hit
+    S->>D: snapshot in the debug session
+```
+
+</div>
+
+<div class="tiny">
+
+Simplified. [Datadog Live Debugger](https://docs.datadoghq.com/tracing/live_debugger/): "non-breaking breakpoints that collect diagnostic data without pausing the application"
+
+</div>
+
+---
+
+## From a line to a machine address
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[file:line] -->|DWARF line table| B[PC]
+    B -->|file offset| C[uprobe]
+    C -->|DWARF location list| D[register or stack]
+```
+
+</div>
+
+The same uprobe as before. DWARF supplies the address and the variable locations.
+
+---
+
+## Some variables are not there
+
+<div class="columns">
+<div>
+
+### The compiler moved them
+
+Inlining and register allocation leave some values with no location at that PC.
+
+</div>
+<div>
+
+### The probe still fires
+
+The snapshot marks the variable **unavailable**.
+
+Some lines have no safe place for a probe.
+
+</div>
+</div>
+
+---
+
+## Bounded by design
+
+| Control | Public limit |
+| --- | --- |
+| Logpoint with variable capture | 1 execution per second |
+| Logpoint without capture | 5000 per second per service instance |
+| Lifetime | Expires with the debug session |
+| Sensitive values | Redacted before the data leaves the host |
+
+<div class="small">
+
+Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ · [Live Debugger docs](https://docs.datadoghq.com/tracing/live_debugger/) · [Sensitive data scrubbing](https://docs.datadoghq.com/tracing/live_debugger/sensitive-data-scrubbing/)
+
+</div>
+
+---
+
+## Other ways, and their cost
+
+| | Code change | Stops the program | Reads variables |
+| --- | --- | --- | --- |
+| Delve breakpoint | no | **yes** | yes |
+| Flight recorder (Go 1.25) | **yes** | no | no, execution trace |
+| Hand-written uprobe | no | no | by hand |
+| Live Debugger logpoint | no | no | yes, bounded |
+
+---
+
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 08
 
 # When to reach for what
 
@@ -859,36 +1225,21 @@ Start with the constraint you cannot change. Add the other layer when its signal
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 07
+###### 09
 
 # What comes next
 
 ---
 
-## User Statically-Defined Tracing (USDT)
+## cgo without a C toolchain
 
-USDT probes put stable, named hook points in the binary instead of forcing tools to chase function addresses.
+* [#81450](https://github.com/golang/go/issues/81450): call prebuilt C libraries with no C compiler at build time
+* Bindings in Go syntax. Glue in Go and assembly. `runtime/cgo` without C.
+* The internal linker learns dynamic imports on Linux.
 
-<div class="columns">
-<div>
+<br>
 
-![width:480](../assets/github_kakkoyun_usdt_poc.png)
-
-</div>
-<div>
-
-```bash
-# Proof of concept: github.com/kakkoyun/go/tree/poc_usdt
-go tool usdt list ./...
-
-# probe: net/http.(*conn).serve enter
-# probe: database/sql.(*DB).QueryContext enter
-```
-
-Go ships no built-in USDT probes today. The proof of concept shows what a stable contract could look like.
-
-</div>
-</div>
+<span class="chip note">GOEXPERIMENT=cgobindings accepted (#81662)</span> <span class="chip caution">design still in review</span>
 
 ---
 
