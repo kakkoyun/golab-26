@@ -1,6 +1,6 @@
 # Speaker notes: Zero-Touch Go Instrumentation
 
-GopherCon UK 2026. 30-minute keynote. Advanced Go audience.
+GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Advanced Go audience.
 
 Deck: `slides/presentation.md`. Section headings below match slide titles
 verbatim, so you can find your place by what is on screen.

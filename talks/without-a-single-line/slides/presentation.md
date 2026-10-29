@@ -8,7 +8,7 @@ theme: gophercon-datadog-minimal
 math: mathjax
 html: true
 paginate: true
-header: "Zero-Touch Go Instrumentation · GopherCon UK 2026"
+header: "Zero-Touch Go Instrumentation · GoLab 2026"
 footer: " "
 style: |
   .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
@@ -22,7 +22,7 @@ style: |
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
-##### GopherCon UK · 2026
+##### GoLab · 2026
 
 # Zero-Touch
 
@@ -976,7 +976,7 @@ For more agent skills for instrumenting Go applications, see [github.com/ollygar
 
 ### Talk material
 
-[github.com/kakkoyun/gopherconuk-26](https://github.com/kakkoyun/gopherconuk-26)
+[github.com/kakkoyun/golab-26](https://github.com/kakkoyun/golab-26)
 
 Both decks · research · [earlier FOSDEM version](https://youtu.be/0TvrSebuDPk)
 
@@ -990,7 +990,7 @@ Both decks · research · [earlier FOSDEM version](https://youtu.be/0TvrSebuDPk)
 </div>
 <div class="center">
 
-![w:250](../../assets/gopherconuk-26-repo-qr.png)
+![w:250](../../assets/golab-26-repo-qr.png)
 
 **Scan for the talk repository**
 
@@ -1008,4 +1008,4 @@ Both decks · research · [earlier FOSDEM version](https://youtu.be/0TvrSebuDPk)
 
 [linkedin.com/in/kakkoyun](https://www.linkedin.com/in/kakkoyun/) · [bsky.app/profile/kakkoyun.me](https://bsky.app/profile/kakkoyun.me) · [x.com/kakkoyun_me](https://x.com/kakkoyun_me)
 
-<span class="small">Talk repo [github.com/kakkoyun/gopherconuk-26](https://github.com/kakkoyun/gopherconuk-26) · Tools [github.com/kakkoyun/zeroins](https://github.com/kakkoyun/zeroins)</span>
+<span class="small">Talk repo [github.com/kakkoyun/golab-26](https://github.com/kakkoyun/golab-26) · Tools [github.com/kakkoyun/zeroins](https://github.com/kakkoyun/zeroins)</span>

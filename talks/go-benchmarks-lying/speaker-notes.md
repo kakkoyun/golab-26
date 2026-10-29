@@ -1,6 +1,6 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GopherCon UK 2026 · 50 minutes + 10 Q&A · 110 slides
+GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. 110 slides.
 
 **How to use this.** `SAY` lines are the words. They are written to be spoken,
 not read — short sentences, one idea each. You do not need them verbatim; learn
