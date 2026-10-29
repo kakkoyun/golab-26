@@ -1,0 +1,645 @@
+/* @theme golab */
+
+/* GoLab 2026 speaker template. Art credit: assets/ATTRIBUTION.md.
+   Structure uses deep teal. Readings use violet. Cautions use deep pink.
+   The bright accents are backgrounds. Text uses dark shades on light slides. */
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 300; font-display: swap; src: url("fonts/Rubik-300-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 300; font-display: swap; src: url("fonts/Rubik-300-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/Rubik-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/Rubik-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/Rubik-500-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/Rubik-500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/Rubik-700-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Rubik"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/Rubik-700-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/JetBrainsMono-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/JetBrainsMono-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/JetBrainsMono-500-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/JetBrainsMono-500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/JetBrainsMono-700-latin-ext.woff2") format("woff2"); unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/JetBrainsMono-700-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+2000-206F, U+20AC, U+2122, U+2212; }
+
+:root {
+    --yellow: #f8fc61;
+    --pink: #ff009a;
+    --violet: #7800ff;
+    --teal: #13e4d1;
+    --light: #f5f5f5;
+    --ink: #101010;
+    --structure: #13e4d1;
+    --structure-deep: #006459;
+    --reading: #6200ce;
+    --reading-lift: #e4cbff;
+    --caution: #b00060;
+    --caution-lift: #f8fc61;
+    --fg: var(--ink);
+    --bg: var(--light);
+    --mute: #454545;
+    --rule: rgba(0, 0, 0, .22);
+    --card: #fff;
+    --panel: #fff;
+    --panel-tab: #e7e7e7;
+    --edge: 76px;
+    --sans: "Rubik", sans-serif;
+    --mono: "JetBrains Mono", monospace;
+    --gopher: none;
+}
+section {
+    width: 1280px;
+    height: 720px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    padding: 74px var(--edge) 110px;
+    background: var(--bg) url("assets/bg-light.jpg") center / cover no-repeat;
+    color: var(--fg);
+    font: 300 28px / 1.37 var(--sans);
+    text-wrap: pretty;
+    -webkit-font-smoothing: antialiased;
+}
+section > *:not(header):not(footer) { position: relative; z-index: 1; }
+header { display: none; }
+/* The PPTX footer begins at 628/720. Reserve 93 CSS pixels for it. */
+section::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 93px;
+    background: var(--yellow);
+    z-index: 2;
+}
+footer {
+    position: absolute;
+    z-index: 3;
+    left: 86px;
+    bottom: 37px;
+    margin: 0;
+    font: 400 12px / 1 var(--mono);
+    letter-spacing: -.04em;
+    color: #101010;
+}
+footer::before {
+    content: "GOLAB";
+    margin-right: 28px;
+    font: 700 27px / 1 var(--sans);
+    letter-spacing: -.03em;
+    vertical-align: middle;
+}
+footer::after {
+    content: "the international conference on go in italy | November 1st - 3rd, 2026";
+    vertical-align: middle;
+}
+section::after {
+    content: attr(data-marpit-pagination);
+    position: absolute;
+    right: 29px;
+    bottom: 30px;
+    /* Marpit pagination inherits the section padding. Reset it so the number sits in the band. */
+    padding: 0;
+    z-index: 3;
+    font: 400 21px / 1 var(--sans);
+    color: var(--ink);
+}
+
+/* ───────────────────────────────────────────────────────── headings ── */
+
+h1 {
+	margin: 0 0 26px;
+	font-weight: 700;
+	font-size: 54px;
+	line-height: 1.05;
+	letter-spacing: -0.035em;
+}
+h2 {
+	margin: 0 0 20px;
+	font-weight: 700;
+	font-size: 40px;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+}
+h3 {
+	margin: 0 0 16px;
+	font-weight: 500;
+	font-size: 32px;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+}
+h4 {
+	margin: 0 0 14px;
+	font-weight: 500;
+	font-size: 26px;
+}
+h5 {
+	margin: 0 0 12px;
+	font: 500 18px / 1 var(--mono);
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--structure-deep);
+}
+
+/* h6 is the utility slot: filename tab, section number, delta chip */
+h6 {
+	margin: 0;
+	font: 500 19px / 1 var(--mono);
+	font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────────────────── blocks ── */
+
+p {
+	margin: 0 0 22px;
+}
+strong {
+	font-weight: 700;
+}
+em {
+	font-style: italic;
+}
+
+a {
+	color: var(--structure-deep);
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	text-decoration-thickness: 2px;
+}
+a:hover {
+	color: var(--reading);
+}
+
+ul,
+ol {
+	margin: 0 0 22px;
+	padding: 0 0 0 0;
+}
+li {
+	margin: 0 0 18px;
+	padding-left: 1.9em;
+	text-indent: -1.9em;
+	list-style: none;
+}
+li::marker {
+	content: none;
+}
+/* List markers use the structural shade. A leading emoji replaces the marker. */
+ul > li::before {
+	content: "";
+	display: inline-block;
+	width: 0.38em;
+	height: 0.38em;
+	margin-right: 1.05em;
+	margin-bottom: 0.22em;
+	vertical-align: middle;
+	background: var(--structure-deep);
+	text-indent: 0;
+}
+ul.emoji > li::before,
+li.emoji::before,
+section.emoji ul > li::before {
+	content: none;
+	margin: 0;
+}
+ol {
+	counter-reset: li;
+}
+ol > li {
+	counter-increment: li;
+}
+ol > li::before {
+	content: counter(li, decimal-leading-zero);
+	display: inline-block;
+	width: 1.5em;
+	margin-right: 0.4em;
+	font: 700 0.62em / 1 var(--mono);
+	color: var(--structure-deep);
+	text-indent: 0;
+}
+
+blockquote {
+	margin: 0 0 24px;
+	padding: 4px 0 4px 30px;
+	border-left: 8px solid var(--structure-deep);
+	font-size: 32px;
+}
+blockquote p:last-child {
+	margin-bottom: 0;
+}
+
+hr {
+	height: 2px;
+	margin: 34px 0;
+	border: 0;
+	background: var(--rule);
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 24px;
+}
+th {
+	padding: 14px 16px;
+	border-bottom: 2px solid var(--ink);
+	font: 500 17px / 1 var(--mono);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	text-align: left;
+	color: var(--mute);
+}
+td {
+	padding: 15px 16px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+}
+tr td:last-child,
+tr th:last-child {
+	text-align: right;
+	font-family: var(--mono);
+}
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+/* ───────────────────────────────────────────────────────────── code ── */
+
+code {
+	font-family: var(--mono);
+	font-size: 0.86em;
+	padding: 0.1em 0.34em;
+	border-radius: 3px;
+	background: rgba(19, 228, 209, 0.14);
+	color: var(--structure-deep);
+}
+
+pre {
+	margin: 0 0 24px;
+	padding: 28px 30px;
+	overflow: hidden;
+	background: #fff;
+	color: #101010;
+	box-shadow: 0 2px 8px rgba(11, 15, 20, 0.28);
+	position: relative;
+	/* kind: a code panel gets a coloured left rail that names its kind at a
+	   glance. --kind-accent defaults to the structural shade; --kind-rail defaults to
+	   0 so a bare text diagram renders with no rail. Each kind below sets both
+	   tokens, and the header sets its own copy because a custom property
+	   cannot reach a preceding sibling. */
+	--kind-accent: var(--structure-deep);
+	--kind-rail: 0px;
+	border-left: var(--kind-rail) solid var(--kind-accent);
+	padding-left: calc(30px - var(--kind-rail));
+}
+pre code {
+	display: block;
+	padding: 0;
+	background: none;
+	color: inherit;
+	font-size: 22px;
+	line-height: 1.5;
+}
+
+/* Source files have a structural rail.
+   go, yaml, yml, s, and the data-kind equivalents a plugin might emit. */
+pre:has(> code.language-go),
+pre:has(> code.language-yaml),
+pre:has(> code.language-yml),
+pre:has(> code.language-s),
+h6:has(+ pre > code.language-go),
+h6:has(+ pre > code.language-yaml),
+h6:has(+ pre > code.language-yml),
+h6:has(+ pre > code.language-s),
+pre[data-kind="go"],
+pre[data-kind="yaml"],
+pre[data-kind="yml"],
+pre[data-kind="s"],
+h6[data-kind="go"],
+h6[data-kind="yaml"],
+h6[data-kind="yml"],
+h6[data-kind="s"] {
+	--kind-accent: var(--structure-deep);
+	--kind-rail: 4px;
+}
+
+/* Disassembly and shell readings have a violet rail. */
+pre:has(> code.language-asm),
+pre:has(> code.language-bash),
+pre:has(> code.language-sh),
+pre:has(> code.language-shell),
+pre:has(> code.language-zsh),
+pre:has(> code.language-console),
+h6:has(+ pre > code.language-asm),
+h6:has(+ pre > code.language-bash),
+h6:has(+ pre > code.language-sh),
+h6:has(+ pre > code.language-shell),
+h6:has(+ pre > code.language-zsh),
+h6:has(+ pre > code.language-console),
+pre[data-kind="asm"],
+pre[data-kind="bash"],
+pre[data-kind="sh"],
+pre[data-kind="shell"],
+pre[data-kind="zsh"],
+pre[data-kind="console"],
+h6[data-kind="asm"],
+h6[data-kind="bash"],
+h6[data-kind="sh"],
+h6[data-kind="shell"],
+h6[data-kind="zsh"],
+h6[data-kind="console"] {
+	--kind-accent: var(--reading-lift);
+	--kind-rail: 4px;
+}
+
+/* A headered text panel is captured output, so it uses the reading rail. A bare text
+   panel (an ASCII diagram) keeps the default: no rail. The header is the
+   discriminator, which keeps every diagram byte-identical to today. */
+h6:has(+ pre > code.language-text),
+h6:has(+ pre > code.language-text) + pre {
+	--kind-accent: var(--reading-lift);
+	--kind-rail: 4px;
+}
+
+/* corner prompt: a shell panel without a header shows $ top-right. Absolute, so
+   zero reflow; pre already clips. Suppressed on headered panels — the $ moves
+   into the header below. */
+pre:has(> code.language-bash):not(h6 + pre)::before,
+pre:has(> code.language-sh):not(h6 + pre)::before,
+pre:has(> code.language-shell):not(h6 + pre)::before,
+pre:has(> code.language-zsh):not(h6 + pre)::before {
+	content: "$";
+	position: absolute;
+	top: 10px;
+	right: 14px;
+	font: 700 16px / 1 var(--mono);
+	opacity: 0.55;
+	color: var(--kind-accent);
+}
+
+/* h6 immediately before a fence becomes the editor tab */
+h6 + pre {
+	margin-top: 0;
+}
+h6:has(+ pre) {
+	display: block;
+	padding: 15px 26px;
+	padding-left: calc(26px - var(--kind-rail));
+	background: #e7e7e7;
+	color: #111;
+	border-top: 3px solid var(--kind-accent);
+	border-left: var(--kind-rail) solid var(--kind-accent);
+	font: 500 21px / 1 var(--mono);
+	--kind-accent: var(--structure-deep);
+	--kind-rail: 4px;
+}
+/* $ prefix in the header for shell and output (captured) kinds */
+h6:has(+ pre > code.language-text)::before,
+h6:has(+ pre > code.language-bash)::before,
+h6:has(+ pre > code.language-sh)::before,
+h6:has(+ pre > code.language-shell)::before,
+h6:has(+ pre > code.language-zsh)::before,
+h6:has(+ pre > code.language-console)::before {
+	content: "$";
+	margin-right: 0.7em;
+	color: var(--kind-accent);
+}
+h6:has(+ pre) + pre {
+	padding-block: 22px;
+	box-shadow: 0 2px 8px rgba(11, 15, 20, 0.28);
+}
+
+/* highlight.js */
+.hljs-comment,
+.hljs-quote {
+	color: #505e61;
+	font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-type,
+.hljs-literal {
+	color: var(--structure-deep);
+}
+.hljs-string,
+.hljs-attr,
+.hljs-regexp {
+	color: #7a3900;
+}
+.hljs-number {
+	color: var(--reading);
+}
+.hljs-title,
+.hljs-title.function_,
+.hljs-section {
+	color: #111;
+	font-weight: 500;
+}
+.hljs-meta,
+.hljs-meta .hljs-prompt {
+	color: var(--reading);
+}
+.hljs-variable,
+.hljs-params {
+	color: #333;
+}
+.hljs-deletion {
+	color: #b00060;
+}
+.hljs-addition {
+	color: var(--reading);
+}
+
+
+/* Accent modifiers select the source template backgrounds. */
+section.yellow { --bg: var(--yellow); background-image: none; }
+section.pink { --bg: var(--pink); background-image: url("assets/bg-pink.jpg"); }
+section.violet { --bg: var(--violet); background-image: url("assets/bg-violet.jpg"); --fg: #fff; --mute: #fff; }
+section.teal { --bg: var(--teal); background-image: url("assets/bg-teal.jpg"); }
+section.light { --bg: var(--light); background-image: url("assets/bg-light.jpg"); --fg: var(--ink); }
+section.violet h5, section.dark h5 { color: var(--teal); }
+section.violet a, section.dark a { color: var(--caution-lift); }
+section.violet th, section.dark th { color: #fff; border-color: #fff; }
+
+section.title, section.end {
+    background-color: var(--yellow);
+    --fg: var(--ink);
+    padding: 120px 530px 120px var(--edge);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+section.title { background-image: url("assets/bg-yellow-title.jpg"); }
+section.title h5 { position: absolute; top: 56px; left: var(--edge); color: inherit; font: 400 19px / 1.2 var(--sans); letter-spacing: 0; }
+section.title h1 { font: 400 78px / 1.08 var(--sans); letter-spacing: -.025em; margin: 0 0 32px; }
+section.title h3 { font: 500 30px / 1.2 var(--sans); margin: 0 0 8px; }
+section.title p { font: 300 24px / 1.35 var(--sans); }
+section.title.pink { background-color: var(--pink); background-image: url("assets/bg-pink-title.jpg"); --fg: var(--ink); }
+section.title.violet { background-color: var(--violet); --fg: #fff; }
+section.title.teal { background-color: var(--teal); --fg: var(--ink); }
+section.title.light { background-color: var(--light); --fg: var(--ink); }
+section.title.violet, section.title.teal, section.title.light { background-image: none; }
+/* The template opener has one hamster. Existing modifiers keep their CC0 art. */
+section.title.gopher-hiking, section.title.gopher-balloon,
+section.title.gopher-rocket { background-image: none; }
+section.title.gopher-hiking, section.title.gopher-balloon,
+section.title.gopher-rocket, section.end.gopher-hiking { background-image: var(--gopher); background-repeat: no-repeat; background-position: right 58px center; background-size: 410px 445px; }
+section.title.gopher-hiking, section.end.gopher-hiking { --gopher: url("assets/gophers/gopher-hiking.svg"); }
+section.title.gopher-balloon, section.end.gopher-balloon { --gopher: url("assets/gopher-cocktail.png"); }
+section.title.gopher-rocket, section.end.gopher-rocket { --gopher: url("assets/gopher-cocktail.png"); }
+section.title.gopher-hero, section.title.gopher-sage, section.title.gopher-network { background-image: url("assets/bg-yellow-title.jpg"); }
+section.title.pink.gopher-hero, section.title.pink.gopher-sage, section.title.pink.gopher-network { background-image: url("assets/bg-pink-title.jpg"); }
+section.end.gopher-hero, section.end.gopher-sage, section.end.gopher-network { background-image: url("assets/gopher-cocktail.png"); background-size: auto 495px; background-position: right 38px center; }
+section.title.gopher-none, section.end.gopher-none { background-image: none; }
+
+section.section {
+    background-image: url("assets/bg-section-teal.jpg");
+    display: grid;
+    grid-template-columns: 43% 57%;
+    grid-template-rows: auto 1fr;
+    gap: 50px 30px;
+    padding: 70px var(--edge) 120px;
+    align-items: center;
+}
+section.section.pink { background-image: url("assets/bg-section-pink.jpg"); }
+section.section.violet { background-image: url("assets/bg-section-violet.jpg"); --fg: var(--ink); }
+section.section.violet p { color: #fff; }
+section.section.yellow, section.section.light { background-image: none; }
+section.section h6 { grid-column: 1; grid-row: 1; align-self: start; font: 400 23px / 1 var(--sans); }
+section.section h1 { grid-column: 1; grid-row: 2; font: 400 53px / 1.12 var(--sans); overflow-wrap: anywhere; margin: 0; }
+section.section p { grid-column: 2; grid-row: 2; font-size: 28px; padding: 0 35px; margin: 0; color: var(--ink); }
+section.section.teal { background-image: url("assets/bg-section-teal.jpg"); }
+/* This split has room for full words and longer section labels. */
+
+section.dark { --fg: #fff; --bg: var(--violet); --mute: #fff; background-image: url("assets/bg-violet.jpg"); }
+section.dark code { color: var(--ink); background: var(--yellow); }
+section.dark td { border-bottom-color: rgba(255,255,255,.35); }
+section.stat { display: flex; flex-direction: column; justify-content: center; }
+section.stat h1 { font-size: 220px; line-height: 1; color: var(--reading); margin: 0 0 25px; }
+section.stat p { font-size: 36px; max-width: 1000px; }
+section.stat.violet h1 { color: var(--reading-lift); }
+
+section.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-content: start; }
+section.compare h1 { grid-column: 1 / -1; }
+section.compare blockquote { margin: 0; padding: 28px; border: 0; background: #fff; font-size: 26px; }
+section.compare blockquote:nth-of-type(2) { background: #e4cbff; }
+section.compare blockquote strong { display: block; font: 500 20px / 1.2 var(--mono); }
+section.compare blockquote h2 { font-size: 65px; margin: 18px 0; }
+section.compare h6 { position: absolute; top: 375px; left: 50%; transform: translateX(-50%); padding: 12px; background: var(--reading); color: #fff; z-index: 2; }
+section.terminal h1::before { content: "▶"; color: var(--reading); margin-right: 18px; font-size: .55em; vertical-align: middle; }
+section.terminal pre code { font-size: 24px; }
+
+section.chart h5 { margin-bottom: 30px; }
+.bars { display: flex; flex-direction: column; gap: 22px; }
+.bars .row { display: flex; align-items: center; gap: 22px; }
+.bars .label { width: 230px; text-align: right; font: 400 24px / 1 var(--mono); }
+.bars .track { flex: 1; height: 36px; background: #dedede; }
+.bars .fill { display: block; height: 100%; background: var(--structure-deep); }
+.bars .value { width: 100px; font: 500 24px / 1 var(--mono); }
+.bars .mark .fill { background: var(--reading); }
+.bars .mark .label, .bars .mark .value { color: var(--reading); }
+.cols, .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 55px; align-items: start; }
+.cols.wide-left { grid-template-columns: 1.6fr 1fr; }
+.cols.wide-right { grid-template-columns: 1fr 1.6fr; }
+.card { background: var(--card); padding: 25px; border-left: 7px solid var(--structure-deep); color: var(--ink); }
+.card.measure { border-left-color: var(--reading); }
+.qr { width: 190px; height: 190px; padding: 10px; background: #fff; }
+.qr img { width: 100%; height: 100%; }
+
+section.end { --bg: var(--violet); --fg: #fff; background-color: var(--violet); background-image: url("assets/gopher-cocktail.png"), url("assets/bg-violet.jpg"); background-repeat: no-repeat; background-position: right 55px center, center; background-size: auto 500px, cover; }
+section.end h1 { font: 400 78px / 1.06 var(--sans); margin: 0 0 40px; }
+section.end p, section.end ul { font-size: 25px; line-height: 1.5; }
+section.end a { color: var(--yellow); }
+section.end li { padding: 0; text-indent: 0; }
+section.end li::before { content: none; }
+section.end .qr { position: absolute; right: 320px; bottom: 130px; }
+section.end.gopher-balloon, section.end.gopher-rocket { background-image: url("assets/gopher-cocktail.png"); background-size: auto 495px; background-position: right 38px center; }
+section.end.yellow, section.end.teal, section.end.light { --fg: var(--ink); }
+section.end.yellow { background-color: var(--yellow); }
+section.end.teal { background-color: var(--teal); }
+section.end.light { background-color: var(--light); }
+section.end.pink { background-color: var(--pink); }
+section.end.yellow a, section.end.teal a, section.end.light a { color: var(--structure-deep); }
+section.end.pink { --fg: var(--ink); }
+section.end.pink a { color: var(--ink); }
+
+section.meme { background: var(--light); padding: 0; }
+section.meme p:last-of-type { position: absolute; left: 0; right: 0; bottom: 93px; min-height: 75px; margin: 0; padding: 18px 80px; background: var(--teal); font: 500 34px / 1.15 var(--sans); color: var(--ink); }
+section.agenda li { margin: 0; padding: 10px 10px 10px 20px; border-left: 6px solid transparent; opacity: .6; font-size: 36px; }
+section.agenda li:has(strong) { opacity: 1; border-color: var(--reading); }
+section.agenda li::before { background: none; width: auto; height: auto; content: none; }
+section.speaker { background: var(--violet) url("assets/gopher-tree.png") right center / auto 627px no-repeat; --fg: #fff; display: flex; flex-direction: column; justify-content: center; padding-right: 480px; }
+section.speaker p:has(img) { position: absolute; right: 80px; top: 130px; }
+section.speaker img { width: 290px; height: 290px; object-fit: cover; border-radius: 50%; }
+section.speaker h1 { font-size: 60px; }
+section.speaker a { color: var(--yellow); }
+section.speaker li::before { content: none; }
+section.photo { color: #fff; display: flex; flex-direction: column; justify-content: flex-end; }
+section.photo h1, section.photo h5, section.photo p { color: #fff; text-shadow: 0 2px 3px #101010; }
+section.photo > *:not(footer) { z-index: 1; }
+section.photo h1 { font-size: 70px; }
+section.punchline { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 80px 100px 140px; background-image: url("assets/bg-violet.jpg"); --fg: #fff; }
+section.punchline h1, section.punchline h2, section.punchline h3 { font-size: 74px; line-height: 1.12; margin: 0 0 20px; }
+section.punchline:has(h2 ~ h2) h2, section.punchline:has(h3 ~ h3) h3 { font-size: 58px; }
+section.punchline em { font-style: normal; color: var(--yellow); }
+section.punchline.pink { background-image: url("assets/bg-pink.jpg"); --fg: var(--ink); }
+section.punchline.pink em { color: var(--ink); text-decoration: underline; }
+section.punchline.teal { background-image: url("assets/bg-teal.jpg"); --fg: var(--ink); }
+section.vcenter { display: flex; flex-direction: column; justify-content: center; }
+section.vcenter.punchline { align-items: center; }
+
+.mono { font-family: var(--mono); }
+.mute { color: var(--mute); }
+.measure { color: var(--reading); }
+.big { font-size: 1.4em; }
+.tight { margin-bottom: 8px; }
+.center { text-align: center; }
+.chip { display: inline-block; padding: .12em .55em; font: 700 .7em / 1.1 var(--mono); border-radius: 4px; text-transform: uppercase; }
+.chip.note { background: #d0f8f4; color: var(--structure-deep); }
+.chip.measure { background: #e4cbff; color: var(--reading); }
+.chip.caution { background: #ffdaed; color: var(--caution); }
+section.dark .chip.note { background: #00473f; color: #e1fff9; }
+section.dark .chip.measure { background: #32006a; color: var(--reading-lift); }
+section.dark .chip.caution { background: #6b0039; color: #ffe4f3; }
+[data-marpit-fragment] { transition: opacity .22s ease, filter .22s ease; }
+[data-bespoke-marp-fragment="inactive"] { opacity: .18; filter: saturate(.1); }
+@media print { section { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+/* Scale external diagrams inside the content area above the footer band. */
+.center img[src^="https://kroki.io/mermaid/"] {
+    /* Kroki SVGs have a small native size. Fill the width, keep the aspect ratio. */
+    width: 100%;
+    height: auto;
+    max-height: 435px;
+    object-fit: contain;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Existing deck inline colour names remain in Markdown until the talk edit. */
+.hl-blue { color: var(--reading) !important; }
+.hl-orange { color: var(--structure-deep) !important; }
+section.photo footer, section.photo::after { color: var(--ink) !important; }
+/* Marp duplicates photo slides for its background layer. Only the content layer owns chrome. */
+section.photo[data-marpit-advanced-background="pseudo"] {
+    background: transparent;
+}
+section.photo[data-marpit-advanced-background="pseudo"]::before {
+    content: "GOLAB      the international conference on go in italy | November 1st - 3rd, 2026";
+    inset: auto 0 0;
+    display: flex;
+    align-items: center;
+    height: 93px;
+    box-sizing: border-box;
+    padding-left: 86px;
+    font: 500 15px / 1 var(--mono);
+    background: var(--yellow);
+    color: var(--ink);
+}
+section.photo[data-marpit-advanced-background="pseudo"]::after {
+    content: attr(data-marpit-pagination) !important;
+    display: block !important;
+    position: absolute !important;
+    top: auto !important;
+    bottom: 30px !important;
+    right: 29px !important;
+    z-index: 5 !important;
+    transform: translate(75px, 105px);
+    color: var(--ink) !important;
+    font: 400 21px / 1 var(--sans);
+}

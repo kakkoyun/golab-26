@@ -37,3 +37,6 @@ The slide-specific checks remain here:
 - `check_slide_fragments.py` protects progressive-reveal markers.
 
 `make check` runs them against both decks.
+
+The GoLab footer check reserves 70 PDF points at the bottom of each slide.
+The theme places the yellow footer band in that area.

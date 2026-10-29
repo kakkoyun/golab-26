@@ -1,21 +1,21 @@
 ---
 marp: true
-theme: gophercon-datadog
+theme: golab
 paginate: true
-footer: '@handle · #gopherconuk'
+footer: " "
 html: true
 ---
 
 <!-- _class: title gopher-hero -->
 <!-- _paginate: false -->
 
-##### GopherCon UK · 12 Aug 2026
+##### GoLab · November 2026
 
 # Profiling Go in production
 
 ### Speaker Name
 
-Staff Engineer · Datadog
+Go engineer
 
 ---
 
@@ -58,7 +58,7 @@ TEXT ·Collect(SB), NOSPLIT, $0-8
     CALL  runtime·pprofStartCPUProfile(SB)
 ```
 
-A reading, not source — the header names the file that was disassembled.
+The header names the source file for this disassembly.
 
 ---
 
@@ -70,8 +70,7 @@ A reading, not source — the header names the file that was disassembled.
 BenchmarkCollect-10   14322   81.4 ns/op   0 B/op
 ```
 
-The header names the artifact the bytes came from; the `$` marks it as command
-output.
+The header names the source of the captured output. The `$` marks command output.
 
 ---
 
@@ -81,7 +80,7 @@ output.
 go test -bench=Collect -benchmem -count=10
 ```
 
-The body *is* the command, so no header — just the purple rail and a corner `$`.
+The command has a reading rail and a corner `$`.
 
 ---
 
@@ -99,10 +98,10 @@ The body *is* the command, so no header — just the purple rail and a corner `$
 
 # Four things we tried first
 
-- 🔥 Flamegraphs, read wrong — depth is not cost
-- 🧊 Cold paths that still bill you every request
-- 📉 Averages, which hid the only number that mattered
-- 🤖 Automating the diff instead of the reading
+* 🔥 Flame charts can mislead you. Depth is not cost.
+* 🧊 Cold paths that still bill you every request
+* 📉 Averages, which hid the only number that mattered
+* 🤖 Automating the diff instead of the reading
 
 ---
 
@@ -208,7 +207,7 @@ Every frame is a decision someone made. Find the decision, not the frame.
 
 ---
 
-<!-- _class: section -->
+<!-- _class: section pink -->
 
 ###### 02
 
@@ -235,7 +234,7 @@ What survived contact with production.
 
 ##### The Brewery, 2025
 
-# Three hundred people, one flamegraph
+# Three hundred people, one profile graph
 
 Nobody in the room agreed on what it meant.
 
@@ -264,21 +263,41 @@ Nobody in the room agreed on what it meant.
 
 # Speaker Name
 
-### Staff Engineer · Datadog
+### Go engineer
 
-- bluesky **@handle**
-- github **@handle**
-- slides **example.dev/gcuk**
+* social **@handle**
+* GitHub **@handle**
+* slides **example.dev/golab**
 
 ---
 
-<!-- _class: end gopher-rocket -->
+<!-- _class: end gopher-rocket teal -->
 <!-- _paginate: false -->
 
 # Thank you
 
 <div class="qr"><img src="assets/placeholder-qr.png" alt="slides"></div>
 
-- slides → example.dev/gcuk
-- bluesky → @handle
-- code → github.com/handle/talk
+* slides → example.dev/golab
+* social → @handle
+* code → github.com/handle/talk
+
+---
+
+<!-- _class: section violet -->
+
+###### III
+
+# More layout choices
+
+The left panel gives the title room to wrap.
+
+---
+
+<!-- _class: title pink gopher-none -->
+
+# A second opener
+
+### Speaker Name
+
+Go engineer

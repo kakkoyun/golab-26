@@ -19,7 +19,7 @@ Posts live at `content/posts/<slug>.md`, flat files, `draft: true` until schedul
 
 ## Cadence
 
-Post 1 publishes as a pre-conference teaser, roughly a week before the GopherCon UK slot;
+Post 1 publishes as a pre-conference teaser, roughly a week before the GoLab slot;
 posts 2–5 weekly after. Dates in the frontmatter are placeholders (2026-09-01 onward) until
 the slot is confirmed. Every post stays `draft: true` until then.
 

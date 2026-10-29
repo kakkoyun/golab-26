@@ -1,6 +1,6 @@
 # Speaker notes: Zero-Touch Go Instrumentation
 
-GopherCon UK 2026. 30-minute keynote. Advanced Go audience.
+GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Section headings below match slide titles
 verbatim, so you can find your place by what is on screen.
@@ -17,21 +17,24 @@ Memorise the beat (the bold line before each block), then let the words follow.
 | --- | --- |
 | Open | The debugging loop is slow. An agent alone does not fix it. |
 | 01 Why Go resists | Go compiled away the attachment point other runtimes have. |
-| 02 OBI | Observe from the kernel. No rebuild. Linux and privileges are the cost. |
-| 03 otelc | Rewrite at build time. Rich semantics. The rebuild is the cost. |
-| 04 Injector | Load at process start. No source change. The binary is the constraint. |
-| 05 Profiles | The fourth signal, from the kernel. Correlation is the bridge. |
-| 06 When to reach for what | Start from the constraint you cannot change. |
-| 07 What comes next | The loop, without the redeploy. The agent now has the framework. |
+| 02 eBPF, from the ground up | One uprobe hit, and the three ways Go makes it harder. |
+| 03 OBI | Observe from the kernel. No rebuild. Linux and privileges are the cost. |
+| 04 otelc | Rewrite at build time. Rich semantics. The rebuild is the cost. |
+| 05 Injector | Every runtime gives the loader an entry point. A static Go binary has no loader. |
+| 06 Profiles | The fourth signal, from the kernel. Correlation is the bridge. |
+| 07 Live debugging | A uprobe at a source line. One variable, no redeploy. |
+| 08 When to reach for what | Start from the constraint you cannot change. |
+| 09 What comes next | The loop, without the redeploy. The agent now has the framework. |
 
 ## Timing
 
-Measured read-through pending (P4.1). The deck is ~60 pages against a 52-page
-baseline. The cut ladder in `outline.md` recovers about four and a half minutes
-of pages plus roughly a minute of spoken detail if the slot demands it.
+The times in `outline.md` are a word-count model: 3,422 SAY words at 130 words
+per minute, plus 25% for pauses and visuals, gives about 33 minutes. The
+cuttable static-PIE anecdote adds about 1:25. The rest of the 38 minutes is
+buffer for the silent beats. This version still needs a timed read-through.
 
-Checkpoints: open OBI by ~7:30, otelc by ~14:00, injector by ~18:00,
-profiles by ~20:45, the decision section by ~25:30.
+Checkpoints: open the primer by ~4:00, OBI by ~11:30, otelc by ~16:00, the
+injector by ~19:30, live debugging by ~25:00, the decision section by ~28:30.
 
 ---
 
@@ -239,7 +242,8 @@ audience should see it as the spine.
 Runtime injection exists for Go, but it is narrow.
 
 Dynatrace supports eligible dynamically linked binaries. The OpenTelemetry
-host injector ships Java, .NET, Node.js, and Python. It does not inject Go.
+host injector ships Java, Node.js, .NET, Ruby, and Python. It does not inject
+Go.
 The OpenTelemetry Operator has a separate, feature-gated Go eBPF sidecar.
 
 Datadog is working on a Go path for Single-Step Instrumentation.
@@ -251,7 +255,203 @@ later.
 
 ---
 
-## 02 OBI: observe from the kernel
+## 02 eBPF, from the ground up
+
+**SAY**
+
+OBI, the profiler, and the live debugger in this talk all run on eBPF. So before we use it, let us build it up from the bottom. Nine short steps. Each step needs the one before
+it.
+
+**DO**
+
+Section bridge. Promise the room that the steps are short. Keep each primer
+slide under a minute. If you are behind at the OBI divider, say the CO-RE and
+field-offset slides in one sentence each.
+
+---
+
+## A checked program runs at an event
+
+**SAY**
+
+eBPF lets you attach a small program to an event in Linux.
+
+A loader sends the program to the kernel. The verifier checks every memory
+access and every operation before the program can run. A supported JIT can turn the bytecode into native instructions.
+
+The program calls helpers for kernel services. It keeps state in maps. User
+space reads the maps.
+
+Loading, verification, and JIT compilation happen once, at load time. After that, the program runs each time
+the event occurs.
+
+**DO**
+
+Credit the diagram verbally to eBPF.io. Do not say the verifier proves the
+whole system safe. It checks this program.
+
+---
+
+## CO-RE adapts kernel layouts, not Go layouts
+
+**SAY**
+
+A field in a kernel struct can move between kernel builds. BTF describes the types of the current kernel. CO-RE uses BTF to adjust the field reads
+in the program before it loads. One compiled object can then work across supported kernel layouts.
+
+Remember the limit. CO-RE knows kernel types. It knows nothing about a Go HTTP
+request. For Go, we need a separate source of layouts. We solve that later in this primer.
+
+**DO**
+
+Thirty seconds. The dotted branch on the diagram is the point.
+
+---
+
+## Choose the place to observe
+
+**SAY**
+
+Next, choose where to look. A tracepoint is a named kernel event. A kprobe
+observes a kernel function. Fentry and fexit use a fast trampoline, but only
+for kernel and BPF functions.
+
+For a Go function, the hook is a uprobe: an instruction in a user-space
+binary. A uretprobe observes a return. Keep that one in mind, because Go
+breaks it.
+
+**DO**
+
+Point at the uprobe row. Do not let the room think that fentry works for Go
+functions.
+
+---
+
+## A uprobe hit enters the kernel
+
+**SAY**
+
+Here is one uprobe hit. The loader finds the instruction from the symbol. The
+kernel puts a breakpoint into the mapped code of the process. The file on disk
+does not change.
+
+When the goroutine reaches the breakpoint, the thread enters the kernel and our
+handler runs. Then the kernel must still do the work of the original
+instruction. It emulates the instruction, or it single-steps a copy. Then Go
+code continues.
+
+Newer kernels made this path scale much better. But each active hit still
+crosses into the kernel. That is the cost we see again in the OBI section.
+
+**DO**
+
+Fifty seconds. Do not quote a nanosecond number on stage. The kernel benchmark
+numbers in the research are for an empty probe, not for a real handler.
+
+---
+
+## Read Go values, not C arguments
+
+**SAY**
+
+Now the Go part. Go does not pass arguments the way C does. On amd64, since Go
+1.17, the first integer arguments go in AX, BX, and CX. When enough registers remain, a string uses two of them. Otherwise Go passes it on the stack. A tracer that expects the C order reads garbage.
+
+Second problem. The goroutine can start a function on one thread and finish it
+on another. So the thread ID cannot tie entry and exit together. OBI uses the
+process ID and the address of the goroutine, the g pointer.
+
+**DO**
+
+Say amd64 out loud. arm64 uses different registers. The g pointer and the
+numeric goroutine ID are different values. Do not mix them.
+
+---
+
+## Probe the RET, not the return address
+
+**SAY**
+
+Here is why uretprobes and Go do not mix. A uretprobe replaces the saved
+return address on the stack with a trampoline address.
+
+Go copies stacks when they grow. To do that, the runtime walks every frame.
+It finds an address that does not belong to any Go function. The runtime can
+reject the stack, and the process can crash.
+
+So OBI does not use uretprobes for Go. It disassembles the function, finds
+every RET instruction, and puts an ordinary uprobe on each one. The return
+address is never touched.
+
+**DO**
+
+Forty-five seconds. This is the most Go-specific idea in the primer. Do not
+skip it.
+
+---
+
+## Find the instruction and the field
+
+**SAY**
+
+A tracer needs two different things. An instruction address, to attach the
+probe. And a field offset, to read the request inside the function.
+
+The function address comes from the symbol table or from Go's own runtime
+tables. Field offsets come from DWARF, if the binary still has debug
+information. If it does not, OBI reads the Go and library versions from the
+build information and looks the offsets up in a prepared database.
+
+A function address is not a type layout. That is the Go-side half of the CO-RE
+problem.
+
+**DO**
+
+Thirty-five seconds. Link back to the CO-RE slide.
+
+---
+
+## User Statically-Defined Tracing (USDT)
+
+**SAY**
+
+USDT lets the program declare its own probes.
+
+The producer puts a NOP at the probe site and writes an ELF note. The note
+names the probe and gives a recipe for each argument: which register, which
+stack slot. A tracer reads the note and attaches an ordinary uprobe at the NOP.
+An optional semaphore tells the program that a tracer is present, so it can
+skip expensive argument preparation when nobody listens.
+
+USDT does not make a hit free. It makes the contract explicit.
+
+**DO**
+
+Expand the acronym before you use it. USDT runs on uprobes. It is not a
+separate kernel mechanism.
+
+---
+
+## Go needs a USDT producer
+
+**SAY**
+
+The Go 1.26.0 source that we checked emits no native USDT probes. Salp and libstapsdt let an application
+add them through cgo. Polar Signals builds the other side, a Go tracer that
+reads USDT notes.
+
+My fork experiments with producer support in the toolchain itself. It is a
+proof of concept. It shows what a stable contract could look like, for eBPF
+tools and for injectors.
+
+**DO**
+
+The fork is a proof of concept. Do not claim that it builds today or that the
+commands on the slide run. Do not invent a reason why Go has no USDT.
+
+---
+
+## 03 OBI: observe from the kernel
 
 **SAY**
 
@@ -283,17 +483,25 @@ Reveal each line. The chip at the bottom is amber: do not ship this as stable.
 
 ---
 
-## How OBI works
+## OBI turns observations into spans
 
 **SAY**
 
-OBI sits beside your service. Uprobes and network probes go through the kernel.
-Events come back to the DaemonSet, which emits OTLP traces and metrics to your
-collector.
+Now OBI is not a box any more. OBI finds the supported HTTP, gRPC, and SQL
+functions and their field offsets. It attaches uprobes at the entry and at
+each RET.
+
+The handlers read request data. They keep timestamps and trace context in a
+map keyed by process ID and goroutine. At the end site, a completed event goes
+through a ring buffer to OBI in user space. OBI exports OTLP spans and metrics.
+
+On supported paths, OBI can also write the outgoing trace header, so the next
+service continues the trace.
 
 **DO**
 
-Move quickly. The diagram is the point, not the prose.
+Fifty seconds. Every box on this diagram is a step from the primer. Point at
+two of them, not all.
 
 ---
 
@@ -472,7 +680,7 @@ bought. The caption is the punchline to the uprobe section. Advance.
 
 ---
 
-## 03 otelc: instrument during the build
+## 04 otelc: instrument during the build
 
 **SAY**
 
@@ -649,7 +857,7 @@ hard constraint.
 
 ---
 
-## 04 Process start: the injector
+## 05 Process start: the injector
 
 **SAY**
 
@@ -662,19 +870,63 @@ Section bridge. Name the trade-off in one sentence.
 
 ---
 
-## What the injector is
+## How process-start injection works
 
 **SAY**
 
-An injector is a shared library loaded at process start. No source change, no
-rebuild.
+On Linux, a dynamically linked program does not start at main. It starts in
+the dynamic loader, ld.so.
 
-Datadog Single-Step Instrumentation and the OpenTelemetry host injector both
-live here. Today they ship Java, .NET, Node.js, and Python.
+The loader reads LD_PRELOAD. It maps those libraries before all others. The
+ELF rules say that their initializers run before the program gains control.
+
+So the injector runs first. It sets startup environment variables. The language
+runtime does the rest: Java loads an agent, Node.js loads a module, .NET loads
+a profiler.
 
 **DO**
 
-The category is public. The Go capability is the teaser.
+The two quotes in the footer are the evidence. Read neither aloud.
+
+---
+
+## Runtime hooks that injectors use
+
+**SAY**
+
+Each non-Go runtime on this table has a designed entry point for an agent. The
+injector only has to find it.
+
+The OpenTelemetry injector is a small shared library. It covers Java, Node.js,
+.NET, Ruby, and Python. Datadog Single Step Instrumentation uses the same
+LD_PRELOAD mechanism on Linux and lists Java, Python, Ruby, Node.js, .NET, and
+PHP.
+
+Look at the last row. Go has no such entry point.
+
+**DO**
+
+The two language lists come from the public pages in the footer. Python is off
+by default in the OpenTelemetry injector. Say so if asked.
+
+---
+
+## A static Go binary has no loader
+
+**SAY**
+
+Now a default Go binary. With CGO_ENABLED=0 there is no interpreter entry in
+the ELF file. The kernel never starts ld.so. There is no libc. Nobody reads
+LD_PRELOAD.
+
+With cgo it is not much better. The internal linker does not run the
+constructors of preloaded libraries. Ian Lance Taylor said it plainly in that
+issue: if you want LD_PRELOAD, use external linking.
+
+**DO**
+
+This is the problem statement for the section. Be exact: the variable is not
+ignored, it is never read.
 
 ---
 
@@ -730,7 +982,7 @@ One line. Advance.
 
 ---
 
-## 05 Profiles complete the four signals
+## 06 Profiles complete the four signals
 
 **SAY**
 
@@ -787,30 +1039,25 @@ data-model contract.
 
 ---
 
-## Go stacks survive stripped binaries
+## Go metadata tells the profiler how to unwind
 
 **SAY**
 
-Go binaries keep .gopclntab even when fully static and stripped, because the Go
-runtime needs it for stack traces. The profiler uses it to unwind and
-symbolize.
+The Go runtime needs .gopclntab to print its own stack traces. So the table
+stays even in a static, stripped binary.
+
+The profiler reads it once and prepares unwind rules: how to find the caller
+from each function. It loads the rules into BPF maps. When a CPU sample fires,
+the BPF unwinder walks the stack with those rules. Then the same table turns
+addresses into Go function names.
+
+Ordinary Go frames can use frame pointers. The table covers the rest. You need
+no special debug build.
 
 **DO**
 
-Explain that the runtime needs the table. That is why stripped static binaries
-remain symbolizable.
-
----
-
-## Stripping does not erase `.gopclntab`
-
-**SAY**
-
-The information remains present even for fully static and stripped executables.
-
-**DO**
-
-Let the audience read the quote. Then move on. This is a deliberate proof slide.
+Forty seconds. Let the room read the quote while you finish. Do not say that
+the profiler ignores frame pointers.
 
 ---
 
@@ -869,7 +1116,114 @@ shipping today.
 
 ---
 
-## 06 When to reach for what
+## 07 Live debugging: probe a running process
+
+**SAY**
+
+Back to the bug from the opening. You need one variable, on one line, in
+production. Every tool so far adds telemetry that you planned. This one
+answers a question that you did not plan.
+
+**DO**
+
+Section bridge. Name the opening loop: the log line, the redeploy, the wrong
+place.
+
+---
+
+## The probe goes to the running process
+
+**SAY**
+
+You pick a line in the debugger and write a message. The backend sends the
+logpoint to the Datadog agent on that host. The system probe finds the line in
+the binary and attaches a uprobe.
+
+The service keeps running. Nothing restarts. When the line runs, the probe
+captures the values. The snapshot appears in your debug session.
+
+**DO**
+
+The diagram is simplified. The public docs do not describe the hop from the
+backend to the system probe in detail, so do not add steps to it on stage.
+It can take a couple of minutes after you create a logpoint before it
+captures. Say so if someone asks why it is not instant.
+
+---
+
+## From a line to a machine address
+
+**SAY**
+
+This is the same uprobe from the primer, with one new input: DWARF.
+
+The DWARF line table maps file and line to machine addresses. The tool prefers a statement row for that line. If only other rows match, it uses the first one. That gives a PC. It turns the PC into a file offset
+and attaches the uprobe there.
+
+When the probe hits, DWARF location lists say where each variable lives at that
+PC: in a register, or on the stack.
+
+**DO**
+
+The mechanism comes from the public datadog-agent repository. Present it as
+how the code works, not as a product guarantee.
+
+---
+
+## Some variables are not there
+
+**SAY**
+
+The compiler does not keep every variable alive at every line. After inlining
+and register allocation, some values have no location at that PC.
+
+The probe still fires. The snapshot marks those variables as unavailable.
+Some lines have no safe place for a probe at all, and the tool tells you.
+
+**DO**
+
+If the room laughs at "unavailable", let it. Every Go developer who used a
+debugger on an optimised binary has seen it.
+
+---
+
+## Bounded by design
+
+**SAY**
+
+A debugger in production needs hard limits.
+
+A logpoint that captures variables runs at most once per second. Without
+capture, the limit is five thousand per second per service instance.
+Logpoints expire when the debug session ends. The system probe redacts values with sensitive names, such as password, before the data leaves the host.
+
+For Go, you need Linux 5.17 or newer and Agent 7.73 or newer on the same host. The docs strongly recommend the Go SDK 2.9 or newer.
+
+**DO**
+
+Every number on this slide is from the public docs in the footer. Do not add an overhead percentage. The public docs give no measured overhead figure for Go.
+
+---
+
+## Other ways, and their cost
+
+**SAY**
+
+There are other ways. A Delve breakpoint shows the available variables, but it stops the program. The Go 1.25 flight recorder does not stop anything, but you must
+add it to the code, and it records an execution trace, not variable values. A
+hand-written uprobe works, but you do the DWARF work yourself.
+
+A logpoint gives bounded variable snapshots with no code change and no pause. You decode nothing by hand.
+
+**DO**
+
+Read the last row, not the whole table. Delve tracepoints do not stop the
+program. If someone says so, agree, and say that they print events, not
+snapshots.
+
+---
+
+## 08 When to reach for what
 
 **SAY**
 
@@ -917,7 +1271,7 @@ in its approved wording: no denominator, no "mostly new users."
 
 ---
 
-## 07 What comes next
+## 09 What comes next
 
 **SAY**
 
@@ -929,21 +1283,29 @@ Section bridge. This is where the arc lands.
 
 ---
 
-## User Statically-Defined Tracing (USDT)
+## cgo without a C toolchain
 
 **SAY**
 
-USDT probes put stable, named hook points in the binary instead of forcing
-tools to chase function addresses.
+One more thing to watch. Today, a standard cgo build needs a C compiler at build time.
 
-Go ships no built-in USDT probes today. This proof of concept shows what a
-stable contract could look like.
+Proposal 81450 removes that need for prebuilt C libraries. You write the
+bindings in Go syntax. The cgo tool generates the glue in Go and assembly.
+The proposal also rewrites runtime/cgo in Go and assembly. And the internal linker learns to
+reference shared libraries on Linux.
+
+The Go team accepted the experiment, so the code can land behind a flag. The
+design itself is still in review.
+
+Why do I care? The injector section showed that a Go binary without a dynamic
+loader gives an injector nothing to attach to. This work teaches the internal linker to import shared libraries. It does not promise new linking defaults or preload support.
 
 **DO**
 
-Expand the acronym before using USDT. The fork is a proof of concept, not an
-accepted upstream feature. It is food for thought for the future. It could work
-with both eBPF-based systems and injectors.
+Say "accepted experiment" and "design in review". Do not say the proposal is
+accepted. Do not predict which binaries an injector can reach after it ships.
+That is the owner-review boundary in the outline. Re-check the issue labels
+the week of the talk.
 
 ---
 

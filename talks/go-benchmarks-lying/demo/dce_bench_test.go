@@ -1,6 +1,6 @@
 // Package demo contains live-demo benchmarks for
 // "Why Your Go Benchmarks Are Lying (And How to Stop Them)"
-// GopherCon UK 2026.
+// GoLab 2026.
 //
 // This file demonstrates dead-code elimination (DCE) and
 // constant folding silently gutting benchmark loops.

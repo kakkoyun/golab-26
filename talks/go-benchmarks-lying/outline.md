@@ -1,7 +1,7 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
-> **Format:** 60 minutes presented, Q&A opportunistic · advanced Go audience
-> **Deck:** `slides/presentation.md` (129 pages, including progressive-reveal steps)
+> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
+> **Deck:** `slides/presentation.md` (105 pages, including progressive-reveal steps)
 > **Demonstrations:** no live demos; every command and captured result stays in the repository
 
 ## Thesis
@@ -28,49 +28,33 @@ Microbenchmarks usually fail **representative**. Macrobenchmarks usually fail
 
 ## Timing baseline
 
-Dry run 2 was measured against wall-clock timestamps: 10:13 start, slide 60 at
-10:44. That is ~31 minutes to the war story and ~38-40 minutes for the whole
-original 76-slide deck — roughly **2 slides per minute**.
+GoLab gives the talk a 45-minute slot. The target is 38 minutes presented and
+7 minutes of Q&A.
 
-The earlier claim of 66 minutes in this file and in `speaker-notes.md` was an
-estimate that the rehearsal disproved. It has been removed. Plan against
-measured pace, not the estimate.
+By the model below, the GopherCon UK script held about 53 minutes of spoken material at 129 pages. The GoLab cut removes 24 pages and about 1,400 SAY words. The prose pass removes 330 more. The cut keeps the
+basics and both incidents, because GoLab lists the talk as Intermediate. It
+removes the mechanism explainers and the advanced side paths.
 
-Physical page count is no longer a good time proxy, because progressive reveals
-now spend several pages on one idea. Budget by section.
-
-> **Note.** The running order changed (WHY first, OPERA third) and a basics
-> section was added, so the 60-minute target now covers the expanded content.
-> The per-section targets above are a construction from section content, not a
-> measurement — a timed read-through is still outstanding (see `TODO.md`).
+The times below are a word-count model: SAY words at 130 words per minute, plus
+25% for reveals, pauses, and visuals. Three earlier timing estimates in this repository were wrong. A timed read-through must replace this model before
+delivery (see `TODO.md`).
 
 ## Beat sheet
 
 | Part | Section | Purpose | Target | Cumulative |
 | --- | --- | --- | ---: | ---: |
-| 1 | **01 Why Benchmark?** | Is it slow, could it go faster, is it worth it; latency/throughput, cost of slowness, Lütke; further watching | 6:00 | 6:00 |
-| 1 | **02 Why I Care** | How I got here, why Datadog cares, SpeedLab, FOSDEM prior work | 3:00 | 9:00 |
-| 1 | **03 A Loose Cable** | OPERA, the three questions, the two-scales roadmap | 4:00 | 13:00 |
-| 1 | **04 Before You Measure** | Representative + repeatable, micro vs macro, when to use which, start macro | 4:00 | 17:00 |
-| 1 | **05 Benchmarking, Quickly** | Write, run, read, profile, read compiler output — shared vocabulary | 5:00 | 22:00 |
-| 2 | **06–10 Arc 1 — local and micro** | bot-comment plant · compiler honesty · timers and `B.Loop` · keepalive mechanism · code layout and Berger · statistics · local environment · recap | 17:30 | 39:30 |
-| 3 | **11–15 Arc 2 — CI and macro** | #643 opener · macro design · SMT and DFS · change-point detection · upstream Go dashboard and baseline · CI patterns · presubmit/postsubmit · SlowBots · false-positive ledger · recap | 16:00 | 55:30 |
-| 4 | **16 Wire It Up** | Three CLIs, punchline, minimum discipline, 3×2 recap, CTA | 4:00 | 59:30 |
+| 1 | **01 Why Benchmark?** | Is it slow, could it go faster, is it worth it. Latency and throughput, cost of slowness, Martí | 3:30 | 3:30 |
+| 1 | **02 Why I Care** | How I got here, why Datadog cares | 1:00 | 4:30 |
+| 1 | **03 A Loose Cable** | OPERA, the three questions, the two-scales roadmap | 2:30 | 7:00 |
+| 1 | **04 Before You Measure** | Representative and repeatable, micro vs macro, start macro | 1:15 | 8:15 |
+| 1 | **05 Benchmarking, Quickly** | Write, run, read, profile, read compiler output | 2:30 | 10:45 |
+| 2 | **06–10 Local and micro** | Bot-comment plant, DCE, constant folding, timers, `b.Loop`, code layout, statistics, local environment, recap | 12:00 | 22:45 |
+| 3 | **11–15 CI and macro** | #643 opener, macro design, SMT and DFS impact, change-point detection, baseline, CI patterns, false-positive ledger, recap | 10:45 | 33:30 |
+| 4 | **16 Wire It Up** | Three CLIs, `benchenv`, minimum discipline, 3×2 recap, take-home | 2:30 | 36:00 |
 
-**Rehearsal checkpoints:** §05 by 17:00 · arc 1 (§06) by 22:00 · arc 2
-(§11) by 39:30 · close (§16) by 55:30 · finish by 59:30. If arc 2 has not
-started by 40:00, apply the cut ladder live.
+The model total is 36:00 for 3,756 SAY words. The remaining 2 minutes to 38:00 are buffer.
 
-> **The slack is gone, and delivery was too dense.** The first delivery ran at
-> 127 pages and the feedback was that it was hard to digest. The response was a
-> deliberate trade rather than more content: three memes in, three slides out.
-> The memes are ten-second beats with a `DO` cue saying so; the slides they
-> replaced were a minute each, so the deck is page-neutral at 129 and about two
-> minutes *cheaper* than before, with three places for the room to breathe.
->
-> The cut ladder below is still expected rather than contingency. Do not spend
-> the memes to buy time back: they are the pacing, and cutting them recreates the
-> problem they were added to fix.
+**Rehearsal checkpoints:** §05 by 8:15 · §06 by 10:45 · §11 by 22:45 · §16 by 33:30 · finish by 36:00. If §11 has not started by 25:00, apply the cut ladder live.
 
 ## Narrative order
 
@@ -124,34 +108,30 @@ noise, and a shared runner cannot be fixed with more samples.
 
 ## Cut ladder
 
-Apply in this order if the timed read-through runs long.
+The GoLab cut already removed most of the previous ladder. It removed "what a macro gate
+needs at scale", "Go runs this on Go", "Seeing the hardware", "How the
+keepalive works", the macro traps, and the SMT and DFS mechanism slides. It
+also removed the observer effect, escape analysis, `make asm-dce`, inlining,
+`StopTimer` with no `StartTimer`, causal profiling, the Linux toolbox,
+`perflock`, the existing-tools table, and the `honestbench` and `benchgate`
+panels. The script and the ledger still hold that material for a longer slot.
 
-Rungs 1, 4 and 10 of the previous ladder have already been spent: "Upstream
-splits it the same way", the feedback-loop diagram, and the "Inlining decisions"
-`-m -m` slide were removed to pay for the memes. What is left:
+Apply in this order if the timed read-through runs long:
 
-1. The "what a macro gate needs at scale" slide (−1:00)
-2. "Go runs this on Go", keeping "Why a baseline, not a pair" (−0:45) — the
-   quote is the load-bearing half; the dashboard screenshot is corroboration.
-3. "Seeing the hardware" (−0:30) — a pointer to `perfgo`, not an argument the
-   talk depends on; the observer-effect slide before it already makes the point
-   that `ns/op` cannot see a cache miss.
-4. "How the keepalive works" (−1:00) — the `b.Loop` table already carries the
-   actionable advice; this slide is the why-it-works footnote.
-5. Coordinated omission and deterministic inputs, folded to one line (−1:30)
-6. The SMT and DFS *mechanism* explainer slides, keeping the impact data (−1:30)
-7. The benchmarking-basics "Reading the output" slide, keeping the rest of §05
-   (−1:00) — last resort. Removing an explanation does not fix density, and
-   §07 leans on `ns/op` and `allocs/op` being already defined.
+1. "Why SMT breaks benchmarks" and "Why DFS breaks benchmarks" (−1:00). Keep
+   the impact data and the three sysfs writes.
+2. "Finding what to optimize" (−0:20). The Martí link stays on the closing
+   slide.
+3. "The two-variable sink" (−0:25). `b.Loop` is the fix the talk recommends.
+4. "Constant folding" (−0:15).
+5. "Reading compiler output" (−0:30). Last resort, because §07 uses the
+   compiler output vocabulary.
 
 **Never cut without review:** either opening incident, the DCE captured
 evidence, the local CV experiment, the macOS caveat, the SMT and DFS impact
-data, the 3×2 recap, the Datadog rationale, "Why not just add more runners?"
-(it answers the objection the CI half always draws, in upstream's own words), the
-observer effect (it generalises §07 from "the compiler is not neutral" to "your
-harness is not neutral either", which is what earns the second half), or **any of
-the three memes** (they are the fix for the density complaint from delivery one,
-and they cost ten seconds each).
+data, the 3×2 recap, the Datadog rationale, "Why not just add more runners?",
+the §05 basics, or **any of the three memes**. The memes cost ten seconds each.
+They are the fix for the density complaint from the first delivery.
 
 ## Public results and sources to preserve
 
@@ -178,7 +158,7 @@ version back, that row has to move to `verified` first.
 
 ## Audience resources
 
-- Talk repository: <https://github.com/kakkoyun/gopherconuk-26>
+- Talk repository: <https://github.com/kakkoyun/golab-26>
 - Benchmark tools and skills: <https://github.com/kakkoyun/benchlab>
 - Binaries: `go install github.com/kakkoyun/benchlab/cmd/...@latest`
 - Agent Skills: `npx skills add kakkoyun/benchlab --all`

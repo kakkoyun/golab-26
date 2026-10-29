@@ -1,7 +1,7 @@
 # Research: Without a Single Line
 
 > **Talk:** "How to Instrument Go Without Changing a Single Line of Code"
-> GopherCon UK 2026 — 30-min keynote (advanced)
+> GoLab 2026 — 45-minute slot: 38 minutes presented, 7 minutes Q&A (intermediate)
 
 ## Reading order
 
@@ -14,6 +14,9 @@
 | `05-benchmarking.md` | Deferred benchmark methodology; no public overhead comparison without data | Future standalone experiment |
 | `06-runtime-futures.md` | Go runtime futures — #63185, #69887, #67120, hook-gap bugs | Post 6: "Go runtime futures: flight recording, USDT, and hook proposals" |
 | `07-usdt.md` | USDT for Go — Salp, libbpf/usdt, libstapsdt, Polar Signals | Post 6 (continued) |
+| `08-ebpf-primer.md` | eBPF, uprobes, and USDT from first principles; the GoLab primer sequence and visuals | GoLab deck §02 |
+| `09-process-start-injection.md` | ld.so and LD_PRELOAD, why static Go has no loader, OTel injector, Datadog SSI, cgo without a C toolchain (#81450, #81662) | GoLab deck §05 and §09 |
+| `10-live-debugger.md` | Live Debugger for Go: public status, line-to-PC mechanics, limits, redaction, other ways | GoLab deck §07 |
 
 ## Key files
 

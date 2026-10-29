@@ -1,13 +1,13 @@
 ---
 marp: true
-theme: gophercon-datadog-minimal
-# fragment-floor: 60. `*` is the ONLY list marker allowed on slides. Every list
+theme: golab
+# fragment-floor: 45. `*` is the ONLY list marker allowed on slides. Every list
 # is an intentional Marp reveal; a `-` bullet here is a bug. `make check/fragments`
 # guards the count against formatters that rewrite markers.
 math: mathjax
 html: true
 paginate: true
-header: "Why Your Go Benchmarks Are Lying · GopherCon UK 2026"
+header: "Why Your Go Benchmarks Are Lying · GoLab 2026"
 footer: " "
 style: |
   .columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -30,7 +30,7 @@ style: |
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
-##### GopherCon UK · 2026
+##### GoLab · 2026
 
 # Why Your Go Benchmarks Are Lying
 
@@ -180,15 +180,6 @@ Operations per second.
 
 ---
 
-<!-- _class: vcenter -->
-
-> "Not all fast software is world-class,
-> but all world-class software is fast."
-
-Tobi Lütke · [X, 5 May 2024](https://x.com/tobi/status/1787139157078188180)
-
----
-
 ## Finding what to optimize
 
 <div class="columns">
@@ -205,28 +196,6 @@ This talk covers *whether you can trust the number*.
 <div class="center">
 
 ![width:480](../assets/gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png)
-
-</div>
-</div>
-
----
-
-## Finding what is worth optimizing
-
-<div class="columns">
-<div>
-
-[**Performance Matters**](https://www.youtube.com/watch?v=r-TLSBdHe1A)
-Emery Berger · Strange Loop 2019
-
-The component that *looks* hot
-is not always the one
-holding wall time.
-
-</div>
-<div class="center">
-
-![width:480](../assets/strangeloop19_emery_berger_performance_matters.png)
 
 </div>
 </div>
@@ -283,30 +252,6 @@ from PGO alone.
 </div>
 
 ### Overhead is product correctness
-
----
-
-## This talk builds on
-
-<div class="columns">
-<div>
-
-[**How to Reliably Measure Software Performance**](https://youtu.be/8211fNI_nc4)
-Kemal Akkoyun & Augusto de Oliveira
-FOSDEM 2026
-
-The SMT and DFS data later in this talk
-comes from this earlier version.
-
-<span class="small">simultaneous multithreading · dynamic frequency scaling</span>
-
-</div>
-<div class="center">
-
-![width:480](../assets/fosdem26_ka_how_to_reliabliy_measure_performance.png)
-
-</div>
-</div>
 
 ---
 
@@ -494,22 +439,6 @@ Risk: **cause is unclear**
 <br>
 
 *Both. They fail differently.*
-
----
-
-## When to use which
-
-<div class="centered-table">
-
-| Use case | Type |
-| --- | --- |
-| Comparing algorithms | Micro |
-| Validating an optimization | Micro |
-| Regression detection | Both |
-| Capacity planning | Macro |
-| User-facing latency | Macro |
-
-</div>
 
 ---
 
@@ -812,24 +741,6 @@ func BenchmarkMakeBuffer_Correct(b *testing.B) {
 
 ---
 
-## Escape analysis
-
-###### gcflags-m-m.txt
-
-```text
-dce:46:13: make([]byte, 64) does not escape
-dce:59:17: make([]byte, 64) escapes to heap
-dce:59:17:   flow: {heap} ← s:
-dce:59:17:     from sink = s (assign) at dce:61:7
-```
-
-* Discarded → `does not escape` → eliminable
-* Sunk → `escapes to heap` → the allocation must happen
-
-`-m -m` shows the flow that decides.
-
----
-
 ## Constant folding
 
 ###### dce_bench_test.go
@@ -845,57 +756,6 @@ Evaluated at compile time.
 You benchmarked a **constant load**.
 
 </div>
-
----
-
-## `make asm-dce`
-
-<div class="columns">
-<div>
-
-###### dce_bench_test.go
-
-```asm
-MOVD  $3, R2
-```
-
-</div>
-<div>
-
-###### dce_bench_test.go
-
-```asm
-MOVD    onesInput(SB), R3
-VCNT    V0.B8, V0.B8
-VUADDLV V0.B8, V0
-```
-
-</div>
-</div>
-
-<div class="center">
-
-Route inputs through a **package-level variable**.
-
-</div>
-
----
-
-## Inlining feeds DCE
-
-```bash
-go build -gcflags='-m'   # "can inline X"
-```
-
-<div class="center big">
-
-Non-constant input **and** captured result.
-
-Either alone is not enough.
-
-</div>
-
-<span class="chip caution">TEST-ONLY</span> `//go:noinline` is a diagnostic.
 
 ---
 
@@ -959,20 +819,6 @@ A benchmark measuring the wrong thing looks like good news.
 
 ---
 
-<!-- _class: vcenter -->
-
-## `StopTimer` with no `StartTimer`
-
-<div class="center big">
-
-Duration never accumulates.
-
-`b.N` doubles. Forever.
-
-</div>
-
----
-
 ## `b.Loop()` · Go 1.24
 
 ###### bloop_bench_test.go
@@ -1013,63 +859,6 @@ Proposal #61515 · Austin Clements
 <div class="center">
 
 Must be written literally as `b.Loop()`.
-
-</div>
-
----
-
-## How the keepalive works
-
-<span class="small">cmd/compile/internal/bloop</span>
-
-* Call arguments, results, and assigned variables are kept alive inside the loop
-* **Go 1.24 and 1.25** did that by *suppressing inlining* in the loop body
-* Cost: benchmarks could heap-allocate where production code would not
-* **Go 1.26** keeps the protection and allows inlining again
-
-<div class="center">
-
-The thing protecting your measurement is **also code that can be wrong**.
-
-</div>
-
----
-
-## The observer effect
-
-<span class="small">summing the first 8 columns of an int64 matrix</span>
-
-<div class="centered-table">
-
-| | reused matrix | fresh matrix |
-| --- | --- | --- |
-| 512 columns | 15073 ns/op | 33547 ns/op |
-| 513 columns | <span class="hl-blue">7358 ns/op</span> | 35507 ns/op |
-
-</div>
-
-<div class="center">
-
-Reuse the input and 513 looks **50% faster**.
-Build it fresh and the gap is **gone**.
-
-<span class="small">Teiva Harsanyi · [P99 CONF](https://p99conf.io/2023/08/16/how-to-write-accurate-benchmarks-in-go/) · *100 Go Mistakes* #91</span>
-
-</div>
-
----
-
-## Seeing the hardware
-
-<span class="small">[perfgo](https://github.com/perfgo/perfgo) · Linux `perf` + CPU PMU counters</span>
-
-* Runs your Go benchmark while collecting hardware counters
-* Event-based profiles: **cache-miss hotspots**, not just wall time
-* `cache-to-cache` flags line transfers, a false-sharing tell
-
-<div class="center">
-
-`ns/op` tells you *how long*. Counters tell you **why**.
 
 </div>
 
@@ -1167,36 +956,6 @@ performance **±10%**.
 ![width:420](../assets/strangeloop19_emery_berger_performance_matters.png)
 
 </div>
-</div>
-
----
-
-## Causal profiling
-
-<div class="columns">
-<div>
-
-### A flat profile says
-
-`encode` is 30% of CPU.
-
-</div>
-<div>
-
-### Causal profiling says
-
-`encode` 20% faster
-→ end-to-end **2%**.
-
-</div>
-</div>
-
-<br>
-
-<div class="center">
-
-Virtual speedup: *what if this part got faster?*
-
 </div>
 
 ---
@@ -1414,39 +1173,6 @@ Bare-metal Linux, SMT off: **~0.05%**
 <div class="center">
 
 **Get:** isolation from neighbours. **Don't get:** controlled hardware.
-
-</div>
-
----
-
-## The Linux toolbox
-
-<div class="centered-table">
-
-| Control | Command |
-| --- | --- |
-| Affinity | `taskset -c 0` |
-| Core isolation | `isolcpus`, `cset shield` |
-| Priority | `nice -n -5`, `chrt -f` |
-| Frequency lock | `perflock` |
-
-</div>
-
----
-
-## "Is there a Go tool for this?"
-
-```bash
-perflock go test -bench=. -count=10 ./...
-```
-
-* Serialises runs so two never overlap
-* Writes `scaling_min_freq` / `scaling_max_freq`
-
-<div class="center">
-
-**macOS:** the lock works. Frequency pinning does not.
-Default `-governor 90` errors. Pass `-governor=none`.
 
 </div>
 
@@ -1683,50 +1409,6 @@ Micro gates compare commits. Macro gates compare against a **budget**.
 
 ---
 
-## What a macro gate needs at scale
-
-* Dedicated hardware, not shared runners
-* A budget per component
-* Several archetypes, not one workload
-* Gate the release, not only the PR
-
-<div class="center">
-
-Code inside someone else's process → overhead is a **customer-visible defect**.
-
-</div>
-
----
-
-## Two macro traps
-
-<div class="columns">
-<div>
-
-### Coordinated omission
-
-The system falls behind.
-
-The generator stops issuing.
-
-**p99 improves because you
-measured less.**
-
-</div>
-<div>
-
-### Non-deterministic input
-
-Random fixtures. Live deps.
-
-**The input moved too, so
-you can't attribute a delta.**
-
-</div>
-</div>
-
----
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -1760,38 +1442,6 @@ An **environment** problem, not a statistics problem.
 
 ---
 
-## What SMT actually is
-
-<span class="small">Simultaneous multithreading</span>
-
-<div class="columns">
-<div>
-
-### The bet
-
-Two threads share one core.
-
-Most code stalls on memory,
-so fill the idle slots.
-
-Good for throughput.
-
-</div>
-<div>
-
-### The cost
-
-Two CPU-bound threads
-**fight for the same units**.
-
-Your runtime depends on an
-invisible co-tenant.
-
-</div>
-</div>
-
----
-
 ## Why SMT breaks benchmarks
 
 * A core has fixed execution units: ALUs, FPUs, load/store
@@ -1803,19 +1453,6 @@ invisible co-tenant.
 <div class="center">
 
 Same code. Same core. Different **share** each run.
-
-</div>
-
----
-
-## What's the impact of disabling SMT?
-
-<div class="center">
-
-bare metal, DFS disabled
-**2 CPU-bound tasks, <span class="hl-blue">same core</span> vs <span class="hl-orange">separate cores</span>**
-
-![width:520](../assets/environment-control-smt-experiment.svg)
 
 </div>
 
@@ -1845,34 +1482,6 @@ bare metal, DFS disabled
 
 **~100× less variance**, and twice as fast.
 
-</div>
-
----
-
-## What DFS is
-
-<span class="small">Dynamic frequency scaling</span>
-
-<div class="columns">
-<div>
-
-### Governors
-
-The kernel picks a clock:
-`powersave`, `performance`,
-`schedutil`.
-
-</div>
-<div>
-
-### Why it ruins runs
-
-Run 1 boosts.
-Run 20 is warm and throttles.
-
-Same code, different clock.
-
-</div>
 </div>
 
 ---
@@ -1943,18 +1552,6 @@ The write may **succeed
 and be ignored**.
 
 </div>
-</div>
-
----
-
-## Noise goes all the way down
-
-<div class="center">
-
-![width:720](../assets/brendan-gregg-shouting-at-datacenter.png)
-
-**Don't shout in the datacenter.** · [Brendan Gregg](https://www.youtube.com/watch?v=tDacjrSCeq4)
-
 </div>
 
 ---
@@ -2048,22 +1645,6 @@ Netflix, at scale
 
 ---
 
-## Go runs this on Go
-
-<div class="center">
-
-![width:940](../assets/golang_perf_dashboard_charts.png)
-
-</div>
-
-<div class="small center">
-
-[perf.golang.org/dashboard](https://perf.golang.org/dashboard/) · every commit · per builder shape · 95% confidence interval
-
-</div>
-
----
-
 ## Why a baseline, not a pair
 
 <div class="small">
@@ -2147,23 +1728,6 @@ Performance needs the **scarce** machine.
 
 ---
 
-## Existing tools
-
-<div class="centered-table">
-
-| Tool | Fit |
-| --- | --- |
-| [**bencher.dev**](https://bencher.dev) | Hosted, Go-native, PR comments |
-| [**github-action-benchmark**](https://github.com/benchmark-action/github-action-benchmark) | Simple first gate, threshold only |
-| [**Apache Otava**](https://otava.apache.org) | Change-point detection |
-| [**gobenchdata**](https://github.com/bobheadxi/gobenchdata) | GitHub Pages dashboards |
-| [**CodSpeed**](https://codspeed.io/docs/benchmarks/go) | Hosted; Go is walltime-only |
-| [**prombench**](https://github.com/prometheus/test-infra) | Macro E2E on dedicated nodes |
-
-</div>
-
----
-
 ## Keep a ledger of false positives
 
 <div class="small">
@@ -2225,49 +1789,6 @@ benchenv                                          # env diagnosis
 go install github.com/kakkoyun/benchlab/cmd/...@latest   # all three
 npx skills add kakkoyun/benchlab --all                    # agent skills
 ```
-
----
-
-## `honestbench`
-
-###### benchlab
-
-```text
-dce_bench_test.go:46:3: high: discarded-result:
-    call to makeBuffer() result is discarded;
-    compiler may eliminate this call via DCE
-
-timer_bench_test.go:80:3: high: stoptimer-without-starttimer:
-    b.StartTimer() called after the work under test
-
-17 findings (2 high, 4 medium, 11 info) across 12 functions
-```
-
-<div class="center">
-
-AST analysis. **Nothing has to run.**
-
-</div>
-
----
-
-## `benchgate`
-
-###### benchlab
-
-```text
-# threshold 5%   → FAIL
-BenchmarkMakeBuffer_Correct  mean=11.8 ns/op  cv=5.2%  ✗
-
-# threshold 8%   → PASS
-BenchmarkMakeBuffer_Correct  mean=11.1 ns/op  cv=2.2%  ✓
-```
-
-<div class="center">
-
-Catches a noisy machine **before** the number reaches a PR comment.
-
-</div>
 
 ---
 
@@ -2357,14 +1878,14 @@ A shared runner cannot be fixed with more samples.
 
 `honestbench` · `benchgate` · `benchenv` · Agent Skills
 
-[Talk repo, decks, captured results](https://github.com/kakkoyun/gopherconuk-26)
+[Talk repo, decks, captured results](https://github.com/kakkoyun/golab-26)
 
 [Earlier FOSDEM version](https://youtu.be/8211fNI_nc4)
 
 </div>
 <div class="center">
 
-![w:250](../../assets/gopherconuk-26-repo-qr.png)
+![w:250](../../assets/golab-26-repo-qr.png)
 
 **Scan for the talk repo**
 
@@ -2382,4 +1903,4 @@ A shared runner cannot be fixed with more samples.
 
 [linkedin.com/in/kakkoyun](https://www.linkedin.com/in/kakkoyun/) · [bsky.app/profile/kakkoyun.me](https://bsky.app/profile/kakkoyun.me) · [x.com/kakkoyun_me](https://x.com/kakkoyun_me)
 
-<span class="small">Talk repo [github.com/kakkoyun/gopherconuk-26](https://github.com/kakkoyun/gopherconuk-26) · Tools [github.com/kakkoyun/benchlab](https://github.com/kakkoyun/benchlab)</span>
+<span class="small">Talk repo [github.com/kakkoyun/golab-26](https://github.com/kakkoyun/golab-26) · Tools [github.com/kakkoyun/benchlab](https://github.com/kakkoyun/benchlab)</span>
