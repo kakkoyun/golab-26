@@ -132,8 +132,11 @@ has the framework.
 
 - OBI supports Linux amd64 and arm64, kernel 5.8+ with BTF, plus documented
   RHEL-family backports.
-- OBI trace-log correlation enriches selected JSON logs and does not export
-  them.
+- OBI v1.0.0 (30 Oct 2026) is a stable core, not a stable everything. The Go
+  module API, the Collector receiver, and gRPC telemetry are outside the v1
+  contract.
+- OBI trace-log correlation enriches selected JSON and plain-text logs and
+  does not export them.
 - OBI's support matrix documents 13 Go library baselines, including
   gin >= v1.6.0, != v1.7.5 and github.com/redis/go-redis/v9 >= v9.0.0.
 - Privileges vary by feature. Do not present one capability list as universal.

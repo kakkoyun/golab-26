@@ -213,6 +213,7 @@ Runtime injection is useful, but Go's default static binary leaves less surface 
 | Jan 2025 | Alibaba, Datadog, and Quesma form the Go compile-time SIG |
 | 2025 | Beyla becomes OpenTelemetry eBPF Instrumentation |
 | Jul 2026 | `otelc` v1 becomes stable |
+| Oct 2026 | OBI v1.0.0 ships a stable core |
 
 The projects did not collapse into one agent. They learned to compose.
 
@@ -428,6 +429,15 @@ go tool usdt list ./...
 
 ---
 
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+## OBI *v1.0.0* shipped
+
+### 30 October. Three days ago.
+
+---
+
 ## OpenTelemetry eBPF Instrumentation
 
 **OBI** is the upstream successor to Grafana Beyla, donated to OpenTelemetry in 2025.
@@ -439,7 +449,7 @@ go tool usdt list ./...
 
 <br>
 
-<span class="chip caution">v0: breaking changes are still possible</span>
+<span class="chip note">v1.0.0, 30 Oct 2026: stable core</span> <span class="chip caution">Go module API and gRPC telemetry not yet stable</span>
 
 ---
 
@@ -499,7 +509,7 @@ Probe sites give events. Correlation turns them into spans.
 
 <div class="tiny">
 
-`gin >= v1.6.0, != v1.7.5` · `redis/go-redis/v9 >= v9.0.0` · [OBI support matrix](https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/main/SUPPORT_MATRIX.md)
+`gin >= v1.6.0, != v1.7.5` · `redis/go-redis/v9 >= v9.0.0` · [OBI v1.0.0 support matrix](https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/SUPPORT_MATRIX.md)
 
 </div>
 
@@ -523,7 +533,7 @@ RED and runtime metrics
 
 ### Log correlation
 
-OBI can enrich selected **JSON logs** with `trace_id` and `span_id` while a span is active.
+OBI can enrich selected **JSON and plain-text logs** with `trace_id` and `span_id` while a span is active.
 
 It leaves log shipping to your existing pipeline. It is not a log exporter.
 
@@ -532,7 +542,8 @@ It leaves log shipping to your existing pipeline. It is not a log exporter.
 
 <div class="tiny">
 
-[OpenTelemetry: OBI trace-log correlation](https://opentelemetry.io/docs/zero-code/obi/trace-log-correlation/)
+v1 stable: HTTP and SQL spans and duration metrics. gRPC: release candidate. Go runtime metrics: development.<br>
+[OpenTelemetry: OBI trace-log correlation](https://opentelemetry.io/docs/zero-code/obi/trace-log-correlation/) · [OBI v1.0.0 telemetry contract](https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/TELEMETRY.md)
 
 </div>
 
@@ -577,7 +588,7 @@ It leaves log shipping to your existing pipeline. It is not a log exporter.
 - HTTP and gRPC spans
 - RED and runtime metrics
 - Supported library operations
-- JSON log correlation
+- Log correlation
 
 </div>
 <div>
@@ -591,6 +602,12 @@ It leaves log shipping to your existing pipeline. It is not a log exporter.
 - Custom sampling decisions
 
 </div>
+</div>
+
+<div class="tiny">
+
+Go spans you write with `otel.Tracer` and no SDK: OBI can export them through the Auto SDK. It needs `CAP_SYS_ADMIN`.
+
 </div>
 
 ---

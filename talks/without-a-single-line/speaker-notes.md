@@ -465,6 +465,23 @@ Section bridge. Name the trade-off in one sentence.
 
 ---
 
+## OBI v1.0.0 shipped / 30 October. Three days ago.
+
+**SAY**
+
+And some news before we start. OBI v1.0.0 shipped on the thirtieth of
+October. Three days before this talk. Congratulations to the OBI maintainers
+and contributors.
+
+**DO**
+
+Celebrate it. Smile, pause, let the room clap if it wants to. Ten seconds,
+no more. Do not explain "stable" here: the next slide does that. Do not name
+maintainers. If the talk moves off 2 November, change "Three days ago" on
+the slide.
+
+---
+
 ## OpenTelemetry eBPF Instrumentation
 
 **SAY**
@@ -475,11 +492,16 @@ OBI is the upstream successor to Grafana Beyla, donated to OpenTelemetry in
 One DaemonSet can observe a mixed-language node. Network protocols give broad
 coverage. Go-specific uprobes add library-level detail.
 
-It is still v0. Breaking changes are possible.
+What does v1 mean here? A stable core: the configuration, the command line,
+the images, and the telemetry marked stable. Not everything. The Go module API is not stable, even with a v1 tag.
+And gRPC telemetry is still a release candidate.
 
 **DO**
 
-Reveal each line. The chip at the bottom is amber: do not ship this as stable.
+Reveal each line. Two chips: teal for the stable core, amber for what is
+outside it. Say "stable core", never "OBI is stable". Do not quote the README:
+at the v1.0.0 tag it still has the old "Development" wording, and the release
+notes say that is a known follow-up.
 
 ---
 
@@ -542,13 +564,18 @@ v1.7.5.
 OBI emits traces and metrics. HTTP, gRPC, database, messaging. RED and runtime
 metrics.
 
-Its log feature enriches selected JSON writes with trace and span IDs while a
-span is active. It leaves log shipping to your existing pipeline. It is not a
-log exporter.
+Its log feature enriches selected JSON and plain-text writes with trace and
+span IDs while a span is active. It leaves log shipping to your existing
+pipeline. It is not a log exporter.
+
+In v1, the stable part is HTTP and SQL: their spans and duration metrics.
+gRPC is a release candidate. Go runtime metrics are still in development.
 
 **DO**
 
 Say explicitly: correlation is log support, but OBI is not a log exporter.
+The stability line is the small print at the bottom. Say it once. It tells
+the room which dashboards are safe to build on.
 
 ---
 
@@ -580,8 +607,10 @@ need SYS_ADMIN because it uses bpf_probe_write_user.
 **DO**
 
 Speak the ladder as four rungs, never as a table. CAP_SYS_PTRACE inspects
-/proc. It does not PTRACE_ATTACH. perf_event_paranoid, Secure Boot, and kernel
-lockdown can remove capabilities even when a manifest looks correct.
+/proc. It does not PTRACE_ATTACH. If asked about perf_event_paranoid: since
+v0.14.0, OBI falls back to tracefs, so most probes attach without SYS_ADMIN.
+The write helper still needs SYS_ADMIN. Secure Boot and kernel lockdown can
+still turn it off even when a manifest looks correct.
 
 ---
 
@@ -590,14 +619,19 @@ lockdown can remove capabilities even when a manifest looks correct.
 **SAY**
 
 OBI can see service boundaries, HTTP and gRPC spans, RED and runtime metrics,
-supported library operations, and JSON log correlation.
+supported library operations, and log correlation.
 
 It cannot infer a tenant ID, a checkout stage, or a domain event unless those
 semantics already cross an instrumented boundary.
 
+One thing moved. If you write a span with otel.Tracer and register no SDK,
+OBI can now export it. You still write the span. You do not need the SDK.
+
 **DO**
 
-This is the boundary slide. The honesty is the point.
+This is the boundary slide. The honesty is the point. The otel.Tracer line
+is the small print: it needs SYS_ADMIN, because OBI writes into the process
+to turn on the Auto SDK.
 
 ---
 
@@ -719,9 +753,13 @@ The projects matured in parallel. Profiling, eBPF instrumentation, and
 compile-time instrumentation did not collapse into one agent. They learned to
 compose.
 
+This year both instrumentation projects reached v1. otelc in July. OBI in
+October.
+
 **DO**
 
-Move quickly. The dates corroborate; they are not the argument.
+Move quickly. The dates corroborate; they are not the argument. Do not
+celebrate OBI here. The OBI section opens with that slide.
 
 ---
 
@@ -1413,11 +1451,17 @@ End with this line. Stop. Let the questions slide stay up.
 
 Answers to likely questions. Keep them bounded.
 
-**OBI roadmap.** The v0.11.0 target and the proposed path to v1.0 are SIG
-proposals, not commitments. v0.11.0 is targeted mid-August, gated on Config v2.
-A proposed path: v0.12 in September, rc1 in October, v1.0.0 target late
-October, before KubeCon NA. All proposed, not committed. Never state the
-October date as a plan of record.
+**Is OBI production ready now?** v1.0.0 shipped on 30 October, after two
+release candidates on 7 and 16 October. The stable contract covers Config v2,
+the CLI and environment variables, binaries and images, telemetry marked
+stable, and the support matrix. Config v1 still works but is frozen. The
+release notes list known limitations: metrics can stay missing after a Pod
+restart until OBI restarts, and a child span can start before its parent.
+Canary it, as the release notes say.
+
+**Can I import OBI as a Go library?** The module tag is v1.0.0, but the
+release notes exclude the Go API from the stable contract. The Collector
+receiver is a separate module, still on v0.15.2.
 
 **Go-Auto sunset.** The slide's claim is about the OpenTelemetry Operator's
 feature gate, not about a Go-Auto project. The claim holds either way. Do not
@@ -1427,10 +1471,12 @@ discuss an Orchestrion sunset.
 retention. You can always use an open-source observability backend and keep
 signals for a shorter time in your local environment.
 
-**OBI custom spans.** RFC work is active. The boundary slide is accurate today:
-zero code changes for standard observability, but use language agents or manual
-instrumentation when you need custom spans, application-specific attributes, or
-business events.
+**OBI custom spans.** In Go, this shipped. Since v0.11.0, OBI can export
+spans written with the global otel.Tracer API when no TracerProvider is
+registered. Since v0.15.2 it also uses the Auto SDK embedded in otel/trace.
+Limits: recognised otel versions only, amd64 or arm64, SYS_ADMIN, no kernel
+lockdown, spans up to 16 KiB. If you register an SDK, OBI defers to it. The
+boundary stays: the business span is still code you write.
 
 **Injector mechanism.** Deferred to next year. The mechanism is deliberately
 undisclosed. Do not add linking model, entry path, or binary-compatibility
@@ -1456,7 +1502,9 @@ The standing line on the ethos slide is small print and is not read aloud.
 | OBI requirements and signals | <https://opentelemetry.io/docs/zero-code/obi/> |
 | OBI capability ladder | <https://opentelemetry.io/docs/zero-code/obi/security/> |
 | OBI trace-log correlation | <https://opentelemetry.io/docs/zero-code/obi/trace-log-correlation/> |
-| OBI Go support matrix | <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/main/SUPPORT_MATRIX.md> |
+| OBI Go support matrix | <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/SUPPORT_MATRIX.md> |
+| OBI v1.0.0 release notes | <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/releases/tag/v1.0.0> |
+| OBI v1.0.0 telemetry contract | <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/TELEMETRY.md> |
 | uprobe performance pitfalls | <https://fosdem.org/2026/schedule/event/H3LM7G-performance_and_reliability_pitfalls_of_ebpf/> |
 | RCU-protected uprobe hot path | <https://lists.openwall.net/linux-kernel/2024/08/13/142> |
 | Go 1.26 OBI resolver change | <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/pull/1851> |

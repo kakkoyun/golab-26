@@ -6,7 +6,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** 84 pages, 38-minute target, 27 fragment reveals, 9 sections. The
+**State:** 85 pages, 38-minute target, 27 fragment reveals, 9 sections. The
 word-count model gives about 33 minutes plus a 1:25 cuttable anecdote. The
 actual read-through against a clock is still required before delivery.
 
@@ -30,7 +30,14 @@ Count `---` separators minus one to get pages.
 - [ ] **Blocking: re-check golang/go#81450 and #81662 the week of the talk.** The
   slide says the GOEXPERIMENT is accepted and the design is in review. Both can
   change before 2 November 2026.
-- [ ] **Timed read-through.** Read the SAY content aloud at delivery pace against
+- [ ] **Decide: the zeroins OBI catalog is still pinned to v0.10.0.** The
+  take-home slide says "offline OBI v0.10.0 catalog". That is true of zeroins
+  at 4c26da8, so the slide is accurate. But it sits next to a v1.0.0
+  announcement. The Go library table is identical at v0.10.0 and v1.0.0, so a
+  bump in zeroins changes only the pins and the `kubectl-obi` image tag. Either
+  bump zeroins and change the slide, or keep the slide as it is.
+- [ ] **Timed read-through.** The OBI v1.0.0 refresh (2026-11-01) added about
+  100 spoken words, about 40 seconds. Read the SAY content aloud at delivery pace against
   a clock. Record splits at each divider. Write the real number into `outline.md`
   and `speaker-notes.md`. The word-count model is about 33 minutes.
 - [ ] **Diagram legibility pass.** Kroki renders Mermaid at a small native size.
@@ -72,8 +79,15 @@ recorded here.
   section of `speaker-notes.md`, marked cuttable. Not Kemal's incident, not a
   slide. It is the maintenance cost of inferring a layout you did not compile.
 - **Internal claims are speaker-attested ledger rows.** C-050 (Live Debugger),
-  C-051 (injector teaser), C-052 (OBI roadmap), C-053 (Usama talk) follow the
-  C-026 pattern. Not unsourced slide text.
+  C-051 (injector teaser), C-053 (Usama talk) follow the C-026 pattern. Not
+  unsourced slide text. C-052 (OBI roadmap) is superseded by the actual
+  releases.
+- **OBI v1.0.0 is a "stable core", not "stable".** Checked against the
+  v1.0.0 release notes, TELEMETRY.md, and the schema registry on 2026-11-01
+  (C-076 to C-079). The Go module API, the Collector receiver, gRPC telemetry,
+  and Go runtime metrics are outside the v1 contract. Do not quote the README
+  status line: it still says "Development", and the release notes call that
+  wording a known follow-up.
 - **All three screenshots are cropped on purpose.** The two joke screenshots
   are cropped to one identical 16:9 region (image 1 shifted 2px to align
   content). The Usama FOSDEM grab is cropped to title plus poster. The USDT PoC
