@@ -114,6 +114,14 @@
 - **Accessed:** 2026-11-01
 - **Notes:** v0.11.0: Go Trace API spans through the Auto SDK, Config v2, plain-text log correlation. v0.14.0: tracefs fallback, fewer `CAP_SYS_ADMIN` needs. v0.15.2: capture through the Auto SDK embedded in `otel/trace`, Collector receiver split into its own module. Supports C-052, C-078.
 
+### [S-OBI-13] OBI source code and commit history at v1.0.0
+
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/tree/v1.0.0>
+- **Type:** official-repo (code)
+- **Version/tag/SHA:** v1.0.0, d23be0d6b709c7e7047067c7e32c2500deee51dd. History read with `git log v0.10.0..v1.0.0` (959 commits)
+- **Accessed:** 2026-11-01
+- **Notes:** Code checks behind C-011, C-012, C-015, C-076, C-077, C-078: `pkg/obi/os.go` (kernel 5.8 or RHEL 4.18), `pkg/obi/config.go` (plain-text enrichment on by default), `pkg/internal/ebpf/{uprobe,kprobe}` (tracefs fallback), `pkg/ebpf/common/common.go` (`CAP_SYS_ADMIN` and lockdown check), `pkg/internal/goexec/structmembers.go` (Auto SDK allowlist up to `otel` v1.47.0, newer than the docs), `bpf/common/common.h` (16 KiB span limit), `bpf/gotracer/go_common.h` (6 goroutine levels), `pkg/internal/goexec/gofile.go` (Go 1.17 minimum), `configs/offsets/tracker_input.json` (gin `!= v1.7.5` in the generator only), `pkg/export/attributes/metric.go` (stable metric names). Release commit #3972 is the only commit after rc.2. It is not on `main`.
+
 ## Go Runtime Issues & Proposals
 
 <!-- #63185 flight recording, #69887 hook proposal, #67120 runtime/metrics, #75654 #38270 hook-gap bugs -->

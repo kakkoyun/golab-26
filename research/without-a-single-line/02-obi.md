@@ -159,15 +159,33 @@ OBI provides Go-specific **library-level uprobe instrumentation** (distinct from
 | `github.com/IBM/sarama` | >= 1.37 |
 | `go.mongodb.org/mongo-driver` | v1 >= v1.10.1; v2 >= v2.0.1 |
 
-The support matrix is the source of truth. Internal layouts can change even when an import path remains compatible. The table is identical at v0.10.0 and v1.0.0.
+The support matrix is the source of truth. Internal layouts can change even when an import path remains compatible. The table is identical at v0.10.0 and v1.0.0. In code, the gin `!= v1.7.5` exclusion is in the offset generator input only. The runtime does not reject v1.7.5.
+
+### Docs versus code at v1.0.0
+
+Checked against the code and the commit history at `d23be0d6` (S-OBI-13):
+
+| Claim | Docs | Code | Result |
+| --- | --- | --- | --- |
+| Kernel minimum | 5.8, RHEL 4.18 | `pkg/obi/os.go`: 5.8, RHEL 4.18 | Match |
+| Go minimum | 1.17 | `gofile.go`: 1.17 | Match |
+| Plain-text log enrichment | on by default | `config.go`: `PlainText.Enabled: true` | Match |
+| Tracefs fallback | uprobes and kprobes | `tracefs.WithFallback` in both | Match |
+| `CAP_SYS_ADMIN` for Go write helper | 5.10+, plus lockdown `none` | `SupportsContextPropagationWithProbe` | Match |
+| Auto SDK span size | 16 KiB | `k_go_auto_span_json_max_len = 16 * 1024` | Match |
+| Goroutine nesting | 6 levels | `attempts < 6` | Match |
+| Auto SDK `otel` allowlist | up to v1.46.0 | up to v1.47.0 (#3724) | **Docs out of date** |
+| gin `!= v1.7.5` | runtime baseline | generator input only | **Docs stricter than code** |
+| rc.2 to v1.0.0 "unchanged" | release notes | one commit, schema URL and Collector `go.mod` | Match |
+| v1.0.0 on `main` | not stated | release line off rc.2, not on `main` | **Note** |
 
 ### Go Trace API spans without an SDK (since v0.11.0)
 
 OBI can export spans that the application writes with the global `otel.Tracer` API when no
 `TracerProvider` is registered. It activates the OpenTelemetry Go Auto SDK in the target process.
 Since v0.15.2 this also works through the Auto SDK embedded in `go.opentelemetry.io/otel/trace`.
-Requirements (C-078): recognised `otel` and `otel/trace` versions (v1.35.0 to v1.46.0 for the
-embedded path), amd64 or arm64, `CAP_SYS_ADMIN`, and kernel lockdown `[none]` on Linux 5.10+. Spans
+Requirements (C-078): recognised `otel` and `otel/trace` versions (v1.35.0 to v1.47.0 for the
+embedded path, read from the code allowlist. The support matrix still says v1.46.0), amd64 or arm64, `CAP_SYS_ADMIN`, and kernel lockdown `[none]` on Linux 5.10+. Spans
 over 16 KiB encoded are dropped without a warning. If the application registers an SDK, OBI defers
 to it.
 
