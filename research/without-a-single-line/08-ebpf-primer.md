@@ -121,6 +121,8 @@ All entries below were accessed **2026-10-29**. This date applies to every URL w
 
 OBI pin: **v0.10.0**, tree commit **4a4dc7ecdb2aeba6791d02fbebb5048c0f0c1261**. This report uses the deck's existing version for mechanism research. It does not claim that this is the latest release.
 
+Re-check at **v1.0.0**, commit **d23be0d6b709c7e7047067c7e32c2500deee51dd**, on 2026-11-01: all files linked in S10 to S12 exist at the v1.0.0 tag. The mechanisms are unchanged: RET-offset collection in `instructions_amd64.go`, the PID plus goroutine key in `go_addr_key.h`, DWARF first and then `offsets.json` in `structmembers.go`, and the `runtime.moduledata` text-base resolver in `instructions.go`. The v0.10.0 links stay valid as pinned evidence.
+
 - <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v0.10.0/pkg/internal/goexec/instructions.go>.
 - <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v0.10.0/pkg/internal/goexec/instructions_amd64.go#L25-L48>.
 - <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v0.10.0/pkg/internal/ebpf/gotracer/gotracer.go#L495-L650>.

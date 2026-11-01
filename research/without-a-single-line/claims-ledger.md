@@ -66,31 +66,31 @@
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04, S-OBI-06, S-OBI-07
-- **Notes:** Baseline platform support is Linux 5.8+ with BTF, or documented RHEL-family 4.18+ backports. Network flow capture, application observability, context propagation, and Go library propagation require different capabilities. Do not publish one fixed list as universal. `CAP_SYS_ADMIN` may be required for Go propagation or restrictive `perf_event_paranoid` settings.
+- **Notes:** Baseline platform support is Linux 5.8+ with BTF, or documented RHEL-family 4.18+ backports. Network flow capture, application observability, context propagation, and Go library propagation require different capabilities. Do not publish one fixed list as universal. Re-verified at v1.0.0 on 2026-11-01: platform rows unchanged. Correction: since v0.14.0, OBI falls back to tracefs when a restrictive `perf_event_paranoid` blocks PMU access, so most probe attachment no longer needs `CAP_SYS_ADMIN`. `CAP_SYS_ADMIN` is still needed for features that use `bpf_probe_write_user()`: library-level Go context propagation and Go Trace API span capture (C-078). Do not say that `perf_event_paranoid` forces `CAP_SYS_ADMIN`.
 
 ### [C-012] OBI is language-agnostic at network-protocol level; also provides Go-specific library uprobes for 13 libraries
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04, S-OBI-06
-- **Notes:** Language-agnostic: Go, Java (JDK 8+), .NET, Node.js, Python, Ruby, C, C++, Rust, GenAI SDKs. Go-specific uprobe support for 13 named libraries (net/http, gin, gRPC, gorilla/mux, go-redis, Kafka, database/sql, etc.). See SUPPORT_MATRIX.md v0.10.0 for complete list.
+- **Notes:** Language-agnostic: Go, Java (JDK 8+), .NET, Node.js, Python, Ruby, C, C++, Rust, GenAI SDKs. Go-specific uprobe support for 13 named libraries (net/http, gin, gRPC, gorilla/mux, go-redis, Kafka, database/sql, etc.). Re-verified at v1.0.0 on 2026-11-01: the Go library table is identical to v0.10.0 (diffed). Pin the slide link to the v1.0.0 tag.
 
 ### [C-013] OBI current release: v0.10.0 (2026-06-30), Development status (breaking changes expected)
 
-- **Verdict:** CONFIRMED (re-verified 2026-08-13)
-- **Source(s):** S-OBI-03 (pkg.go.dev), S-OBI-04 (README)
-- **Notes:** README: "OBI is currently in Development. Users should expect breaking changes between minor releases while the project remains in v0." No v1.x release exists. Still latest as of 2026-08-13. On-screen pin OBI v0.10.0 holds.
+- **Verdict:** REFUTED (superseded 2026-11-01). Use C-076
+- **Source(s):** S-OBI-03 (pkg.go.dev), S-OBI-04 (README), S-OBI-09, S-OBI-12
+- **Notes:** True until 2026-08-17. OBI then shipped v0.11.0 through v0.15.2 and v1.0.0 on 2026-10-30. The "v0: breaking changes are still possible" chip is wrong now. Trap: the README at the v1.0.0 tag still says "OBI is currently in Development". The v1.0.0 release notes say that this wording is left over from the pre-v1 phase and that the stable-surface declaration applies. Do not quote the README as the current status.
 
 ### [C-014] "Zero code changes" holds for HTTP/gRPC RED metrics and 13 Go library spans; does NOT hold for custom spans, business-logic events, SQL query details
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04 (official docs caveat)
-- **Notes:** Official docs explicitly: "Use language agents or manual instrumentation when you need custom spans, application-specific attributes, business events, or other in-process telemetry." Be precise in the talk: "zero changes for standard observability."
+- **Notes:** Official docs explicitly: "Use language agents or manual instrumentation when you need custom spans, application-specific attributes, business events, or other in-process telemetry." Be precise in the talk: "zero changes for standard observability." Update 2026-11-01: custom spans still need code, but in Go that code no longer needs an SDK. OBI can export spans written with the global `otel.Tracer` API (C-078). The boundary holds: the application still authors the business span.
 
 ### [C-015] OBI can correlate JSON logs with traces by enriching writes with trace and span IDs, but it does not export logs
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-08
-- **Notes:** Enrichment applies to selected JSON logs while a span is active. Plain text is unchanged. Existing log forwarding remains responsible for export. Current docs require Linux 6.0+ for this feature.
+- **Notes:** Corrected 2026-11-01. Enrichment applies to selected JSON and plain-text logs while a span is active. Plain-text enrichment adds `key=value` fields and is on by default for selected services since v0.11.0. The earlier note "Plain text is unchanged" is wrong now. Existing log forwarding remains responsible for export. Current docs require Linux 6.0+, BPFFS, and a kernel without lockdown for this feature.
 
 ### [C-016] Uprobe instrumentation has infrastructure, BPF-program, and compatibility costs even though recent kernels improved hot-path scalability
 
@@ -250,9 +250,9 @@
 
 ### [C-052] OBI roadmap: v0.11.0 targeted mid-August, proposed path to v1.0.0 by late October
 
-- **Verdict:** PLAUSIBLE (SIG proposal, not a commitment)
-- **Source(s):** S-OBI-05 (OBI SIG notes, Aug 12 2026, public, linked from open-telemetry/community)
-- **Notes:** v0.11.0 targeted 18 August, gated on Config v2. A proposed path: v0.12 (Sep 22), rc1 (Oct 5), v1.0.0 target 26 Oct, before KubeCon NA. Channel: `#otel-ebpf-instrumentation`. Proposed, not committed. Script only. Never state the October date as a plan of record.
+- **Verdict:** SUPERSEDED (2026-11-01) by the actual releases. Use C-076 and S-OBI-12
+- **Source(s):** OBI SIG notes, Aug 12 2026, public, linked from open-telemetry/community. The old row cited S-OBI-05, which is the Kubernetes setup page. That citation was wrong. S-OBI-12 has the actual dates
+- **Notes:** Proposed in August: v0.11.0 on 18 Aug, v0.12 on 22 Sep, rc1 on 5 Oct, v1.0.0 on 26 Oct. Actual: v0.11.0 on 17 Aug, v0.12.1 on 20 Aug, v0.13.0 on 4 Sep, v0.14.0 on 2 Oct, v1.0.0-rc.1 on 7 Oct, v1.0.0-rc.2 on 16 Oct, v1.0.0 on 30 Oct. The roadmap is history now. Do not present it as a plan.
 
 ### [C-053] Usama Saqib's FOSDEM 2026 talk covers production eBPF pitfalls at Datadog
 
@@ -294,13 +294,14 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 ### [C-064] Conventional uretprobes are unsafe for Go. OBI attaches ordinary uprobes at RET instructions instead
 
 - **Verdict:** CONFIRMED
-- **Source(s):** 08-ebpf-primer.md S09, S10 (E17, E18, E19), OBI v0.10.0
-- **Notes:** The saved-return-address replacement conflicts with Go stack copying and frame metadata.
+- **Source(s):** 08-ebpf-primer.md S09, S10 (E17, E18, E19), OBI v0.10.0, re-verified at v1.0.0 (d23be0d6)
+- **Notes:** The saved-return-address replacement conflicts with Go stack copying and frame metadata. At v1.0.0, `pkg/internal/goexec/instructions_amd64.go` `FindReturnOffsets` still collects `x86asm.RET` offsets, and `instructions.go` still says that Go linkage prevents uretprobes. `bpf/common/go_addr_key.h` still keys state by PID and goroutine address (C-063).
 
 ### [C-065] OBI reads field offsets from DWARF when present, otherwise from build versions and a prepared offset database
 
 - **Verdict:** CONFIRMED
-- **Source(s):** 08-ebpf-primer.md S12 (E22, E23), OBI v0.10.0
+- **Source(s):** 08-ebpf-primer.md S12 (E22, E23), OBI v0.10.0, re-verified at v1.0.0 (d23be0d6)
+- **Notes:** At v1.0.0, `structmembers.go` still tries DWARF first and falls back to the embedded `offsets.json`. The `runtime.moduledata` resolver from PR #1851 (C-016) is still in `instructions.go`.
 
 ### [C-066] USDT is a NOP plus an ELF note with a name and argument recipe. A tracer attaches an ordinary uprobe at the site. An optional semaphore signals a present tracer
 
@@ -356,3 +357,31 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED (public code), owner review
 - **Source(s):** 10-live-debugger.md, datadog-agent `pkg/dyninst` at fd1f089014df9e80e6949323f7349041deadff5c
 - **Notes:** Mechanism from public code, not a product guarantee. The sequence diagram simplifies the backend-to-system-probe hop, which the public docs do not describe.
+
+---
+
+## OBI v1.0.0 (refresh 2026-11-01)
+
+### [C-076] OBI v1.0.0 (2026-10-30) is the first stable core release. The v1 contract covers Config v2, documented CLI flags, environment variables, binaries and images, stable-classified telemetry, and the support matrix. The Go module API and the Collector receiver are outside it
+
+- **Verdict:** CONFIRMED
+- **Source(s):** S-OBI-09 (v1.0.0 release notes), S-OBI-11 (VERSIONING.md after-v1 rules), S-OBI-03 (Go proxy: `obi@latest` v1.0.0, `obi/collector@latest` v0.15.2)
+- **Notes:** Published 2026-10-30T17:50:30Z, commit d23be0d6. The celebration slide says "30 October. Three days ago." That is true only for delivery on 2026-11-02. Instrumentation is promoted unchanged from v1.0.0-rc.2. Minor releases may add compatible features. Incompatible changes to stable surfaces need v2. Two traps for a Go room: (1) `go.opentelemetry.io/obi@v1.0.0` does not make the exported Go packages stable. The release notes say so explicitly. (2) The Collector receiver is `go.opentelemetry.io/obi/collector` on its own v0 line, at `collector/v0.15.2`. Say "stable core", never "OBI is stable" without the qualifier. Config v1 is frozen: supported, but no fixes or features.
+
+### [C-077] At v1.0.0 the stable telemetry is HTTP server and client spans and duration metrics, SQL client spans, and `db.client.operation.duration`. gRPC telemetry is release candidate. Go runtime metrics are development
+
+- **Verdict:** CONFIRMED
+- **Source(s):** S-OBI-10 (TELEMETRY.md, `schemas/obi/groups/{http,db,rpc,go}/*.yaml` at v1.0.0)
+- **Notes:** Read from `stability:` fields in the registry YAML. Stable metrics: `http.server.request.duration`, `http.client.request.duration`, `db.client.operation.duration`, plus JVM and .NET runtime metrics. Stable spans: `obi.http.server`, `obi.http.client`, `obi.db.sql.client`. `obi.rpc.grpc.server`, `obi.rpc.grpc.client`, `rpc.server.call.duration`, and `rpc.client.call.duration` are `release_candidate`. All `go.*` runtime metrics are `development`. Signal and attribute stability are independent: a stable span can carry unprotected attributes. Network flow attribute names are excluded pending semconv alignment (#1092).
+
+### [C-078] OBI can export Go spans that the application writes with the global `otel.Tracer` API when no `TracerProvider` is registered. It activates the Auto SDK and needs `CAP_SYS_ADMIN` for `bpf_probe_write_user`
+
+- **Verdict:** CONFIRMED
+- **Source(s):** S-OBI-06 (SUPPORT_MATRIX.md v1.0.0, "Go Global Trace API And Auto SDK Activation" and "Go Trace API Embedded Auto SDK"), S-OBI-12 (v0.11.0, v0.15.2 notes), `examples/go-trace-api` at v1.0.0
+- **Notes:** Since v0.11.0 with the external `go.opentelemetry.io/auto/sdk` module (v1.1.0 to v1.2.1, `otel` v1.33.0 to v1.46.0). Since v0.15.2 also through the Auto SDK embedded in `go.opentelemetry.io/otel/trace` (v1.35.0 to v1.46.0, `auto/sdk` optional). Needs amd64 or arm64, recognised module checksums and versions, and on Linux 5.10+ effective `CAP_SYS_ADMIN` plus kernel lockdown `[none]`. Spans over 16 KiB encoded are dropped without a warning. If an SDK provider is registered, OBI defers to it. The application still authors the span. This narrows C-014 and does not refute it.
+
+### [C-079] OBI v1.0.0 ships with documented operational limitations: application metrics can stay missing after a Pod restart until OBI restarts, and child spans can start before their parents
+
+- **Verdict:** CONFIRMED
+- **Source(s):** S-OBI-09 ("Known operational limitations"), S-OBI-10 ("Known v1 emission limitations")
+- **Notes:** Both root causes are unconfirmed. No workaround is documented for span ordering. Port-based discovery can also select a helper or port-forwarder. Script and Q&A only: use it to say "canary it", not to disparage the release.

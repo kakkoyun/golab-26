@@ -38,17 +38,17 @@
 
 - **URL:** <https://pkg.go.dev/go.opentelemetry.io/obi>
 - **Type:** official-package-index
-- **Version/tag/SHA:** v0.10.0, 2026-06-30
-- **Accessed:** 2026-07-22
-- **Notes:** Release and module identity. Supports C-013.
+- **Version/tag/SHA:** v1.0.0, commit d23be0d6b709c7e7047067c7e32c2500deee51dd (Go proxy time 2026-10-30T14:18:13Z). Earlier pin: v0.10.0, 2026-06-30
+- **Accessed:** 2026-11-01
+- **Notes:** Release and module identity. `@latest` for `go.opentelemetry.io/obi` is v1.0.0. `@latest` for `go.opentelemetry.io/obi/collector` is v0.15.2. Supports C-013, C-076.
 
 ### [S-OBI-04] OpenTelemetry eBPF Instrumentation documentation
 
 - **URL:** <https://opentelemetry.io/docs/zero-code/obi/>
 - **Type:** official-docs
-- **Version/tag/SHA:** accessed 2026-08-10
-- **Accessed:** 2026-08-10
-- **Notes:** Platform, architecture, kernel, BTF, signal, and maturity boundaries. Supports C-011 through C-014.
+- **Version/tag/SHA:** opentelemetry.io main, accessed 2026-11-01
+- **Accessed:** 2026-11-01
+- **Notes:** Platform, architecture, kernel, BTF, signal, and maturity boundaries. Supports C-011 through C-014. On 2026-11-01 the page still shows "Recent highlights (v0.15.2)". It does not mention v1.0.0 yet. Use the release notes (S-OBI-09) for the v1 claims.
 
 ### [S-OBI-05] OBI Kubernetes setup
 
@@ -60,27 +60,59 @@
 
 ### [S-OBI-06] OBI support matrix
 
-- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/main/SUPPORT_MATRIX.md>
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/SUPPORT_MATRIX.md>
 - **Type:** official-repo-doc
-- **Version/tag/SHA:** main, accessed 2026-08-10
-- **Accessed:** 2026-08-10
-- **Notes:** Thirteen Go library baselines, including the gin v1.7.5 exclusion and go-redis v9 path. Supports C-011 and C-012.
+- **Version/tag/SHA:** v1.0.0 (d23be0d6). Earlier read: main, 2026-08-10
+- **Accessed:** 2026-11-01
+- **Notes:** Thirteen Go library baselines, including the gin v1.7.5 exclusion and go-redis v9 path. The Go library table is identical at v0.10.0 and v1.0.0 (diffed). New at v1.0.0: the "Go Global Trace API And Auto SDK Activation" and "Go Trace API Embedded Auto SDK" sections, Go goroutine propagation up to 6 nested levels (was 3), Go runtime metrics marked Experimental. The intro paragraph still says "While OBI remains in Development". The v1.0.0 release notes call that wording a known follow-up. Supports C-011, C-012, C-078.
 
 ### [S-OBI-07] OBI security, permissions, and capabilities
 
 - **URL:** <https://opentelemetry.io/docs/zero-code/obi/security/>
 - **Type:** official-docs
-- **Version/tag/SHA:** accessed 2026-08-10
-- **Accessed:** 2026-08-10
-- **Notes:** Feature-dependent capability ladder and `perf_event_paranoid` caveats. Supports C-011.
+- **Version/tag/SHA:** opentelemetry.io main, accessed 2026-11-01
+- **Accessed:** 2026-11-01
+- **Notes:** Feature-dependent capability ladder and `perf_event_paranoid` caveats. Since v0.14.0, OBI falls back to tracefs when PMU access is blocked, so most uprobes and kprobes attach without `CAP_SYS_ADMIN`. Features that use `bpf_probe_write_user()`, including library-level Go trace-context propagation, still need `CAP_SYS_ADMIN`. Supports C-011.
 
 ### [S-OBI-08] OBI trace-log correlation
 
 - **URL:** <https://opentelemetry.io/docs/zero-code/obi/trace-log-correlation/>
 - **Type:** official-docs
-- **Version/tag/SHA:** accessed 2026-08-10
-- **Accessed:** 2026-08-10
-- **Notes:** JSON-only enrichment, trace/span fields, no log export, and feature requirements. Supports C-015.
+- **Version/tag/SHA:** opentelemetry.io main, accessed 2026-11-01
+- **Accessed:** 2026-11-01
+- **Notes:** JSON and plain-text enrichment (plain text on by default for selected services since v0.11.0), trace/span fields, no log export, Linux 6.0+, BPFFS, no kernel lockdown. The 2026-08-10 read said JSON only. That is no longer correct. Supports C-015.
+
+### [S-OBI-09] OBI v1.0.0 release notes
+
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/releases/tag/v1.0.0>
+- **Type:** official-release-notes
+- **Version/tag/SHA:** v1.0.0, published 2026-10-30T17:50:30Z, commit d23be0d6b709c7e7047067c7e32c2500deee51dd
+- **Accessed:** 2026-11-01
+- **Notes:** "First stable core release." Defines the v1 stable surfaces, excludes the Go module API, keeps the Collector receiver on v0, lists known operational limitations, and states that the instrumentation is promoted unchanged from v1.0.0-rc.2. Supports C-076, C-077, C-079.
+
+### [S-OBI-10] OBI telemetry contract and schema registry at v1.0.0
+
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/TELEMETRY.md>
+- **Type:** official-repo-doc
+- **Version/tag/SHA:** v1.0.0 (d23be0d6), `TELEMETRY.md` and `schemas/obi/groups/**`
+- **Accessed:** 2026-11-01
+- **Notes:** Only registry entries with `stability: stable` are protected. Stable signals at v1.0.0, read from the registry YAML: `http.server.request.duration`, `http.client.request.duration`, `db.client.operation.duration`, spans `obi.http.server`, `obi.http.client`, `obi.db.sql.client`, plus JVM and .NET runtime metrics. gRPC spans and `rpc.*.call.duration` are `release_candidate`. Go runtime metrics are `development`. Supports C-077.
+
+### [S-OBI-11] OBI versioning policy at v1.0.0
+
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/VERSIONING.md#compatibility-and-release-rules-after-v1>
+- **Type:** official-repo-doc
+- **Version/tag/SHA:** v1.0.0 (d23be0d6)
+- **Accessed:** 2026-11-01
+- **Notes:** Major, minor, and patch rules for stable surfaces after v1. Supports C-076.
+
+### [S-OBI-12] OBI release history v0.11.0 to v1.0.0
+
+- **URL:** <https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/releases>
+- **Type:** official-release-notes
+- **Version/tag/SHA:** v0.11.0 (2026-08-17), v0.12.1 (2026-08-20, supersedes unpublished v0.12.0), v0.12.2 (2026-08-22), v0.13.0 (2026-09-04), v0.14.0 (2026-10-02), v1.0.0-rc.1 (2026-10-07), v0.15.2 (2026-10-16, supersedes unpublished v0.15.0 and v0.15.1), v1.0.0-rc.2 (2026-10-16), v1.0.0 (2026-10-30). Dates are GitHub release publication times (UTC)
+- **Accessed:** 2026-11-01
+- **Notes:** v0.11.0: Go Trace API spans through the Auto SDK, Config v2, plain-text log correlation. v0.14.0: tracefs fallback, fewer `CAP_SYS_ADMIN` needs. v0.15.2: capture through the Auto SDK embedded in `otel/trace`, Collector receiver split into its own module. Supports C-052, C-078.
 
 ## Go Runtime Issues & Proposals
 
