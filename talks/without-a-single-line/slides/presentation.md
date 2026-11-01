@@ -1298,16 +1298,11 @@ Same move as the opening joke, except now the agent has the *framework*.
 
 ```bash
 go install github.com/kakkoyun/zeroins/cmd/...@latest
-obi-integration net/http     # offline OBI v0.10.0 catalog
-otelc-aspect    net/http     # offline otelc v1.0.1 catalog
-npx skills add kakkoyun/zeroins --all
 ```
 
 <br>
 
-Catalog lookups are offline and read-only. `kubectl-obi` and `kubectl-profiler` are experimental privileged wrappers needing an explicit OTLP endpoint.
-
-For more agent skills for instrumenting Go applications, see [github.com/ollygarden/opentelemetry-agent-skills](https://github.com/ollygarden/opentelemetry-agent-skills).
+<span class="chip caution">experimental</span> `kubectl-obi` and `kubectl-profiler` need an explicit OTLP endpoint.
 
 ---
 
@@ -1330,6 +1325,19 @@ For more agent skills for instrumenting Go applications, see [github.com/ollygar
 
 </div>
 </div>
+
+---
+
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+# Shameless plug
+
+## Why Your Go Benchmarks Are Lying (And How to Stop Them)
+
+### Tomorrow · 10:45 · Golab #2
+
+[golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them](https://golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them)
 
 ---
 

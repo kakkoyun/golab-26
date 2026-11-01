@@ -1393,24 +1393,17 @@ Slow down. These two lines are the whole talk. Let them land.
 
 Take it home.
 
-go install the zeroins toolkit. Two offline catalog lookups: obi-integration
-for OBI, otelc-aspect for otelc. Both are pinned to the versions on screen.
-
-And the skill line: npx skills add kakkoyun/zeroins --all.
+go install the zeroins toolkit.
 
 That is the joke's payoff. The framework the agent was missing is the thing you
 take home.
 
-Catalog lookups are offline and read-only. The Kubernetes wrappers are
-experimental, privileged, and need an explicit telemetry endpoint.
-
-For more agent skills, see ollygarden's opentelemetry-agent-skills.
+The kubectl wrappers are experimental and need an explicit telemetry endpoint.
 
 **DO**
 
-Point at the QR and say it opens the talk repository: both decks, research, and
-the earlier FOSDEM recording. Then point to zeroins. Name the four commands.
-Do not imply the QR opens zeroins.
+One command only. Do not walk the subcommands here; the take-it-with-you slide
+names them.
 
 ---
 
@@ -1427,6 +1420,24 @@ Go Compile-Time Instrumentation. eBPF Instrumentation. The Injector. Profiling.
 **DO**
 
 Point to the community repo. All channels are listed there.
+
+---
+
+## Shameless plug
+
+**SAY**
+
+One more thing, and I am not sorry about it.
+
+Tomorrow morning, ten forty-five, room Golab number two: my other talk. Why
+Your Go Benchmarks Are Lying, and How to Stop Them.
+
+Today was about observing what you shipped. Tomorrow is about knowing whether
+it got faster.
+
+**DO**
+
+Deadpan. Own the plug. Say the time and the room slowly enough to photograph.
 
 ---
 

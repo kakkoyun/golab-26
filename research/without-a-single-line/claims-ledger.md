@@ -358,6 +358,8 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Source(s):** 10-live-debugger.md, datadog-agent `pkg/dyninst` at fd1f089014df9e80e6949323f7349041deadff5c
 - **Notes:** Mechanism from public code, not a product guarantee. The sequence diagram simplifies the backend-to-system-probe hop, which the public docs do not describe.
 
+here the separator is kept clean:
+
 ---
 
 ## OBI v1.0.0 (refresh 2026-11-01)
@@ -385,3 +387,13 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-09 ("Known operational limitations"), S-OBI-10 ("Known v1 emission limitations")
 - **Notes:** Both root causes are unconfirmed. No workaround is documented for span ordering. Port-based discovery can also select a helper or port-forwarder. Script and Q&A only: use it to say "canary it", not to disparage the release.
+
+---
+
+## GoLab 2026 schedule
+
+### [C-080] GoLab lists "Why Your Go Benchmarks Are Lying (And How to Stop Them)" (Kemal Akkoyun, 45 min) on 3 November 2026 at 10:45 in room Golab #2. The zero-touch talk is on 2 November at 15:30, so "tomorrow" holds
+
+- **Verdict:** CONFIRMED
+- **Source(s):** golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them and golab.io/speakers/akkoyun, retrieved 2026-11-01
+- **Notes:** The plug slide says "Tomorrow · 10:45 · Golab #2". The word "tomorrow" depends on the zero-touch talk keeping its 2 November slot. Re-check the GoLab schedule in the week of the talk; if either slot moves, update the slide or drop the word "tomorrow".

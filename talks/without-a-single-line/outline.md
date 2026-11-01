@@ -1,7 +1,7 @@
 # Outline: Zero-Touch Go Instrumentation
 
 > **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (84 pages)
+> **Deck:** `slides/presentation.md` (86 pages)
 > **Script:** `speaker-notes.md` (SAY/DO format)
 
 ## Thesis
@@ -26,13 +26,15 @@ GoLab lists the talk as Intermediate. The GoLab version builds eBPF up from the 
 | 06 Profiles | 2:40 | 25:10 | The fourth signal. The `.gopclntab` unwind path, deployment cost, OTEP 4947 correlation bridge. |
 | 07 Live debugging | 3:25 | 28:35 | Probe a running process. Line to address, unavailable variables, public limits, other ways. |
 | 08 When to reach for what | 1:00 | 29:35 | Decision table, practical combination, 20% adoption. |
-| 09 What comes next | 3:20 | 32:55 | cgo without a C toolchain, the agentic close, takeaways, take-home kit, SIG call to action. |
+| 09 What comes next | 3:25 | 33:00 | cgo without a C toolchain, the agentic close, takeaways, take-home line, SIG call to action, the benchmarks-talk plug. |
 
-Timing is a **word-count model**, not a measurement: 3,422 SAY words at 130
-words per minute, plus 25% for pauses and visuals, gives 32:55. The cuttable
+Timing is a **word-count model**, not a measurement: 3,558 SAY words at 130
+words per minute, plus 25% for pauses and visuals, gives about 34:10. The OBI
+v1.0.0 refresh (2026-11-01) added roughly 130 of those words; the section rows
+above still show the pre-refresh splits. The cuttable
 static-PIE anecdote adds about 1:25. This deck has more silent beats than the
-benchmarks talk (two jokes, two memes, eleven punchline pages), so the real
-overhead is probably higher. The remaining 3-4 minutes to 38:00 are buffer, not
+benchmarks talk (two jokes, two memes, thirteen punchline pages), so the real
+overhead is probably higher. The remaining minutes to 38:00 are buffer, not
 missing content. The timed read-through in `TODO.md` replaces the model.
 
 Checkpoints: open the primer by ~4:00, OBI by ~11:30, otelc by ~16:00, the
@@ -58,6 +60,8 @@ Nothing is cut up front. Cut in this order. Each rung says why it is safe.
 8. **Zero-touch profiling deployment-cost table** (-0:40). The OBI
    platform-contract table already taught the room to expect a privilege and
    platform bill.
+9. **Shameless plug** (-0:15). The plug can be spoken over the take-it-with-you
+   slide in five seconds if the room is behind.
 
 ## Never-cut list
 

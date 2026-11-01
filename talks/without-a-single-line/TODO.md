@@ -6,8 +6,8 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** 85 pages, 38-minute target, 27 fragment reveals, 9 sections. The
-word-count model gives about 33 minutes plus a 1:25 cuttable anecdote. The
+**State:** 86 pages, 38-minute target, 27 fragment reveals, 9 sections. The
+word-count model gives about 34 minutes plus a 1:25 cuttable anecdote. The
 actual read-through against a clock is still required before delivery.
 
 Count `---` separators minus one to get pages.
@@ -30,16 +30,13 @@ Count `---` separators minus one to get pages.
 - [ ] **Blocking: re-check golang/go#81450 and #81662 the week of the talk.** The
   slide says the GOEXPERIMENT is accepted and the design is in review. Both can
   change before 2 November 2026.
-- [ ] **Decide: the zeroins OBI catalog is still pinned to v0.10.0.** The
-  take-home slide says "offline OBI v0.10.0 catalog". That is true of zeroins
-  at 4c26da8, so the slide is accurate. But it sits next to a v1.0.0
-  announcement. The Go library table is identical at v0.10.0 and v1.0.0, so a
-  bump in zeroins changes only the pins and the `kubectl-obi` image tag. Either
-  bump zeroins and change the slide, or keep the slide as it is.
+- [ ] **Blocking: re-check the GoLab schedule the week of the talk.** The plug
+  slide says the benchmarks talk is tomorrow, 10:45, Golab #2 (ledger C-080).
+  If either slot moves, update the slide or drop the word "tomorrow".
 - [ ] **Timed read-through.** The OBI v1.0.0 refresh (2026-11-01) added about
   100 spoken words, about 40 seconds. Read the SAY content aloud at delivery pace against
   a clock. Record splits at each divider. Write the real number into `outline.md`
-  and `speaker-notes.md`. The word-count model is about 33 minutes.
+  and `speaker-notes.md`. The word-count model is about 34 minutes.
 - [ ] **Diagram legibility pass.** Kroki renders Mermaid at a small native size.
   The theme now scales each diagram to the content width, but long
   left-to-right chains still have small labels. Check every diagram from the
@@ -48,7 +45,7 @@ Count `---` separators minus one to get pages.
   `pdftoppm -f N -l N -r 60 -png` on every changed page. Confirm that the
   eBPF.io loader diagram is readable at width 860 and that its CC BY 4.0
   credit is legible.
-- [ ] **Rehearse the cut ladder.** If running long, follow the eight-rung
+- [ ] **Rehearse the cut ladder.** If running long, follow the nine-rung
   ladder in `outline.md`. Never cut anything on the never-cut list.
 
 ---
@@ -62,9 +59,15 @@ recorded here.
   decision. The bug, the log line, the redeploy, the wrong place, the second
   redeploy. Then stop.
 - **The agent joke is a plant, not decoration.** It pays off at the agentic
-  close and at the take-home skill. Do not move or cut it for time. It is two
+  close and at the take-home line. Do not move or cut it for time. It is two
   slides, full-bleed, no title, no caption. The beat is spoken: deadpan fake-out,
   then the turn. Ten seconds total.
+- **The close is light on take-home mechanics.** The GopherCon UK delivery got
+  no traction from the command wall and the skills pointers. The take-home
+  slide keeps one install command and one caveat; the `npx skills` line, the
+  ollygarden skills repo, and the catalog lookups are gone. Do not add them
+  back. The SIG call to action stays. The shameless plug for the benchmarks
+  talk (C-080) is on purpose and stays.
 - **The injector is a teaser.** The Datadog Go injector mechanism is
   deliberately undisclosed, and the apparent contradiction with the LD_PRELOAD
   slide is the device, not a bug. The GoLab version explains process-start
