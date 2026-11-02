@@ -237,8 +237,8 @@ flowchart LR
 
 | | |
 | ---: | --- |
-| <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">v1</span> | <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">20%</span> |
-| Stable upstream tool | Growth in customers adopting auto-instrumentation |
+| <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">v1</span> | <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">about 20%</span> |
+| Stable upstream tool | Growth in customer adoption of Orchestrion-based Go auto-instrumentation |
 
 <br>
 
@@ -1242,8 +1242,6 @@ flowchart TD
 </div>
 
 Add a layer when its signal earns the cost. Use live logpoints for missing evidence.
-
-**20% adoption growth** is evidence that Go users want the build-time path too.
 
 ---
 <!-- _class: section light -->
