@@ -61,8 +61,9 @@ None currently.
   still says "Development", so do not quote it.
 - **All three screenshots are cropped on purpose.** Originals keep an `_orig`
   suffix. Do not swap them back.
-- **Reveals remain selective.** The deck declares its fragment floor. Lists inside
-  `.columns` are not counted.
+- **Reveals only for the important beats.** Two lists reveal: the opening
+  loop and "What makes Go different". Every other list is an HTML `<ul>`. Reason:
+  a click per item slowed the talk and diluted the reveals that matter.
 - **The SIG call follows the takeaways.** Keep the resource links at the end.
 - **"Combine the layers" was absorbed.** The 20% line moved to the practical-
   combination slide. The table is "When to reach for what."

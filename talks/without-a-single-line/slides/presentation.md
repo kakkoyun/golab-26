@@ -1,10 +1,10 @@
 ---
 marp: true
 theme: golab
-# fragment-floor: 27. Eight lists use `*` fragment bullets for selective
-# progressive reveal. Lists inside .columns are excluded on purpose. MD004 is
-# disabled, so a mixed `*`/`-` deck lints clean. Reveals animate only in
-# bespoke HTML; the PDF handout shows everything at once.
+# fragment-floor: 6. Only two lists reveal: the opening loop and why Go
+# resists. Every other list is an HTML <ul>, which looks the same and does
+# not reveal. Reveals animate only in bespoke HTML; the PDF handout shows
+# everything at once.
 math: mathjax
 html: true
 paginate: true
@@ -268,20 +268,24 @@ The trade-off is build ownership, not operating-system access.
 
 ### Upstream otelc today
 
-* Traces
-* HTTP and gRPC metrics
-* Go runtime metrics
-* Trace IDs in `log`, `slog`, Logrus, and zap output
+<ul>
+<li>Traces</li>
+<li>HTTP and gRPC metrics</li>
+<li>Go runtime metrics</li>
+<li>Trace IDs in <code>log</code>, <code>slog</code>, Logrus, and zap output</li>
+</ul>
 
 </div>
 <div>
 
 ### Orchestrion + dd-trace-go
 
-* Traces
-* Runtime metrics
-* Correlated logs
-* Continuous profiles
+<ul>
+<li>Traces</li>
+<li>Runtime metrics</li>
+<li>Correlated logs</li>
+<li>Continuous profiles</li>
+</ul>
 
 </div>
 </div>
@@ -377,10 +381,12 @@ the linker picked by symbol loading order
 
 ## The build path has boundaries too
 
-* Requires control of the Go build pipeline.
-* Requires Go 1.26 or newer for current otelc.
-* Coverage stops at the supported integration set.
-* Toolchain internals such as `-toolexec` and `go:linkname` can change.
+<ul>
+<li>Requires control of the Go build pipeline.</li>
+<li>Requires Go 1.26 or newer for current otelc.</li>
+<li>Coverage stops at the supported integration set.</li>
+<li>Toolchain internals such as <code>-toolexec</code> and <code>go:linkname</code> can change.</li>
+</ul>
 
 <br>
 
@@ -471,9 +477,11 @@ sequenceDiagram
 
 ## Runtime injection is a narrower route
 
-* Dynatrace OneAgent injects into eligible Go binaries, including static pure-Go ones started by a dynamic parent.
-* The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.
-* Datadog is working on a Go path for Single-Step Instrumentation.
+<ul>
+<li>Dynatrace OneAgent injects into eligible Go binaries, including static pure-Go ones started by a dynamic parent.</li>
+<li>The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.</li>
+<li>Datadog is working on a Go path for Single-Step Instrumentation.</li>
+</ul>
 
 <br>
 
@@ -573,10 +581,12 @@ DD_TRACE_DEBUG=1 \
 
 **OBI** is the upstream successor to Grafana Beyla, donated to OpenTelemetry in 2025.
 
-* No application rebuild.
-* One DaemonSet can observe a mixed-language node.
-* Network protocols provide broad coverage.
-* Go-specific uprobes add library-level detail.
+<ul>
+<li>No application rebuild.</li>
+<li>One DaemonSet can observe a mixed-language node.</li>
+<li>Network protocols provide broad coverage.</li>
+<li>Go-specific uprobes add library-level detail.</li>
+</ul>
 
 <br>
 
@@ -764,23 +774,27 @@ A function address is not a type layout.
 <div class="columns">
 <div>
 
-* `net/http`
-* `golang.org/x/net/http2`
-* `gorilla/mux`
-* `gin-gonic/gin`
-* `google.golang.org/grpc`
-* `net/rpc/jsonrpc`
-* `database/sql`
+<ul>
+<li><code>net/http</code></li>
+<li><code>golang.org/x/net/http2</code></li>
+<li><code>gorilla/mux</code></li>
+<li><code>gin-gonic/gin</code></li>
+<li><code>google.golang.org/grpc</code></li>
+<li><code>net/rpc/jsonrpc</code></li>
+<li><code>database/sql</code></li>
+</ul>
 
 </div>
 <div>
 
-* `go-sql-driver/mysql`
-* `lib/pq`
-* `redis/go-redis/v9`
-* `segmentio/kafka-go`
-* `IBM/sarama`
-* `mongo-driver` v1 and v2
+<ul>
+<li><code>go-sql-driver/mysql</code></li>
+<li><code>lib/pq</code></li>
+<li><code>redis/go-redis/v9</code></li>
+<li><code>segmentio/kafka-go</code></li>
+<li><code>IBM/sarama</code></li>
+<li><code>mongo-driver</code> v1 and v2</li>
+</ul>
 
 </div>
 </div>
@@ -864,22 +878,26 @@ v1 stable: HTTP and SQL spans and duration metrics. gRPC: release candidate. Go 
 
 ### OBI handles
 
-* Service boundaries
-* HTTP and gRPC spans
-* RED and runtime metrics
-* Supported library operations
-* Log correlation
+<ul>
+<li>Service boundaries</li>
+<li>HTTP and gRPC spans</li>
+<li>RED and runtime metrics</li>
+<li>Supported library operations</li>
+<li>Log correlation</li>
+</ul>
 
 </div>
 <div>
 
 ### Application code still owns
 
-* Business events
-* Domain-specific attributes
-* Arbitrary internal functions
-* Unsupported libraries
-* Custom sampling decisions
+<ul>
+<li>Business events</li>
+<li>Domain-specific attributes</li>
+<li>Arbitrary internal functions</li>
+<li>Unsupported libraries</li>
+<li>Custom sampling decisions</li>
+</ul>
 
 </div>
 </div>
@@ -994,10 +1012,12 @@ somehow, it works
 
 Originated as Elastic Universal Profiling and joined OpenTelemetry in June 2024.
 
-* Samples CPU from the kernel.
-* Profiles every process on a node.
-* Requires no application rebuild or injected library.
-* Emits the OpenTelemetry Profiles signal.
+<ul>
+<li>Samples CPU from the kernel.</li>
+<li>Profiles every process on a node.</li>
+<li>Requires no application rebuild or injected library.</li>
+<li>Emits the OpenTelemetry Profiles signal.</li>
+</ul>
 
 <br>
 
@@ -1283,9 +1303,11 @@ Go 1.27 moved HTTP/2 into `net/http/internal/http2` and added a field to `module
 </div>
 <div>
 
-* A probe is a NOP plus an ELF note: a name and where each value lives.
-* Go 1.27 emits none. Salp adds them through cgo.
-* The eBPF profiler reads allocator USDT probes. The Go allocator has none.
+<ul>
+<li>A probe is a NOP plus an ELF note: a name and where each value lives.</li>
+<li>Go 1.27 emits none. Salp adds them through cgo.</li>
+<li>The eBPF profiler reads allocator USDT probes. The Go allocator has none.</li>
+</ul>
 
 **Ask:** let the toolchain emit SDT notes. Start with runtime sites.
 
@@ -1322,9 +1344,11 @@ threadlocal.schema_version: "go_pprof_labels_v1"
 
 ## Ask 3: close the `-toolexec` gaps
 
-* otelc and Orchestrion both build on `-toolexec`.
-* A tool cannot add its own inputs to a package's build ID.
-* [golang/go#69887](https://github.com/golang/go/issues/69887) lists the gaps, from build-ID influence to new build-graph edges.
+<ul>
+<li>otelc and Orchestrion both build on <code>-toolexec</code>.</li>
+<li>A tool cannot add its own inputs to a package's build ID.</li>
+<li><a href="https://github.com/golang/go/issues/69887">golang/go#69887</a> lists the gaps, from build-ID influence to new build-graph edges.</li>
+</ul>
 
 <br>
 
@@ -1437,10 +1461,12 @@ Same move as the opening joke, except now the agent has the *framework*.
 
 [github.com/open-telemetry/community](https://github.com/open-telemetry/community) has every SIG's calendar, notes, and channels.
 
-* Go Compile-Time Instrumentation (`otelc`)
-* eBPF Instrumentation (OBI)
-* Injector
-* Profiling
+<ul>
+<li>Go Compile-Time Instrumentation (<code>otelc</code>)</li>
+<li>eBPF Instrumentation (OBI)</li>
+<li>Injector</li>
+<li>Profiling</li>
+</ul>
 
 </div>
 </div>

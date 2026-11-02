@@ -626,7 +626,7 @@ And gRPC telemetry is still a release candidate.
 
 **DO**
 
-Reveal each line. Two chips: teal for the stable core, amber for what is outside it. Say "stable core", never "OBI is stable". Do not quote the README.
+Two chips: teal for the stable core, amber for what is outside it. Say "stable core", never "OBI is stable". Do not quote the README.
 
 ---
 

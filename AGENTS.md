@@ -55,6 +55,8 @@ Marp's bespoke template turns `*` list items into progressive-reveal fragments,
 which makes the marker load-bearing rather than a style choice.
 
 - Every list in a deck is an intentional reveal. A `-` bullet in a deck is a bug.
+- For a list that must not reveal, write an HTML `<ul>`. The theme styles it
+  the same, and no formatter rewrites it.
 - Prettier rewrites `*` to `-` and silently destroys every reveal. Decks are in
   `.prettierignore` and `make format/md` is a deliberate no-op on them.
 - Some editor and agent format-on-save hooks rewrite `-` to `*`, silently
