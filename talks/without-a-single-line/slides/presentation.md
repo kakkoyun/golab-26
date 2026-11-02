@@ -1238,7 +1238,7 @@ Add a layer when its signal earns the cost. Use live logpoints for missing evide
 
 ![width:340](../../assets/memes/pretty-please-puss.gif)
 
-I will find you in the hallway.
+I can find you in the hallway. Pretty please 😊
 
 </div>
 
