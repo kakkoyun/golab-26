@@ -568,14 +568,6 @@ DD_TRACE_DEBUG=1 \
 ### 30 October. Three days ago
 
 ---
-<!-- _class: meme -->
-<!-- _paginate: false -->
-
-![bg contain](../../assets/memes/somehow-palpatine-returned-poe.gif)
-
-somehow, it works
-
----
 
 ## OpenTelemetry eBPF Instrumentation
 

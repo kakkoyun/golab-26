@@ -610,18 +610,6 @@ Smile, pause, let the room clap. Ten seconds. Do not explain "stable" here. If t
 
 ---
 
-## somehow, it works
-
-**SAY**
-
-Somehow, it works.
-
-**DO**
-
-Two seconds. Do not explain the Palpatine GIF. The callback comes after the pitfalls section.
-
----
-
 ## OpenTelemetry eBPF Instrumentation
 
 **SAY**
