@@ -1,7 +1,7 @@
 ---
 marp: true
 theme: golab
-# fragment-floor: 45. `*` is the ONLY list marker allowed on slides. Every list
+# fragment-floor: 17. `*` is the ONLY list marker allowed on slides. Every list
 # is an intentional Marp reveal; a `-` bullet here is a bug. `make check/fragments`
 # guards the count against formatters that rewrite markers.
 math: mathjax
@@ -40,184 +40,25 @@ And How to Stop Them
 
 ---
 
-<!-- _class: section -->
-<!-- _paginate: false -->
+## A benchmark bot comment
 
-###### 01
+<div class="big center">
 
-# Why Benchmark?
+`BenchmarkOTLPProtoSize`
 
----
+**6-9% slower than main**
 
-<!-- _class: vcenter -->
-
-## Measure customer happiness,
-
-## not CPU usage
-
----
-
-## Is it actually slow?
-
-<div class="cols">
-<div class="card">
-
-### In-process
-
-`pprof`
-
-Datadog Continuous Profiler
-
-</div>
-<div class="card measure">
-
-### Whole-system
-
-[OTel eBPF Profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler)
-
-[Parca](https://parca.dev)
-
-p50 / p95 / **p99**
-
-</div>
 </div>
 
 <br>
 
-**Benchmark what production says is hot.**
-
----
-
-## Could it go faster?
-
-* Detecting slowness ≠ proving headroom
-* The ceiling is physics: bandwidth, latency, IPC
-* Headroom is the gap between now and that ceiling
-* No headroom → "is it worth it" never comes up
-
----
-
-## Is it worth optimizing?
-
-* **SLO**: a target, not a wish
-* **Error budget**: in budget, optimizing is optional
-* **Amdahl**: only the hot path pays
-
----
-
-## Latency and throughput
-
-<div class="cols">
-<div class="card">
-
-### Latency
-
-One operation.
-
-*Users feel this.*
-
-</div>
-<div class="card measure hidden">
-
-### Throughput
-
-Operations per second.
-
-*Your ceiling.*
-
-</div>
-</div>
-
----
-
-## Latency and throughput
-
-<div class="cols">
-<div class="card">
-
-### Latency
-
-One operation.
-
-*Users feel this.*
-
-</div>
-<div class="card measure">
-
-### Throughput
-
-Operations per second.
-
-*Your ceiling.*
-
-</div>
-</div>
-
-<br>
-
-*Improve one, damage the other.*
-
----
-
-## The cost of slowness
-
-<div class="centered-table">
-
-| Response time | Perception |
-| --- | --- |
-| 100-200 ms | barely noticeable |
-| 300-500 ms | slightly slow |
-| 1-3 s | work is noticeable |
-| 5-10 s+ | user leaves |
-
-</div>
-
-<div class="center big">
-
-500 ms → <span class="hl-blue">−20%</span> Google search traffic
-
-</div>
-
----
-
-## Finding what to optimize
-
-<div class="columns">
-<div>
-
-[**Optimizing Go Code Without a Blindfold**](https://www.youtube.com/watch?v=oE_vm7KeV_E)
-Daniel Martí · GopherCon 2019
-
-He covers *what* to optimize.
-
-This talk covers *whether you can trust the number*.
-
-</div>
 <div class="center">
 
-![width:480](../assets/gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png)
+Nothing in the diff touches OTLP encoding.
+
+**Hold that thought.**
 
 </div>
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 02
-
-# Why I Care
-
----
-
-<!-- _class: vcenter -->
-
-## How I got here
-
-* `client_golang`: allocations in someone's scrape budget
-* Parca: a 5% profiler is not deployable
-* Datadog: SDKs inside *your* process
 
 ---
 
@@ -258,7 +99,7 @@ from PGO alone.
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 03
+###### 01
 
 # A Loose Cable
 
@@ -347,159 +188,6 @@ systematic error survives expert review
 
 ---
 
-## Two scales, same three questions
-
-<div class="centered-table">
-
-| | First half | Second half |
-| --- | --- | --- |
-| **Scope** | local + micro | CI + macro |
-| **Tool** | `testing.B` | whole workload |
-| **Fails on** | representative | repeatable |
-
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 04
-
-# Before You Measure
-
----
-
-<!-- _class: vcenter -->
-
-## Every benchmark needs
-
-## <span class="hl-blue">representative</span>
-
-## <span class="hl-orange">repeatable</span>
-
----
-
-## Micro vs macro
-
-<div class="columns">
-<div>
-
-### Micro
-
-Isolated function
-
-Nanosecond precision
-
-Risk: **not representative**
-
-</div>
-<div class="hidden">
-
-### Macro
-
-End-to-end workflow
-
-Real workload
-
-Risk: **cause is unclear**
-
-</div>
-</div>
-
----
-
-## Micro vs macro
-
-<div class="columns">
-<div>
-
-### Micro
-
-Isolated function
-
-Nanosecond precision
-
-Risk: **not representative**
-
-</div>
-<div>
-
-### Macro
-
-End-to-end workflow
-
-Real workload
-
-Risk: **cause is unclear**
-
-</div>
-</div>
-
-<br>
-
-*Both. They fail differently.*
-
----
-
-## Start macro, then drill
-
-<div class="columns">
-<div>
-
-### Works
-
-1. Macro: does it move?
-2. Profile: which part?
-3. Micro: fix it
-4. Macro: did it hold?
-
-</div>
-<div>
-
-### Wastes weeks
-
-1. Micro: 40% faster
-2. Ship
-3. Nothing changes
-4. Nobody knows why
-
-</div>
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 05
-
-# Benchmarking, Quickly
-
-The instrument we are about to distrust.
-
----
-
-## Writing one
-
-###### bloop_bench_test.go
-
-```go
-func BenchmarkHash_BLoop(b *testing.B) {
-    data := make([]byte, 1024)
-    copy(data, payload)
-    var s [32]byte
-    for b.Loop() {
-        s = sha256.Sum256(data)
-    }
-}
-```
-
-* Setup before the loop: excluded from timing
-* `b.Loop()` runs the measured body; the result sinks somewhere visible
-
----
-
 ## Running one
 
 ```bash
@@ -531,98 +219,10 @@ BenchmarkHash_BLoop-16   6834830   356.2 ns/op   0 B/op   0 allocs/op
 
 ---
 
-## Benchmark + pprof
-
-```bash
-go test -bench=BenchmarkHash_BLoop -cpuprofile=cpu.prof .
-go tool pprof -top cpu.prof
-```
-
-###### pprof-top.txt
-
-```text
-      flat  flat%   sum%        cum   cum%
-     2.02s 94.84% 94.84%      2.02s 94.84%  sha256.blockSHA2
-     0.06s  2.82% 97.65%      0.06s  2.82%  runtime.pthread_cond_signal
-     0.01s  0.47% 98.12%      2.04s 95.77%  sha256.(*Digest).Write
-```
-
-`-cpuprofile` / `-memprofile` → `go tool pprof -top`.
-
----
-
-## Reading compiler output
-
-```bash
-go test -gcflags='-S' -run XXX -bench XXX .        # print assembly
-GOSSAFUNC=BenchmarkHash_BLoop go test -bench=BenchmarkHash_BLoop .   # interactive SSA
-```
-
-* `-S`: disassembly; each line shows the instruction and its source
-* `GOSSAFUNC`: dump every SSA rewrite phase to a browser
-* Read what the compiler *actually did*, not what you wrote
-
-`-S` shows the end state. `GOSSAFUNC` shows every step.
-
----
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 06
-
-# Local and Micro
-
-Trust your laptop before you trust CI.
-
----
-
-## The three questions, micro scale
-
-<div class="centered-table">
-
-| | At this scale |
-| --- | --- |
-| **Real work?** | the compiler deletes it |
-| **Stable sample?** | one run is a point |
-| **Above noise?** | your laptop is uncontrolled |
-
-</div>
-
-<div class="center">
-
-*Can't trust it locally → CI industrialises the lie.*
-
-</div>
-
----
-
-## A benchmark bot comment
-
-<div class="big center">
-
-`BenchmarkOTLPProtoSize`
-
-**6-9% slower than main**
-
-</div>
-
-<br>
-
-<div class="center">
-
-Nothing in the diff touches OTLP encoding.
-
-**Hold that thought.**
-
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 07
+###### 02
 
 # Making the Compiler Honest
 
@@ -721,104 +321,6 @@ the compiler deleted your benchmark
 
 ---
 
-## The two-variable sink
-
-###### dce_bench_test.go
-
-```go
-var sink []byte // package-level: can't be proven unread
-
-func BenchmarkMakeBuffer_Correct(b *testing.B) {
-    var s []byte
-    for range b.N {
-        s = makeBuffer(64)
-    }
-    sink = s // one write per run, not per iteration
-}
-```
-
-<span class="chip caution">TEST-ONLY</span> Never ship a sink to production.
-
----
-
-## Constant folding
-
-###### dce_bench_test.go
-
-```go
-s = bits.OnesCount(0b10110)   // every input is constant
-```
-
-<div class="big center">
-
-Evaluated at compile time.
-
-You benchmarked a **constant load**.
-
-</div>
-
----
-
-## Timer: one-time setup
-
-###### bloop_bench_test.go
-
-```go
-data := make([]byte, 1024)
-copy(data, payload)
-b.ResetTimer()          // exclude setup
-var s [32]byte
-for range b.N {
-    s = sha256.Sum256(data)
-}
-```
-
-<div class="center">
-
-`ResetTimer` zeroes elapsed time. It does **not** stop the timer.
-
-</div>
-
----
-
-## Timer: per-iteration setup
-
-###### timer_bench_test.go
-
-```go
-for range b.N {
-    b.StopTimer()
-    input := buildFixture(fixtureSize) // not timed
-    b.StartTimer()                     // restart BEFORE the work
-    s = processString(input)           // only this is measured
-}
-```
-
----
-
-## `make bench-timer`
-
-###### timer_bench_test.go
-
-```text
-buggy    415.8 ns/op  128 B/op  1 allocs/op
-correct  550.6 ns/op  144 B/op  1 allocs/op
-```
-
-<div class="center big">
-
-The **buggy** one looks 25% faster.
-
-</div>
-
-<div class="center">
-
-A benchmark measuring the wrong thing looks like good news.
-
-</div>
-
----
-
 ## `b.Loop()` · Go 1.24
 
 ###### bloop_bench_test.go
@@ -867,9 +369,11 @@ Must be written literally as `b.Loop()`.
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 08
+###### 03
 
 # The Regression That Was a Speedup
+
+Question 2: stable sample?
 
 ---
 
@@ -962,24 +466,6 @@ performance **±10%**.
 
 <!-- _class: vcenter -->
 
-## A component speedup
-
-## is not a system speedup
-
-<br>
-
-<div class="center">
-
-Micro measures the component.
-
-Only macro measures whether it mattered.
-
-</div>
-
----
-
-<!-- _class: vcenter -->
-
 ## A noisy result can be
 
 ## **directionally wrong**
@@ -991,17 +477,6 @@ Only macro measures whether it mattered.
 It blocks good changes and waves regressions through.
 
 </div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 09
-
-# Statistical Interpretation
-
-Question 2: stable sample?
 
 ---
 
@@ -1084,28 +559,6 @@ Benchstat compares distributions. **CV characterises the machine.**
 
 ---
 
-<!-- _class: vcenter -->
-
-## The p-hacking trap
-
-<div class="center big">
-
-Every rerun is a fresh draw.
-
-With enough draws, noise looks like signal.
-
-</div>
-
-<br>
-
-<div class="center">
-
-**Set your run count before you look.**
-
-</div>
-
----
-
 <!-- _class: meme -->
 
 ![bg contain](../assets/meme-two-buttons.png)
@@ -1117,129 +570,11 @@ more samples will not fix a noisy machine
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 10
+###### 04
 
-# Local Reproduction
+# The Machine Was the Variable
 
 Question 3: above the noise?
-
----
-
-## What does isolation actually buy?
-
-<div class="centered-table">
-
-| Condition | mean ns/op | **CV%** |
-| --- | --- | --- |
-| idle host | 11.46 | **4.75** |
-| + 16 spinners | 34.97 | <span class="hl-blue">**18.88**</span> |
-| pinned container, same load | 16.28 | <span class="hl-orange">**5.25**</span> |
-
-</div>
-
-<div class="small center">
-
-Apple M4 Max · darwin/**arm64** · container linux/**arm64** under
-Apple Virtualization.framework · no QEMU, no emulation
-
-</div>
-
----
-
-<!-- _class: vcenter -->
-
-## 5.25% is not a triumph
-
-## It is a ceiling
-
-<br>
-
-<div class="center big">
-
-Bare-metal Linux, SMT off: **~0.05%**
-
-</div>
-
----
-
-## The macOS caveat
-
-* `--cpuset-cpus=0` pins a **vCPU inside a VM**
-* The VM can still migrate it across physical cores
-* Nothing inside can disable host SMT or pin the clock
-
-<br>
-
-<div class="center">
-
-**Get:** isolation from neighbours. **Don't get:** controlled hardware.
-
-</div>
-
----
-
-## The inner loop
-
-```bash
-benchdiff --base-ref=main ./...
-```
-
-<div class="center big">
-
-change → `benchdiff` → read the interval → decide
-
-</div>
-
-<div class="center">
-
-Free wins: close the indexer, airplane mode, reach thermal steady state.
-
-</div>
-
----
-
-## Local and micro, answered
-
-<div class="centered-table">
-
-| | Micro scale |
-| --- | --- |
-| **Real work?** | sink · `-benchmem` · `allocs/op` · `b.Loop` |
-| **Stable sample?** | `-count=10` · p-value · CV |
-| **Above noise?** | pin it · know your ceiling |
-
-</div>
-
-<div class="center big">
-
-A sub-10% delta can be **layout noise**.
-
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 11
-
-# CI and Macro
-
-Same questions. Different failures.
-
----
-
-## The three questions, macro scale
-
-<div class="centered-table">
-
-| | At this scale |
-| --- | --- |
-| **Real work?** | is the *workload* representative? |
-| **Stable sample?** | across days, not runs |
-| **Above noise?** | the *hardware* is the variable |
-
-</div>
 
 ---
 
@@ -1321,27 +656,189 @@ Same tell: **a benchmark moved that could not have moved.**
 
 ---
 
-<!-- _class: section -->
-<!-- _paginate: false -->
+## What does isolation actually buy?
 
-###### 12
+<div class="centered-table">
 
-# Designing a Macrobenchmark
+| Condition | mean ns/op | **CV%** |
+| --- | --- | --- |
+| idle host | 11.46 | **4.75** |
+| + 16 spinners | 34.97 | <span class="hl-blue">**18.88**</span> |
+| pinned container, same load | 16.28 | <span class="hl-orange">**5.25**</span> |
 
-Representative is the hard part.
+</div>
+
+<div class="small center">
+
+Apple M4 Max · darwin/**arm64** · container linux/**arm64** under
+Apple Virtualization.framework · no QEMU, no emulation
+
+</div>
 
 ---
 
-## What does your app actually do?
+<!-- _class: vcenter -->
 
-* **CPU-bound**: crunching, compression, encryption
-* **I/O-bound**: queries, API calls, files
-* **Mixed**: almost everything real
+## 5.25% is not a triumph
+
+## It is a ceiling
+
+<br>
+
+<div class="center big">
+
+Bare-metal Linux, SMT off: **~0.05%**
+
+</div>
+
+---
+
+## The macOS caveat
+
+* `--cpuset-cpus=0` pins a **vCPU inside a VM**
+* The VM can still migrate it across physical cores
+* Nothing inside can disable host SMT or pin the clock
+
+<br>
 
 <div class="center">
 
-*Match your production workload.*
+**Get:** isolation from neighbours. **Don't get:** controlled hardware.
 
+</div>
+
+---
+
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 05
+
+# How We Run It at Datadog
+
+Question 3, at hardware scale.
+
+---
+
+<!-- _class: vcenter -->
+
+## Why shared runners lie
+
+<div class="center big">
+
+A real 10% regression **vanishes**.
+
+A phantom 10% regression **appears**.
+
+</div>
+
+<br>
+
+<div class="center">
+
+An **environment** problem, not a statistics problem.
+
+</div>
+
+---
+
+## Why not just add more runners?
+
+<div class="center">
+
+![width:1000](../assets/golang_slowbot_quote.png)
+
+</div>
+
+<div class="center">
+
+Elastic capacity is fine for correctness.
+Performance needs the **scarce** machine.
+
+<span class="small">[go.dev/wiki/SlowBots](https://go.dev/wiki/SlowBots)</span>
+
+</div>
+
+---
+
+## What's the impact of disabling SMT?
+
+<div class="columns">
+<div>
+
+![width:430](../assets/environment-control-smt-experiment.svg)
+
+</div>
+<div>
+
+| Task | mean ± stddev | CV |
+| --- | --- | --- |
+| smt-1 | 1537.64 ± 367.29 | <span class="hl-blue">23.887%</span> |
+| smt-2 | 1536.88 ± 366.84 | <span class="hl-blue">23.869%</span> |
+| no-smt-1 | 737.37 ± 0.32 | <span class="hl-orange">0.044%</span> |
+| no-smt-2 | 737.93 ± 1.74 | <span class="hl-orange">0.235%</span> |
+
+</div>
+</div>
+
+<div class="center big">
+
+**~100× less variance**, and twice as fast.
+
+</div>
+
+---
+
+## What's the impact of disabling DFS?
+
+<div class="columns">
+<div>
+
+![width:430](../assets/environment-control-dfs-experiment.svg)
+
+</div>
+<div>
+
+| Configuration | mean ± stddev | CV |
+| --- | --- | --- |
+| DFS on | 533.97 ± 2.046 | <span class="hl-blue">0.383%</span> |
+| DFS off | 738.18 ± 0.306 | <span class="hl-orange">0.041%</span> |
+
+</div>
+</div>
+
+<div class="center big">
+
+**~10× less variance**, and the mean got *slower*.
+
+</div>
+
+---
+
+## Three sysfs writes
+
+```bash
+echo off         | sudo tee /sys/devices/system/cpu/smt/control
+echo performance | sudo tee /sys/.../scaling_governor
+echo 0           | sudo tee /sys/devices/system/cpu/cpufreq/boost
+```
+
+<div class="columns">
+<div>
+
+### Bare metal
+
+CV ~23% → **~0.05%**
+
+</div>
+<div>
+
+### In a VM
+
+The write may **succeed
+and be ignored**.
+
+</div>
 </div>
 
 ---
@@ -1412,154 +909,7 @@ Micro gates compare commits. Macro gates compare against a **budget**.
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 13
-
-# Controlling the CI Environment
-
-Question 3, at hardware scale.
-
----
-
-<!-- _class: vcenter -->
-
-## Why shared runners lie
-
-<div class="center big">
-
-A real 10% regression **vanishes**.
-
-A phantom 10% regression **appears**.
-
-</div>
-
-<br>
-
-<div class="center">
-
-An **environment** problem, not a statistics problem.
-
-</div>
-
----
-
-## Why SMT breaks benchmarks
-
-* A core has fixed execution units: ALUs, FPUs, load/store
-* Two threads share them: neither gets the full core
-* The split is **nondeterministic**: whoever has instructions ready wins the slot
-* Run-to-run, your thread gets a different fraction of the units
-* That fraction swings the runtime: hence the 23% CV
-
-<div class="center">
-
-Same code. Same core. Different **share** each run.
-
-</div>
-
----
-
-## What's the impact of disabling SMT?
-
-<div class="columns">
-<div>
-
-![width:430](../assets/environment-control-smt-experiment.svg)
-
-</div>
-<div>
-
-| Task | mean ± stddev | CV |
-| --- | --- | --- |
-| smt-1 | 1537.64 ± 367.29 | <span class="hl-blue">23.887%</span> |
-| smt-2 | 1536.88 ± 366.84 | <span class="hl-blue">23.869%</span> |
-| no-smt-1 | 737.37 ± 0.32 | <span class="hl-orange">0.044%</span> |
-| no-smt-2 | 737.93 ± 1.74 | <span class="hl-orange">0.235%</span> |
-
-</div>
-</div>
-
-<div class="center big">
-
-**~100× less variance**, and twice as fast.
-
-</div>
-
----
-
-## Why DFS breaks benchmarks
-
-* The clock is not fixed: a governor picks frequency from load and thermals
-* Turbo boosts above base when the chip is cool
-* Run 1: cool chip, high clock, fast result
-* Run 20: warm chip, throttled clock, slower result
-* Same cycles, different wall time: the benchmark is **not comparable**
-
-<div class="center">
-
-Pin to base frequency → every run at the same clock.
-
-</div>
-
----
-
-## What's the impact of disabling DFS?
-
-<div class="columns">
-<div>
-
-![width:430](../assets/environment-control-dfs-experiment.svg)
-
-</div>
-<div>
-
-| Configuration | mean ± stddev | CV |
-| --- | --- | --- |
-| DFS on | 533.97 ± 2.046 | <span class="hl-blue">0.383%</span> |
-| DFS off | 738.18 ± 0.306 | <span class="hl-orange">0.041%</span> |
-
-</div>
-</div>
-
-<div class="center big">
-
-**~10× less variance**, and the mean got *slower*.
-
-</div>
-
----
-
-## Three sysfs writes
-
-```bash
-echo off         | sudo tee /sys/devices/system/cpu/smt/control
-echo performance | sudo tee /sys/.../scaling_governor
-echo 0           | sudo tee /sys/devices/system/cpu/cpufreq/boost
-```
-
-<div class="columns">
-<div>
-
-### Bare metal
-
-CV ~23% → **~0.05%**
-
-</div>
-<div>
-
-### In a VM
-
-The write may **succeed
-and be ignored**.
-
-</div>
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 14
+###### 06
 
 # Detecting Change Over Time
 
@@ -1665,15 +1015,6 @@ That is the Go team, about **their own hardware**.
 
 ---
 
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 15
-
-# Wiring It Into CI
-
----
-
 ## Two patterns
 
 <div class="columns">
@@ -1709,25 +1050,6 @@ CI **detects**. It is not your primary measurement.
 
 ---
 
-## Why not just add more runners?
-
-<div class="center">
-
-![width:1000](../assets/golang_slowbot_quote.png)
-
-</div>
-
-<div class="center">
-
-Elastic capacity is fine for correctness.
-Performance needs the **scarce** machine.
-
-<span class="small">[go.dev/wiki/SlowBots](https://go.dev/wiki/SlowBots)</span>
-
-</div>
-
----
-
 ## Keep a ledger of false positives
 
 <div class="small">
@@ -1743,85 +1065,6 @@ Performance needs the **scarce** machine.
 Documented noise is **benchmark hygiene**.
 
 </div>
-
----
-
-## CI and macro, answered
-
-<div class="centered-table">
-
-| | Macro scale |
-| --- | --- |
-| **Real work?** | archetype · pinned inputs |
-| **Stable sample?** | time series · change points |
-| **Above noise?** | bare metal · SMT + DFS off |
-
-</div>
-
-<div class="center big">
-
-A shared runner cannot be fixed with **more samples**.
-
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 16
-
-# Wire It Up
-
-This afternoon.
-
----
-
-## Three tools
-
-```bash
-honestbench ./...                                 # static analysis
-benchgate   -pkg=./... -count=10 -cv-threshold=5  # CV gate
-benchenv                                          # env diagnosis
-```
-
-```bash
-go install github.com/kakkoyun/benchlab/cmd/...@latest   # all three
-npx skills add kakkoyun/benchlab --all                    # agent skills
-```
-
----
-
-## `benchenv`
-
-###### benchlab
-
-<div class="small">
-
-```text
-benchenv: benchmarking environment diagnosis (darwin/arm64, 16 CPUs)
-
-  [unavailable]  SMT control        no sysfs on macOS
-  [unavailable]  CPU frequency      no governor exposed
-  [unavailable]  Turbo Boost        no user-space control
-  [unavailable]  thermal pressure   not readable from user space
-  [ok]           load average       2.65 ≤ 8.0
-  [ok]           benchstat          found on PATH
-  [ok]           GOMAXPROCS/NumCPU  16 / 16
-  [warn]         perflock           not installed
-  [warn]         benchdiff          not installed
-
-Summary: 3 ok, 2 warn, 4 unavailable.
-```
-
-</div>
-
----
-
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
-
-# Four *unavailable* lines are the honest answer
 
 ---
 
