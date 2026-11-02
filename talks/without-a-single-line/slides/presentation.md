@@ -387,6 +387,25 @@ the linker picked by symbol loading order
 No root access and no kernel version gate, but the binary must be rebuilt.
 
 ---
+
+## The long version: Hooking into the Go Toolchain
+
+<div class="columns">
+<div class="center">
+
+![width:360](../assets/hooking_into_go_toolchain.png)
+
+</div>
+<div>
+
+This section is the short version. The guest post starts from a stopwatch wrapper and builds up to `otelc`.
+
+[Hooking into the Go Toolchain · Internals for Interns](https://internals-for-interns.com/posts/hooking-into-the-go-toolchain/)
+
+</div>
+</div>
+
+---
 <!-- _class: section -->
 <!-- _paginate: false -->
 

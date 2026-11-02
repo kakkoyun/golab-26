@@ -418,7 +418,23 @@ What if we cannot change the build?
 
 **DO**
 
-Move to process start. Do not imply more signals reach every service.
+Move to the link slide. Do not imply more signals reach every service.
+
+---
+
+## The long version: Hooking into the Go Toolchain
+
+**SAY**
+
+This section is the short version. I wrote a guest post that takes the long
+way. It starts from a stopwatch wrapper around `-toolexec` and builds up to
+otelc itself.
+
+If you want the internals step by step, that is the post.
+
+**DO**
+
+Short stop. Point at the link, not the screenshot. Then move to process start.
 
 ---
 
