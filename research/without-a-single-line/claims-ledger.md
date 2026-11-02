@@ -1,14 +1,14 @@
 # Claims Ledger
 
-> Every load-bearing claim in this research corpus must have an entry here.
-> A claim is "load-bearing" if it would change the talk's argument or a blog post's conclusion if wrong.
+> Every load-bearing claim in this corpus needs a row here.
+> A claim is load-bearing if it would change the talk or a blog conclusion when wrong.
 >
 > **Verdicts:**
 >
-> - `CONFIRMED` — verified against a primary source (repo, spec, issue, official blog); cite `[S-NNN]`
-> - `PLAUSIBLE` — consistent with evidence but not directly confirmed; must be flagged in prose, never asserted
-> - `REFUTED` — found to be wrong; do not use; note what is correct instead
-> - `PENDING` — not yet researched; placeholder only
+> - `CONFIRMED`: verified against a primary source. Cite `[S-NNN]`.
+> - `PLAUSIBLE`: consistent with evidence, not confirmed. Flag it in prose. Never assert it.
+> - `REFUTED`: wrong. Do not use. Note the correct value.
+> - `PENDING`: not yet researched. Placeholder only.
 
 ## Format
 
@@ -23,121 +23,143 @@
 
 ## Thesis / Go Runtime Hook Point
 
-### [C-001] Go has no runtime hook point — you cannot monkey-patch a running Go process the way you can with JVM agents or Python's import hooks
+### [C-001] Go has no runtime hook point. You cannot monkey-patch a running Go process the way you can with JVM agents or Python import hooks
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-TH-01 (runtime/proc.go "hall of shame"), S-TH-02 (internal/runtime/exithook), S-TH-03 (golang/go#28909 LD_PRELOAD), S-TH-04 (Dynatrace limitations)
-- **Notes:** Native machine code, no classloader, no bytecode. Pure-Go builds are static. A default cgo build (for example one that imports net) is internally linked but dynamic, and on glibc the loader runs LD_PRELOAD constructors. Verified 2026-11-02 with Go 1.26.5 in Docker on Debian arm64 and Alpine. Only internal exit-time hook is scoped to program termination. Go team labels go:linkname abusers a "hall of shame" in runtime/proc.go.
+- **Notes:**
+  - Go builds native machine code. There is no classloader and no bytecode.
+  - Pure-Go builds are static. A default cgo build is dynamic, and on glibc the loader runs LD_PRELOAD constructors.
+  - The only internal exit hook is scoped to program termination. The Go team lists go:linkname abusers in a "hall of shame" in runtime/proc.go.
 
 ### [C-002] Orchestrion injects a field `__dd_gls_v2 any` into `runtime.g` and exposes it via `go:linkname` get/set function variables
 
 - **Verdict:** CONFIRMED ✅
 - **Source(s):** S-TH-05a (gls.orchestrion.yml, commit b97e7cbb4), S-TH-05b (gls.go, commits b97e7cbb4 + 577c7760f)
-- **Notes:** Complete mechanism (three steps):
-  1. **Aspect** `gls.orchestrion.yml` (`internal/orchestrion/gls.orchestrion.yml` in dd-trace-go, commit b97e7cbb4) targets `struct-definition: runtime.g`, uses `add-struct-field` to inject `__dd_gls_v2 any` into the `g` struct.
-  2. **Injects** `go:linkname` function-variable symbols: `__dd_orchestrion_gls_get.V2` = `func() any { return getg().m.curg.__dd_gls_v2 }` and `__dd_orchestrion_gls_set.V2` = `func(val any) { getg().m.curg.__dd_gls_v2 = val }`.
-  3. **Patches** `runtime.goexit1` with `getg().__dd_gls_v2 = nil` to zero the field when a goroutine exits (prevents memory leaks).
-  - dd-trace-go's `gls.go` then links to the symbols via go:linkname with no-op defaults when Orchestrion is absent.
-  - The SHA "5fef9c1ba9ac9ff0ac966714d0342f7f85dbc4fa" does NOT exist — use b97e7cbb4 (v2.0.0) for the yml file.
-  - Orchestrion applies this aspect. Orchestrion's go.mod does not depend on otelc. otelc has its own rule (instrumentation/runtime/otelc.yaml) that adds otel_trace_context and otel_baggage_container to runtime.g.
+- **Notes:**
+  1. Aspect `gls.orchestrion.yml` (`internal/orchestrion/gls.orchestrion.yml` in dd-trace-go, commit b97e7cbb4) uses `add-struct-field` on `runtime.g` to add `__dd_gls_v2 any`.
+  2. It injects `go:linkname` variables `__dd_orchestrion_gls_get.V2` and `__dd_orchestrion_gls_set.V2`, which read and write `getg().m.curg.__dd_gls_v2`.
+  3. It patches `runtime.goexit1` with `getg().__dd_gls_v2 = nil` to prevent leaks.
+  - `gls.go` in dd-trace-go links these symbols with no-op defaults when Orchestrion is absent.
+  - Trap: SHA `5fef9c1ba9ac9ff0ac966714d0342f7f85dbc4fa` does not exist. Use b97e7cbb4 (v2.0.0).
+  - Trap: Orchestrion's go.mod does not depend on otelc. otelc has its own rule (instrumentation/runtime/otelc.yaml) that adds `otel_trace_context` and `otel_baggage_container` to `runtime.g`.
 
-### [C-002b] go:linkname for variables is fragile — BSS resolution is order-dependent; broke between Go 1.22 and 1.23
+### [C-002b] go:linkname for variables is fragile. BSS resolution is order-dependent and broke between Go 1.22 and 1.23
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-TH-06 (golang/go#72032)
-- **Notes:** Unlike function linkname (which supports bodiless forward declarations), variable linkname has no definition/reference separation. If both sides are uninitialized, linker choice is arbitrary. Manifested as breaking change Go 1.22 → 1.23. Go team documented in #72032.
-- The quote on the slide is Cherry Mui (cherrymui, 2025-03-03), not Ian Lance Taylor. CL 660696 fixed it: the linker keeps the larger BSS symbol. Go 1.25, backported to Go 1.23.9 (#73091) and 1.24.3 (#73092).
+- **Notes:**
+  - Variable linkname has no definition and reference separation. If both sides are uninitialized, the linker choice is arbitrary.
+  - Trap: the slide quote is from Cherry Mui (cherrymui, 2025-03-03), not Ian Lance Taylor.
+  - CL 660696 fixed it. The linker keeps the larger BSS symbol. Backported to Go 1.23.9 (#73091) and 1.24.3 (#73092).
 
-### [C-003] dd-trace-go has 51 integration wrappers in contrib/ (not ~54)
+### [C-003] dd-trace-go has 51 integration wrappers in contrib/, not ~54
 
 - **Verdict:** CONFIRMED (corrected)
 - **Source(s):** S-TH-07 (dd-trace-go contrib/ directory, counted from v2 branch)
-- **Notes:** Prior lead said ~54 — wrong. Actual count: 51 subdirs in contrib/. Use "over 50" or link to supported_integrations.md rather than a specific number that will drift.
+- **Notes:** Trap: the earlier lead said ~54. Use "over 50" or link to supported_integrations.md, because the number drifts.
 
 ---
 
 ## OBI
 
-### [C-010] OBI (OpenTelemetry eBPF Instrumentation) is the renamed/donated successor to Grafana Beyla
+### [C-010] OBI (OpenTelemetry eBPF Instrumentation) is the renamed and donated successor to Grafana Beyla
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-01 (Grafana Beyla OSS page), S-OBI-02 (Beyla README + community issue #2406)
-- **Notes:** Grafana Labs donated Beyla to CNCF/OTel in 2025 via community issue #2406. Beyla continues as Grafana's distribution. New repo: github.com/open-telemetry/opentelemetry-ebpf-instrumentation, module: go.opentelemetry.io/obi.
+- **Notes:** Grafana Labs donated Beyla to CNCF/OTel in 2025 via issue #2406. New repo: github.com/open-telemetry/opentelemetry-ebpf-instrumentation, module go.opentelemetry.io/obi.
 
-### [C-011] OBI requires supported Linux kernels with BTF; the required capabilities depend on the enabled features
+### [C-011] OBI requires supported Linux kernels with BTF. The required capabilities depend on the enabled features
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04, S-OBI-06, S-OBI-07
-- **Notes:** Baseline platform support is Linux 5.8+ with BTF, or documented RHEL-family 4.18+ backports. Network flow capture, application observability, context propagation, and Go library propagation require different capabilities. Do not publish one fixed list as universal. Re-verified at v1.0.0 on 2026-11-01: platform rows unchanged. Correction: since v0.14.0, OBI falls back to tracefs when a restrictive `perf_event_paranoid` blocks PMU access, so most probe attachment no longer needs `CAP_SYS_ADMIN`. `CAP_SYS_ADMIN` is still needed for features that use `bpf_probe_write_user()`: library-level Go context propagation and Go Trace API span capture (C-078). Do not say that `perf_event_paranoid` forces `CAP_SYS_ADMIN`. Code-verified at v1.0.0: `tracefs.WithFallback` wraps both uprobe and kprobe attachment (`pkg/internal/ebpf/{uprobe,kprobe}`). `pkg/obi/os.go` sets the kernel minimum to 5.8, or 4.18 for RHEL.
+- **Notes:**
+  - Baseline: Linux 5.8+ with BTF, or RHEL-family 4.18+ backports.
+  - Capabilities depend on the feature. Since v0.14.0, tracefs fallback means a restrictive `perf_event_paranoid` does not force `CAP_SYS_ADMIN`.
+  - `CAP_SYS_ADMIN` is still needed for `bpf_probe_write_user()` features: Go context propagation and Go Trace API span capture (C-078).
 
-### [C-012] OBI is language-agnostic at network-protocol level; also provides Go-specific library uprobes for 13 libraries
+### [C-012] OBI is language-agnostic at network-protocol level. It also provides Go uprobes for 13 libraries
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04, S-OBI-06
-- **Notes:** Code nuance, 2026-11-01: the gin `!= v1.7.5` exclusion lives in the offset generator input (`configs/offsets/tracker_input.json`). The runtime does not check for it. A gin v1.7.5 binary gets DWARF offsets or the `since 1.7.0` entry in `offsets.json`. The slide keeps the documented baseline. If asked: v1.7.5 is outside the generated and validated range, not a known crash. Language-agnostic: Go, Java (JDK 8+), .NET, Node.js, Python, Ruby, C, C++, Rust, GenAI SDKs. Go-specific uprobe support for 13 named libraries (net/http, gin, gRPC, gorilla/mux, go-redis, Kafka, database/sql, etc.). Re-verified at v1.0.0 on 2026-11-01: the Go library table is identical to v0.10.0 (diffed). Pin the slide link to the v1.0.0 tag.
+- **Notes:**
+  - Language-agnostic: Go, Java (JDK 8+), .NET, Node.js, Python, Ruby, C, C++, Rust, GenAI SDKs. Go uprobes cover 13 named libraries.
+  - Pin slide links to the v1.0.0 tag. The Go library table matches v0.10.0.
+  - gin v1.7.5 is outside the validated range, not a known crash. The exclusion lives in `configs/offsets/tracker_input.json`.
 
-### [C-013] OBI current release: v0.10.0 (2026-06-30), Development status (breaking changes expected)
+### [C-013] OBI current release is v0.10.0 (2026-06-30), Development status
 
 - **Verdict:** REFUTED (superseded 2026-11-01). Use C-076
 - **Source(s):** S-OBI-03 (pkg.go.dev), S-OBI-04 (README), S-OBI-09, S-OBI-12
-- **Notes:** True until 2026-08-17. OBI then shipped v0.11.0 through v0.15.2 and v1.0.0 on 2026-10-30. The "v0: breaking changes are still possible" chip is wrong now. Trap: the README at the v1.0.0 tag still says "OBI is currently in Development". The v1.0.0 release notes say that this wording is left over from the pre-v1 phase and that the stable-surface declaration applies. Do not quote the README as the current status.
+- **Notes:** Wrong now. OBI shipped v0.11.0 through v1.0.0 on 2026-10-30. Trap: the v1.0.0 README still says "in Development".
 
-### [C-014] "Zero code changes" holds for HTTP/gRPC RED metrics and 13 Go library spans; does NOT hold for custom spans, business-logic events, SQL query details
+### [C-014] "Zero code changes" holds for HTTP/gRPC RED metrics and 13 Go library spans. It does not hold for custom spans, business events, or SQL query details
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-04 (official docs caveat)
-- **Notes:** Official docs explicitly: "Use language agents or manual instrumentation when you need custom spans, application-specific attributes, business events, or other in-process telemetry." Be precise in the talk: "zero changes for standard observability." Update 2026-11-01: custom spans still need code, but in Go that code no longer needs an SDK. OBI can export spans written with the global `otel.Tracer` API (C-078). The boundary holds: the application still authors the business span.
+- **Notes:**
+  - Official docs: use language agents or manual instrumentation for custom spans, application attributes, business events, or other in-process telemetry.
+  - Say "zero changes for standard observability" on slides.
+  - Since 2026-11-01, Go spans written with the global `otel.Tracer` API can be exported without an SDK (C-078). The application still authors the business span.
 
-### [C-015] OBI can correlate JSON logs with traces by enriching writes with trace and span IDs, but it does not export logs
+### [C-015] OBI can enrich JSON and plain-text logs with trace and span IDs. It does not export logs
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-OBI-08
-- **Notes:** Corrected 2026-11-01. Code-verified at v1.0.0: the default config sets `LogEnricher.PlainText.Enabled: true` (`pkg/obi/config.go`). Enrichment applies to selected JSON and plain-text logs while a span is active. Plain-text enrichment adds `key=value` fields and is on by default for selected services since v0.11.0. The earlier note "Plain text is unchanged" is wrong now. Existing log forwarding remains responsible for export. Current docs require Linux 6.0+, BPFFS, and a kernel without lockdown for this feature.
+- **Notes:**
+  - Trap: `LogEnricher.PlainText.Enabled` defaults to `true` (`pkg/obi/config.go`). The earlier note "plain text is unchanged" is wrong.
+  - Current docs require Linux 6.0+, BPFFS, and a kernel without lockdown.
+  - Existing log forwarding still handles export.
 
-### [C-016] Uprobe instrumentation has infrastructure, BPF-program, and compatibility costs even though recent kernels improved hot-path scalability
+### [C-016] Uprobe instrumentation has infrastructure, BPF-program, and compatibility costs. Recent kernels improved hot-path scalability
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-UP-01, S-UP-02, S-UP-03, S-UP-04 (OBI PR #1851), S-UP-05 (static-PIE incident)
-- **Notes:** Attached uprobes cross into the kernel. RCU-protected lookup and consumer traversal removed major scalability bottlenecks in newer kernels. A BPF program can still serialize a concurrent path through shared state. Go 1.26's removal of `pcHeader.textStart` required OBI to change symbol resolution; that issue is fixed and should be presented as maintenance evidence, not a current defect.
-
-  **Static-PIE incident (script depth, not a slide):** `aws-load-balancer-controller` v3.2.0 changed one build flag to static-PIE. No application code changed. On nodes running OBI its pods exited 139, `kubectl logs --previous` empty, `GOTRACEBACK=crash` silent because the SIGSEGV beat the Go runtime's signal handler. Static-PIE is `ET_DYN` with no `PT_INTERP`; the external linker restructured segments, `runtimeText` from `.gopclntab` stopped matching `prog.Vaddr`, and the computed offset put the uprobe in the wrong place. Fixed by PR #1851, deriving `runtime.text` from `runtime.moduledata` after Go 1.26 removed `pcHeader.textStart`. Trap: fixed, maintenance cost, never a live defect; the team changed build flags, not application code. Not Kemal's incident.
+- **Notes:**
+  - Attached uprobes cross into the kernel. RCU-protected lookup and consumer traversal removed major bottlenecks in newer kernels.
+  - A BPF program can still serialize a concurrent path through shared state.
+  - Go 1.26 removed `pcHeader.textStart`. OBI changed symbol resolution. The issue is fixed. Present it as maintenance evidence, not a current defect.
+  - Static-PIE incident (script depth, not a slide): `aws-load-balancer-controller` v3.2.0 changed one build flag to static-PIE. No application code changed. On OBI nodes its pods exited 139, with an empty `kubectl logs --previous`. The SIGSEGV beat the Go signal handler. Static-PIE has no `PT_INTERP`. The linker restructured segments, so `runtimeText` no longer matched `prog.Vaddr`. The uprobe landed in the wrong place. PR #1851 fixed it by deriving `runtime.text` from `runtime.moduledata`.
+  - Trap: a fixed maintenance cost, never a live defect. The team changed build flags, not application code. Not Kemal's incident.
 
 ---
 
 ## otelc (OTel Go compile-time instrumentation)
 
-### [C-020] otelc uses `-toolexec` to rewrite Go AST at compile time (not at link time, not at runtime)
+### [C-020] otelc uses `-toolexec` to rewrite Go AST at compile time, not at link or runtime
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-O-03 (orchestrion repo + golang/go#69887), S-O-04 (OTel blog), S-O-05 (otelc repo)
-- **Notes:** Both DataDog/orchestrion and otelc intercept `go tool compile` via `-toolexec`, rewrite .go source ASTs (using github.com/dave/dst in Orchestrion) before the compiler sees them. Orchestrion maintainer quote in #69887 confirms mechanism verbatim.
+- **Notes:** Orchestrion and otelc both intercept `go tool compile` through `-toolexec` and rewrite source ASTs before the compiler runs. Orchestrion uses github.com/dave/dst.
 
 ### [C-021] Orchestrion was donated to OTel as otelc
 
-- **Verdict:** REFUTED — do not use
+- **Verdict:** REFUTED. Do not use
 - **Source(s):** S-O-01, S-O-04
-- **Notes:** Orchestrion was NOT donated. DataDog + Alibaba co-founded OTel Go Compile-Time Instrumentation SIG and built `otelc` (open-telemetry/opentelemetry-go-compile-instrumentation) from scratch, inspired by Orchestrion. Two separate tools with same mechanism, different codebases and default tracers.
+- **Notes:** Wrong. DataDog and Alibaba co-founded the OTel Go Compile-Time Instrumentation SIG and built `otelc` from scratch, inspired by Orchestrion.
 
-### [C-021b] DataDog/orchestrion (CLI: `orchestrion`) and OTel SIG's otelc (CLI: `otelc`) are two distinct tools using the same -toolexec + AST rewriting mechanism
+### [C-021b] DataDog/orchestrion (CLI `orchestrion`) and OTel SIG's otelc (CLI `otelc`) are two distinct tools with the same `-toolexec` mechanism
 
 - **Verdict:** CONFIRMED (re-verified 2026-08-13)
 - **Source(s):** S-O-01, S-O-03, S-O-04, S-O-05
-- **Notes:** orchestrion: GA v1.12.0, defaults to dd-trace-go/v2 but vendor-agnostic. otelc: stable v1.0.1 (2026-07-14), defaults to OTel SDK. Both intercept go tool compile via -toolexec. On no slide; ledger only.
+- **Notes:** Orchestrion defaults to dd-trace-go/v2. otelc defaults to the OTel SDK. Ledger only.
 
-### [C-022] otelc current release version: v1.0.1 (2026-07-14), first stable non-retracted release
+### [C-022] otelc current release is v1.0.1 (2026-07-14), the first stable non-retracted release
 
 - **Verdict:** CONFIRMED (re-verified 2026-08-13)
 - **Source(s):** S-O-04 (OTel blog), S-O-05 (repo)
-- **Notes:** v1.0.1 shipped 2026-07-14. v1.0.0 was retracted over a bad `otelc pin` module path; v1.0.1 is the first stable non-retracted release. Still latest as of 2026-08-13. On-screen pin otelc v1.0.1 holds.
+- **Notes:** v1.0.0 was retracted over a bad `otelc pin` module path. The on-screen pin otelc v1.0.1 holds.
 
-### [C-023] otelc is a production-capable, cross-platform build-time path rather than a local-development-only tool
+### [C-023] otelc is a production-capable, cross-platform build-time path, not a local-only tool
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-O-04, S-O-07, S-O-08
-- **Notes:** Official docs describe fleet-wide build-pipeline use. The repository builds/tests across Linux, macOS, and Windows. Current supported integrations produce traces, HTTP/gRPC metrics, runtime metrics, and trace IDs in supported log output. Runtime behavior still depends on the selected SDK and integration bundle.
-- Re-checked at otelc v1.2.0 (2026-10-12): go.mod declares go 1.26.0 and the README badge says Go 1.26+. Log hooks for log, log/slog, logrus, and zap add trace and span IDs only and emit no OTel log records. CI runs on Linux, macOS, and Windows.
+- **Notes:**
+  - Official docs describe fleet-wide build-pipeline use. CI runs on Linux, macOS, and Windows.
+  - Runtime behavior depends on the selected SDK and integration bundle.
+  - At otelc v1.2.0 (2026-10-12): go.mod declares go 1.26.0. Log hooks for log, log/slog, logrus, and zap add trace and span IDs only. They emit no OTel log records.
 
-### [C-024] The OpenTelemetry host injector does not package Go; the Operator's Go option is a separate feature-gated eBPF sidecar
+### [C-024] The OpenTelemetry host injector does not package Go. The Operator's Go option is a separate feature-gated eBPF sidecar
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-I-01, S-I-02
@@ -147,13 +169,13 @@
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-O-09
-- **Notes:** The three organizations contributed independent experience. Do not describe Orchestrion as renamed or donated wholesale into otelc.
+- **Notes:** Each organization brought independent experience. Do not describe Orchestrion as renamed or donated into otelc.
 
 ### [C-026] Customer adoption of Orchestrion-based Go auto-instrumentation grew by about 20%
 
 - **Verdict:** CONFIRMED by the speaker and approved for public use
 - **Source(s):** S-DD-01
-- **Notes:** Use only the approved percentage. Do not publish a denominator, customer names, or the earlier "mostly new users" interpretation without separate clearance.
+- **Notes:** Use only the approved percentage. Do not publish a denominator, customer names, or the earlier "mostly new users" reading without separate clearance.
 
 ---
 
@@ -163,77 +185,87 @@
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-P-01 (OTel blog June 2024), S-P-02 (CNCF blog March 2024), S-P-04 (community issue #1918)
-- **Notes:** Pledged March 2024, transfer completed June 2024 via community issue #1918.
+- **Notes:** Pledged March 2024. Transfer completed June 2024 via issue #1918.
 
-### [C-031] The OTel profiling signal uses OTLP profiles (not a vendor format)
+### [C-031] The OTel profiling signal uses OTLP profiles, not a vendor format
 
-- **Verdict:** CONFIRMED (with important nuance)
+- **Verdict:** CONFIRMED (with nuance)
 - **Source(s):** S-P-07 (OTel spec), S-P-08 (OTLP 1.11.0)
-- **Notes:** OTLP profiles exist but are NOT stable — Alpha in OTel spec, Development tier in OTLP 1.11.0. Do NOT say "stable" in talk/blog. The profiler ships as an OTel Collector receiver (otelcol-ebpf-profiler), emitting natively via existing pipelines — no separate converter.
+- **Notes:**
+  - Trap: do not say "stable". OTLP profiles are Alpha in the OTel spec and Development tier in OTLP 1.11.0.
+  - The profiler ships as an OTel Collector receiver (otelcol-ebpf-profiler) and emits through existing pipelines. No converter.
 
 ### [C-032] opentelemetry-ebpf-profiler supports whole-system continuous profiling without code changes
 
 - **Verdict:** CONFIRMED (with deployment caveats)
 - **Source(s):** S-P-05 (README + internals.md)
-- **Notes:** "No code changes" holds for profiled apps (no recompilation, no agent injection, no restarts). BUT: requires the otelcol-ebpf-profiler DaemonSet deployed, root/CAP_BPF+CAP_PERFMON on the agent, minimum Linux kernel version (verify exact version). macOS dev requires Linux VM/container.
+- **Notes:**
+  - "No code changes" holds for profiled apps: no recompile, no agent injection, no restart.
+  - Requires the otelcol-ebpf-profiler DaemonSet, root or CAP_BPF+CAP_PERFMON on the agent, and a minimum Linux kernel (verify exact version).
+  - macOS development needs a Linux VM or container.
 
-### [C-033] opentelemetry-ebpf-profiler unwinds Go stacks via .gopclntab (works on stripped production binaries)
+### [C-033] opentelemetry-ebpf-profiler unwinds Go stacks via .gopclntab and works on stripped production binaries
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-P-05, S-P-06 (doc/gopclntab.md)
-- **Notes:** Go executables lack .eh_frame (unless CGo), so profiler uses .gopclntab. Works on fully static stripped binaries. Covers OS-thread CPU stacks — goroutine-level profiling NOT confirmed.
+- **Notes:** Go executables lack .eh_frame unless CGo, so the profiler uses .gopclntab. It covers OS-thread CPU stacks. Goroutine-level profiling is not confirmed.
 
-### [C-034] CPU profiling is the confirmed profiling type; off-CPU is not yet in current release
+### [C-034] CPU profiling is the confirmed profiling type. Off-CPU is not in the current release
 
 - **Verdict:** CONFIRMED (CPU) / PLAUSIBLE NOT YET (off-CPU)
 - **Source(s):** S-P-03 (profiles-alpha blog 2026)
-- **Notes:** The data model supports off-CPU but the current profiler implementation has off-CPU as future work. Do not claim off-CPU support without verification against current CHANGELOG.
+- **Notes:** The data model supports off-CPU. The current implementation lists it as future work. Do not claim off-CPU support without checking the current CHANGELOG.
 
-### [C-035] Current version is v0.0.202627 (calendar-week tags, no formal numbered releases)
+### [C-035] Current version is v0.0.202627 (calendar-week tags, no numbered releases)
 
 - **Verdict:** CONFIRMED (re-verified 2026-08-13)
 - **Source(s):** S-P-05 (GitHub repo tags)
-- **Notes:** Versioning scheme is ISO week-based. Now at v0.0.202633 (2026-08-11). On no slide; ledger only.
+- **Notes:** ISO-week tags. Now at v0.0.202633 (2026-08-11). Ledger only.
 
-### [C-036] Profiles are OpenTelemetry's fourth observability signal; the Profiles specification remains Alpha
+### [C-036] Profiles are OpenTelemetry's fourth observability signal. The Profiles specification remains Alpha
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-P-07, S-P-08
-- **Notes:** Logs, metrics, traces, and profiles are the four signal categories used in the talk. Do not call profiling the third signal or imply a stable profile data model.
+- **Notes:** Logs, metrics, traces, and profiles are the four signals used in the talk. Do not call profiling the third signal or imply a stable profile model.
 
 ### [C-037] OTEP 4947 proposes a Go-specific pprof-label path for sharing request context with profile readers
 
-- **Verdict:** CONFIRMED as a proposal, not as shipped behavior
+- **Verdict:** CONFIRMED as a proposal, not shipped behavior
 - **Source(s):** S-P-09
-- **Notes:** Go is outside the primary TLSDESC mechanism for the foreseeable future because of goroutine concurrency and FFI cost. Go SDKs identify `go_pprof_labels_v1`; readers consume pprof labels directly. Compile-time instrumentation can arrange those labels, but the talk must describe this as proposed work.
+- **Notes:** Go is outside the primary TLSDESC mechanism. Go SDKs identify `go_pprof_labels_v1`. Describe this as proposed work.
 
 ---
 
 ## Go Runtime Futures
 
-### [C-040] golang/go#63185 — flight recording — SHIPPED in Go 1.25
+### [C-040] golang/go#63185 flight recording shipped in Go 1.25
 
 - **Verdict:** CONFIRMED (with API correction)
 - **Source(s):** S-RF-01 (issue), S-RF-02 (go.dev blog Sept 2025), S-RF-03 (flightrecorder.go source)
-- **Notes:** CLOSED Proposal-Accepted, milestoned Go 1.25. JFR-style circular-buffer tracer. API: `trace.NewFlightRecorder(cfg FlightRecorderConfig)` with struct fields `MinAge time.Duration, MaxBytes uint64`. Methods: `Start()`, `Stop()`, `Enabled()`, `WriteTo(w io.Writer)`. The prior lead mentioned `SetMinAge` as a method — WRONG. Shipped API uses struct fields. Do not use old API in talk or blog.
+- **Notes:**
+  - Trap: the API uses struct fields, not methods. `trace.NewFlightRecorder(cfg FlightRecorderConfig)` with `MinAge time.Duration` and `MaxBytes uint64`. Methods: `Start()`, `Stop()`, `Enabled()`, `WriteTo(w io.Writer)`.
+  - Trap: `SetMinAge` is not a method. Do not use the old API.
 
-### [C-041] golang/go#69887 proposes -toolexec/compile-time instrumentation improvements (OPEN)
+### [C-041] golang/go#69887 proposes -toolexec and compile-time instrumentation improvements (OPEN)
 
 - **Verdict:** CONFIRMED (scope correction)
 - **Source(s):** S-RF-04 (issue)
-- **Notes:** Filed 2024-10-15 by Romain Marcadier (DataDog/Orchestrion). OPEN, Proposals Incoming. Does NOT propose general runtime hooks — proposes 5 improvements to -toolexec tooling: per-package build-ID influence, build-graph edges, go/ast API, source mapping, -p parallelism. Root gaps: cache invalidation, no visibility into build flags without crawling process tree.
+- **Notes:** Filed 2024-10-15 by Romain Marcadier (DataDog/Orchestrion). It does not propose general runtime hooks. It lists seven `-toolexec` directions: dedicated support for source rewriting, per-package build-ID influence, build-graph edges, go/ast API, source mapping, -p parallelism, and shared build flags. Trap: an earlier note said five.
 
-### [C-042] golang/go#75654 and #38270 describe httptrace hook gaps (different classes)
+### [C-042] golang/go#75654 and #38270 describe different httptrace hook gaps
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-RF-05 (#75654), S-RF-04 (research context for #38270)
-- **Notes:** #75654 (2025-09-29, OPEN active): client-side — no hook for response body completion; OTel Go uses PutIdleConn as workaround which never fires for HTTP/2, causing client spans to never close (otel-contrib#4876, still open). #38270 (2020, OPEN Proposal-Hold Unplanned): server-side request lifecycle hooks. DIFFERENT classes — not the same problem. Prior lead described both as "hook-gap bugs" which is accurate but imprecise.
+- **Notes:**
+  - #75654 (client side, OPEN): no hook for response body completion. OTel Go's PutIdleConn workaround never fires for HTTP/2, so client spans never close (otel-contrib#4876, still open).
+  - #38270 (server side, OPEN Proposal-Hold Unplanned): request lifecycle hooks.
+  - Trap: they are different classes. Do not treat them as one problem.
 
-### [C-043] golang/go#67120 is the runtime/metrics recommended set proposal (OPEN, Incoming)
+### [C-043] golang/go#67120 is the runtime/metrics recommended set proposal (OPEN)
 
 - **Verdict:** RESOLVED by non-use
 - **Source(s):** S-RF-04
-- **Notes:** Title confirmed verbatim. Cited nowhere in the deck or script. No action needed.
+- **Notes:** Cited nowhere in the deck or script.
 
 ---
 
@@ -243,25 +275,28 @@
 
 - **Verdict:** CONFIRMED by the speaker and approved for public use
 - **Source(s):** S-DD-02 (speaker attestation)
-- **Notes:** Scope: what the slide and script say, nothing more. Uses eBPF through Datadog's `system-probe`; Go support requires Linux 5.17+. Logpoints expire automatically. Bits Live Debugger is in preview. Do not shill the product; this is a brain teaser for what is possible.
+- **Notes:** Uses eBPF through `system-probe`. Go support requires Linux 5.17+. Do not promote the product.
 
 ### [C-051] A Go injector hook exists in development (not released), loaded via LD_PRELOAD at process start
 
 - **Verdict:** CONFIRMED by the speaker, in development, not released
 - **Source(s):** S-DD-03 (speaker attestation)
-- **Notes:** The most important note in the ledger: the mechanism is deliberately undisclosed. Never add linking model, entry path, or binary-compatibility detail to any slide or script line. If asked, defer to next year's talk. The invocation shows `LD_PRELOAD=./libdd_go_hook.so` with `DD_SERVICE` and `DD_TRACE_DEBUG=1`; `DD_TRACE_DEBUG=1` shows span creation and trace-id extraction on stderr. No `make go-hook.so` on the slide: a build the room cannot reproduce reads as a tease. Amber `in development` chip.
+- **Notes:**
+  - Trap: never add the linking model, entry path, or binary-compatibility detail to any slide or script line. If asked, defer to next year's talk.
+  - The invocation shows `LD_PRELOAD=./libdd_go_hook.so` with `DD_SERVICE` and `DD_TRACE_DEBUG=1`. `DD_TRACE_DEBUG=1` prints span creation and trace-id extraction on stderr.
+  - No `make go-hook.so` on the slide. A build the room cannot reproduce reads as a tease. Amber `in development` chip.
 
-### [C-052] OBI roadmap: v0.11.0 targeted mid-August, proposed path to v1.0.0 by late October
+### [C-052] OBI roadmap targeted v0.11.0 in mid-August and v1.0.0 by late October
 
-- **Verdict:** SUPERSEDED (2026-11-01) by the actual releases. Use C-076 and S-OBI-12
-- **Source(s):** OBI SIG notes, Aug 12 2026, public, linked from open-telemetry/community. The old row cited S-OBI-05, which is the Kubernetes setup page. That citation was wrong. S-OBI-12 has the actual dates
-- **Notes:** Proposed in August: v0.11.0 on 18 Aug, v0.12 on 22 Sep, rc1 on 5 Oct, v1.0.0 on 26 Oct. Actual: v0.11.0 on 17 Aug, v0.12.1 on 20 Aug, v0.13.0 on 4 Sep, v0.14.0 on 2 Oct, v1.0.0-rc.1 on 7 Oct, v1.0.0-rc.2 on 16 Oct, v1.0.0 on 30 Oct. The roadmap is history now. Do not present it as a plan.
+- **Verdict:** SUPERSEDED (2026-11-01) by actual releases. Use C-076 and S-OBI-12
+- **Source(s):** OBI SIG notes, Aug 12 2026, public, linked from open-telemetry/community. The old row cited S-OBI-05 (Kubernetes setup page), which was wrong. S-OBI-12 has the dates.
+- **Notes:** Trap: the roadmap is history. Do not present it as a plan. Actual dates: v0.11.0 on 17 Aug, v0.12.1 on 20 Aug, v0.13.0 on 4 Sep, v0.14.0 on 2 Oct, v1.0.0-rc.1 on 7 Oct, v1.0.0-rc.2 on 16 Oct, v1.0.0 on 30 Oct.
 
 ### [C-053] Usama Saqib's FOSDEM 2026 talk covers production eBPF pitfalls at Datadog
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-UP-06 (FOSDEM 2026 public page)
-- **Notes:** Title, speaker, and abstract scope as cited on the slide. The talk covers kprobe performance across kernel versions, a fentry kernel bug, and the pain of scaling uprobes. Twenty-eight minutes, public. URL: <https://fosdem.org/2026/schedule/event/H3LM7G-performance_and_reliability_pitfalls_of_ebpf/>
+- **Notes:** Title, speaker, and abstract scope as cited on the slide. Covers kprobe performance across kernel versions, a fentry kernel bug, and scaling uprobes. Twenty-eight minutes, public. <https://fosdem.org/2026/schedule/event/H3LM7G-performance_and_reliability_pitfalls_of_ebpf/>
 
 ---
 
@@ -276,20 +311,20 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S01, S02 (ebpf.io "What is eBPF", kernel verifier docs)
-- **Notes:** Load-time checks. A hit does not re-verify. The loader diagram on the slide is eBPF.io "Loader", CC BY 4.0, credited on the slide.
+- **Notes:** Checks run at load time. A hit does not re-verify. The slide loader diagram is eBPF.io "Loader", CC BY 4.0, credited on the slide.
 
 ### [C-061] BTF and CO-RE adapt kernel field reads at load time. They do not describe Go library layouts
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S02 (E05, E06)
 
-### [C-062] A uprobe places a breakpoint in the mapped code of the process. The kernel runs the handler, then emulates or single-steps the original instruction
+### [C-062] A uprobe places a breakpoint in the process's mapped code. The kernel runs the handler, then emulates or single-steps the original instruction
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S03, S04 (E08, E10, E11)
-- **Notes:** Conventional x86 path. Newer kernels improve scaling (S05, S06). Do not quote a per-hit nanosecond number: the kernel benchmark measures an empty probe.
+- **Notes:** Conventional x86 path. Trap: do not quote a per-hit nanosecond number. The kernel benchmark measures an empty probe.
 
-### [C-063] On amd64, Go ABIInternal (Go 1.17+) passes the first integer arguments in AX, BX, CX. A goroutine can change threads between entry and exit, so OBI keys state by PID and the g pointer
+### [C-063] On amd64, Go ABIInternal (Go 1.17+) passes the first integer arguments in AX, BX, CX. Goroutines change threads, so OBI keys state by PID and the g pointer
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S07, S08, S11 (E15, E16, E20, E21)
@@ -298,13 +333,13 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S09, S10 (E17, E18, E19), OBI v0.10.0, re-verified at v1.0.0 (d23be0d6)
-- **Notes:** The saved-return-address replacement conflicts with Go stack copying and frame metadata. At v1.0.0, `pkg/internal/goexec/instructions_amd64.go` `FindReturnOffsets` still collects `x86asm.RET` offsets, and `instructions.go` still says that Go linkage prevents uretprobes. `bpf/common/go_addr_key.h` still keys state by PID and goroutine address (C-063).
+- **Notes:** The saved-return-address replacement conflicts with Go stack copying and frame metadata. At v1.0.0, `FindReturnOffsets` in `pkg/internal/goexec/instructions_amd64.go` still collects `x86asm.RET` offsets. `bpf/common/go_addr_key.h` still keys state by PID and goroutine address (C-063).
 
 ### [C-065] OBI reads field offsets from DWARF when present, otherwise from build versions and a prepared offset database
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S12 (E22, E23), OBI v0.10.0, re-verified at v1.0.0 (d23be0d6)
-- **Notes:** At v1.0.0, `structmembers.go` still tries DWARF first and falls back to the embedded `offsets.json`. The `runtime.moduledata` resolver from PR #1851 (C-016) is still in `instructions.go`.
+- **Notes:** At v1.0.0, `structmembers.go` tries DWARF first, then the embedded `offsets.json`. The `runtime.moduledata` resolver from PR #1851 (C-016) is still in `instructions.go`.
 
 ### [C-066] USDT is a NOP plus an ELF note with a name and argument recipe. A tracer attaches an ordinary uprobe at the site. An optional semaphore signals a present tracer
 
@@ -315,9 +350,9 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S15–S18 (E26–E30)
-- **Notes:** Re-checked against Go 1.27 (current 1.27.3); its release notes have no USDT support. Polar Signals' work is a consumer, not Go compiler support. The speaker's fork is a proof of concept that this research did not build.
+- **Notes:** Go 1.27 release notes have no USDT support. Polar Signals is a consumer, not compiler support. The speaker's fork is a proof of concept that this research did not build.
 
-### [C-068] ld.so maps LD_PRELOAD objects before all others, and shared-object initializers run before the executable gains control
+### [C-068] ld.so maps LD_PRELOAD objects before all others. Shared-object initializers run before the executable gains control
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 09-process-start-injection.md I-04 (man7 ld.so(8)), I-05 (System V ABI)
@@ -326,7 +361,7 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 09-process-start-injection.md I-04, I-08 (golang/go#28909, Ian Lance Taylor)
-- **Notes:** #28909 is musl-specific (its title ends with 'and musl libc'). glibc runs preloaded constructors in the loader. The slide now says 'With musl'.
+- **Notes:** Trap: #28909 is musl-specific. glibc runs preloaded constructors in the loader. The slide now says "With musl".
 
 ### [C-070] The OpenTelemetry injector ships Java, Node.js, .NET, Ruby, and Python (Python off by default). It does not inject Go
 
@@ -343,18 +378,18 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED (re-checked 2026-10-29 with `gh api`)
 - **Source(s):** 09-process-start-injection.md I-01, I-02
-- **Notes:** #81662 labelled Proposal-Accepted on 2026-10-01 (aclements). #81450 labels: Proposal, cgo. Re-check before delivery. Any claim about which binaries an injector can reach afterwards is inference and stays off the slides.
+- **Notes:** #81662 labelled Proposal-Accepted on 2026-10-01. #81450 is still a Proposal. Claims about reachable binaries are inference and stay off slides.
 
 ### [C-073] Live Debugger logpoints collect data without pausing the application. Logpoints expire with the debug session
 
 - **Verdict:** CONFIRMED (public docs), owner review
 - **Source(s):** 10-live-debugger.md S-DD-L1 (docs.datadoghq.com/tracing/live_debugger/)
 
-### [C-074] Live Debugger for Go needs Linux 5.17+, Agent 7.73+, and Go SDK 2.9+. Capture logpoints run at most 1 per second. Logpoints without capture run at most 5000 per second per service instance. Sensitive identifiers are redacted before data leaves the host
+### [C-074] Live Debugger for Go needs Linux 5.17+, Agent 7.73+, and Go SDK 2.9+. Capture logpoints run at most 1 per second. Logpoints without capture run at most 5000 per second per instance. Sensitive identifiers are redacted before data leaves the host
 
 - **Verdict:** CONFIRMED (public docs), owner review
 - **Source(s):** 10-live-debugger.md S-DD-L1, S-DD-SCRUB
-- **Notes:** No public overhead number exists. Do not state one.
+- **Notes:** Trap: no public overhead number exists. Do not state one.
 
 ### [C-075] Live Debugger maps a source line to a PC through the DWARF line table, attaches a uprobe, and reads variables through DWARF location lists. A variable with no location at that PC is reported unavailable
 
