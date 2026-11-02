@@ -1,6 +1,6 @@
 # Speaker notes: Zero-Touch Go Instrumentation
 
-GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
+GoLab 2026. 45-minute hard stop: 43 minutes presented, 2 minutes buffer, no Q&A. Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Section headings below match slide titles
 verbatim, so you can find your place by what is on screen.
@@ -27,13 +27,13 @@ cues. Memorise the purpose of each slide, then let the words follow.
 
 ## Timing
 
-The `outline.md` times are working budgets, not measurements. They reserve 36
-minutes for content and two minutes for pauses and overruns. Rehearse the new
+The `outline.md` times are working budgets, not measurements. They reserve 43
+minutes for content and two minutes for pauses and overruns. The slot has no Q&A. Rehearse the new
 future material. Removing the install slide does not make room for all of it.
 
-Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
-live debugging by 22:30, selection by 26:00, future work by 28:00, and the
-closing callback by 32:00. Adjust these together after a timed read. The
+Checkpoints: otelc by 5:00, injector by 9:30, OBI by 13:00, profiles by 23:00,
+live debugging by 26:00, selection by 30:30, future work by 32:30, and the
+closing callback by 37:30. Adjust these together after a timed read. The
 optional static-PIE anecdote needs about 1:25 within the OBI budget.
 
 ---
@@ -50,11 +50,14 @@ Let the title stand. Advance.
 
 **SAY**
 
-There is a bug. It happens in production. You cannot reproduce it locally.
+Imagine it is Friday, twenty to five. Checkout is slow, for one tenant
+only. Staging is fine. Your laptop is fine.
 
-So you add a log line. You redeploy.
+So you add a log line around the cart total. You redeploy. Twenty minutes.
 
-Wrong place. You add another log line. You redeploy again.
+Wrong function. You move the log line. You redeploy again.
+
+By the third deploy, the spike is gone. You never saw the value.
 
 **DO**
 
@@ -93,7 +96,7 @@ Land "a platform problem."
 
 ---
 
-## Other runtimes have an attachment point
+## Go compiled away the attachment point
 
 **SAY**
 
@@ -110,7 +113,7 @@ Point out that each runtime has one. Go does not.
 
 ---
 
-## Why we care
+## Hand-written instrumentation decays
 
 **SAY**
 
@@ -122,7 +125,7 @@ to work in customer services.
 
 **DO**
 
-Do not imply work on OBI.
+Bare beat. Let "decays" land. Do not imply work on OBI.
 
 ---
 
@@ -182,7 +185,7 @@ Reveal each line. Do not rush. Land the last line.
 
 ---
 
-## Choose where to intervene
+## Let the constraint pick the layer
 
 **SAY**
 
@@ -193,6 +196,9 @@ Build time preserves Go semantics but requires a rebuild. Process-start
 injection avoids source edits but depends on binary and linker surfaces.
 Kernel observation avoids the rebuild but inherits Linux, privilege, and
 compatibility constraints.
+
+The reason this matters is that you rarely pick the layer. The constraint
+picks it for you.
 
 We will follow that order: build, process start, then kernel.
 
@@ -210,6 +216,9 @@ At each point, ask which evidence we can collect. Traces, metrics, logs, and
 profiles answer different questions about production.
 
 We will track those signals in the same order throughout the talk.
+
+Three parts. First, the three ways in. Second, the evidence they still miss.
+Third, how to choose, and what Go could make easier.
 
 **DO**
 
@@ -282,7 +291,7 @@ The diagram is the point. Do not over-explain the proxy.
 
 ---
 
-## Production evidence
+## about 20%
 
 **SAY**
 
@@ -340,7 +349,7 @@ Advance to the linkname example.
 
 ---
 
-## What Go actually has
+## Runtime internals are reachable. They are not an API
 
 **SAY**
 
@@ -386,6 +395,9 @@ implementation it depends on the symbol loading order.
 
 This broke between Go 1.22 and 1.23. Go 1.25 now keeps the larger symbol.
 Go 1.23.9 and 1.24.3 got the fix too.
+
+What that means is: a tool that worked on one Go release can break on the
+next one.
 
 **DO**
 
@@ -550,7 +562,7 @@ Be precise. Do not say LD_PRELOAD never works with Go.
 
 ---
 
-## The teaser
+## We made it work
 
 **SAY**
 
@@ -610,9 +622,14 @@ Smile, pause, let the room clap. Ten seconds. Do not explain "stable" here. If t
 
 ---
 
-## OpenTelemetry eBPF Instrumentation
+## One DaemonSet, a whole node, no rebuild
 
 **SAY**
+
+Imagine a platform team with forty Go services and no rebuild window this
+quarter. They deploy one DaemonSet. The same afternoon, they see HTTP and SQL
+spans for every supported service, Go or not. What they do not see is the
+tenant ID. Hold on to that.
 
 OBI is the upstream successor to Grafana Beyla, donated to OpenTelemetry in
 2025.
@@ -651,7 +668,7 @@ Credit the diagram verbally to eBPF.io. Do not say the verifier proves the syste
 
 ---
 
-## Choose the place to observe
+## For Go code, the hook is a uprobe
 
 **SAY**
 
@@ -673,7 +690,10 @@ Point at the uprobe row. Do not imply fentry works for Go functions.
 
 **SAY**
 
-Here is one uprobe hit. The loader finds the instruction from the symbol. The
+Here is one uprobe hit. Think of it this way: a breakpoint that does not
+stop the program.
+
+The loader finds the instruction from the symbol. The
 kernel puts a breakpoint into the mapped code of the process. The file on disk
 does not change.
 
@@ -742,6 +762,8 @@ reject the stack, and the process can crash.
 So OBI does not use uretprobes for Go. It disassembles the function, finds
 every RET instruction, and puts an ordinary uprobe on each one. The return
 address is never touched.
+
+What that means is: OBI never touches the stack that Go needs to move.
 
 **DO**
 
@@ -813,7 +835,7 @@ Do not read all thirteen. Point to a few categories.
 
 ---
 
-## What OBI emits
+## OBI emits traces and metrics. Logs get correlation
 
 **SAY**
 
@@ -834,7 +856,7 @@ Say explicitly: correlation is log support, not a log exporter. Say the stabilit
 
 ---
 
-## The platform contract
+## OBI needs Linux, BTF, and kernel 5.8 or a backport
 
 **SAY**
 
@@ -859,6 +881,8 @@ adds perf monitoring, raw sockets, and process and executable inspection.
 Context propagation adds network administration. Go library propagation may
 need SYS_ADMIN on kernel 5.10 or newer because it uses bpf_probe_write_user.
 
+What that means is: the feature you turn on decides the access you ask for.
+
 **DO**
 
 Speak the ladder as four rungs, never as a table. CAP_SYS_PTRACE inspects /proc. It does not PTRACE_ATTACH. Since v0.14.0, most probes attach without SYS_ADMIN. The write helper still needs SYS_ADMIN. Secure Boot and kernel lockdown can still turn it off.
@@ -872,7 +896,7 @@ Speak the ladder as four rungs, never as a table. CAP_SYS_PTRACE inspects /proc.
 OBI can see service boundaries, HTTP and gRPC spans, RED and runtime metrics,
 supported library operations, and log correlation.
 
-It cannot infer a tenant ID, a checkout stage, or a domain event unless those
+Remember the platform team. It cannot infer their tenant ID, a checkout stage, or a domain event unless those
 semantics already cross an instrumented boundary.
 
 One thing moved. If you write a span with otel.Tracer and register no SDK,
@@ -986,6 +1010,9 @@ Ten seconds. Do not explain the joke. Advance.
 
 **SAY**
 
+That was the first part, the three ways in. Second part: the evidence they
+still miss.
+
 We now know where to intervene. What evidence does the problem need?
 
 The build path can include profiling. This profiler gives us another route:
@@ -1009,7 +1036,7 @@ Pause between the two questions.
 
 ---
 
-## OpenTelemetry eBPF Profiler
+## One profiler, every process on the node
 
 **SAY**
 
@@ -1110,8 +1137,8 @@ Two seconds. Advance.
 
 **SAY**
 
-Back to the bug from the opening. You need one variable, on one line, in
-production. Every tool so far adds telemetry that you planned. This one
+Back to Friday, twenty to five. You need one value, the cart total, on one
+line, in production. Every tool so far adds telemetry that you planned. This one
 answers a question that you did not plan. The signal here is a dynamic log,
 with a snapshot of the available variables.
 
@@ -1212,6 +1239,8 @@ Read the last row, not the whole table. Delve tracepoints print events, not snap
 
 **SAY**
 
+Third part: how to choose, and what Go could make easier.
+
 We can now choose on two grounds. Which signal answers the question?
 Which intervention point can our service support?
 
@@ -1221,7 +1250,7 @@ Compare signal coverage before the constraint table.
 
 ---
 
-## What each approach gives you
+## Similar signals, different coverage
 
 **SAY**
 
@@ -1235,7 +1264,8 @@ Similar signals do not mean identical coverage or deployment costs.
 
 **DO**
 
-Keep the signal order. The Go injector is in development. Live probe metrics and traces remain goals.
+Keep the signal order. Say once: SDK means it depends on the SDK and
+integrations. The Go injector is in development. Live probe metrics and traces remain goals.
 
 ---
 
@@ -1433,8 +1463,7 @@ End the future section. The agent callback uses current preview capabilities.
 
 **SAY**
 
-Remember the loop from the opening. The bug you cannot reproduce. The log line.
-The redeploy. The wrong place.
+Remember Friday. The slow tenant. The log line. The redeploy. The wrong place.
 
 Now: describe the bug in words. The agent places the probe and reads production
 evidence. No source edit, no restart, no redeploy.
@@ -1450,6 +1479,11 @@ This is the one place enthusiasm is the point. Name the product once. Give the s
 ---
 
 ## Takeaways
+
+**SAY**
+
+Go gave us simple binaries. We paid for them with late instrumentation.
+That bill is getting smaller.
 
 **DO**
 
@@ -1477,6 +1511,8 @@ Slow down. These two lines are the whole talk.
 
 If you want to help, bring a concrete requirement: a probe site, a context
 contract, or a deployment restriction. The SIGs need those cases.
+
+These tools are built in the open, in these SIGs. Bring them your case.
 
 github.com/open-telemetry/community has every SIG's calendar, notes, and
 channels.
@@ -1519,19 +1555,27 @@ reach your service.
 
 **DO**
 
-End with this line. Stop.
+Advance to the last slide.
 
 ---
 
-## Questions?
+## Grazie!
+
+**SAY**
+
+Next time production surprises you, do not redeploy to ask. Ask. Without
+changing a single line of code.
+
+Grazie.
 
 **DO**
 
-Stop. Leave the links visible.
+End with this line. Stop. The slot has no Q&A: point to the hallway and
+leave the links visible.
 
 ## Reserve answers
 
-Answers to likely questions. Keep them bounded.
+Answers for hallway questions. The slot has no Q&A. Keep them bounded.
 
 **Is OBI production ready now?** v1.0.0 shipped on 30 October, after two
 release candidates on 7 and 16 October. The stable contract covers Config v2,

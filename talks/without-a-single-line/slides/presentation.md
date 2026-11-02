@@ -71,7 +71,7 @@ The fiftieth inherits gaps.
 
 ---
 
-## Other runtimes have an attachment point
+## Go compiled away the attachment point
 
 | Runtime | Zero-code mechanism |
 | --- | --- |
@@ -85,21 +85,10 @@ The fiftieth inherits gaps.
 ### Go made deployment simple. It made late instrumentation hard
 
 ---
-<!-- _class: vcenter -->
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
 
-## Why we care
-
-| Layer | What | Constraint |
-| --- | --- | --- |
-| *Build time* | `otelc` | Rebuild required |
-| *Process start* | Injector | Binary/linking restrictions |
-| *Runtime + kernel* | eBPF + profiling | Linux, privileges, kernel contracts |
-
-<br>
-
-I wrapped handlers by hand for years. Every job taught me the same thing: hand-written instrumentation *decays*.
-
-Datadog builds at all three layers. Each solves a different constraint.
+# Hand-written instrumentation *decays*
 
 ---
 <!-- _paginate: false -->
@@ -136,7 +125,7 @@ There is no single point where an agent can safely rewrite every function at sta
 
 ---
 
-## Choose where to intervene
+## Let the constraint pick the layer
 
 <div class="center">
 
@@ -231,18 +220,13 @@ flowchart LR
 </div>
 
 ---
-<!-- _class: vcenter -->
+<!-- _class: stat -->
 
-## Production evidence
+# about 20%
 
-| | |
-| ---: | --- |
-| <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">v1</span> | <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">about 20%</span> |
-| Stable upstream tool | Growth in customer adoption of Orchestrion-based Go auto-instrumentation |
+Growth in customer adoption of Orchestrion-based Go auto-instrumentation
 
-<br>
-
-One build-command change can standardize instrumentation across a fleet.
+`otelc` v1 is stable upstream. One build-command change can standardize instrumentation across a fleet.
 
 ---
 
@@ -302,7 +286,7 @@ Not every Datadog integration has moved to otelc yet.
 
 ---
 
-## What Go actually has
+## Runtime internals are reachable. They are not an API.
 
 ###### runtime/proc.go
 
@@ -526,7 +510,7 @@ go build -ldflags="-linkmode=external"
 
 ---
 
-## The teaser
+## We made it work
 
 ```bash
 LD_PRELOAD=./libdd_go_hook.so \
@@ -577,7 +561,7 @@ DD_TRACE_DEBUG=1 \
 
 ---
 
-## OpenTelemetry eBPF Instrumentation
+## One DaemonSet, a whole node, no rebuild
 
 **OBI** is the upstream successor to Grafana Beyla, donated to OpenTelemetry in 2025.
 
@@ -612,7 +596,7 @@ Diagram: eBPF.io authors, "Loader", [ebpf.io/what-is-ebpf](https://ebpf.io/what-
 
 ---
 
-## Choose the place to observe
+## For Go code, the hook is a uprobe
 
 | Hook | Observes |
 | --- | --- |
@@ -621,10 +605,6 @@ Diagram: eBPF.io authors, "Loader", [ebpf.io/what-is-ebpf](https://ebpf.io/what-
 | fentry / fexit | a kernel or BPF function, through a BPF trampoline |
 | **uprobe** | **an instruction in a user-space binary** |
 | uretprobe | a function return, through a return trampoline |
-
-<br>
-
-The hook decides what you can see. For Go code, the hook is a **uprobe**.
 
 ---
 
@@ -807,7 +787,7 @@ A function address is not a type layout.
 
 ---
 
-## What OBI emits
+## OBI emits traces and metrics. Logs get correlation.
 
 <div class="columns">
 <div>
@@ -825,25 +805,22 @@ RED and runtime metrics
 
 ### Log correlation
 
-OBI can enrich selected **JSON and plain-text logs** with `trace_id` and `span_id` while a span is active.
+Adds `trace_id` and `span_id` to selected **JSON and plain-text logs** while a span is active.
 
-It leaves log shipping to your existing pipeline. It is not a log exporter.
-
-Needs Linux 6.0+ and no kernel lockdown.
+Not a log exporter. Linux 6.0+, no kernel lockdown.
 
 </div>
 </div>
 
 <div class="tiny">
 
-v1 stable: HTTP and SQL spans and duration metrics. gRPC: release candidate. Go runtime metrics: development.<br>
 [OpenTelemetry: OBI trace-log correlation](https://opentelemetry.io/docs/zero-code/obi/trace-log-correlation/) · [OBI v1.0.0 telemetry contract](https://github.com/open-telemetry/opentelemetry-ebpf-instrumentation/blob/v1.0.0/TELEMETRY.md)
 
 </div>
 
 ---
 
-## The platform contract
+## OBI needs Linux, BTF, and kernel 5.8 or a backport
 
 | Requirement | OBI |
 | --- | --- |
@@ -1008,7 +985,7 @@ somehow, it works
 
 ---
 
-## OpenTelemetry eBPF Profiler
+## One profiler, every process on the node
 
 Originated as Elastic Universal Profiling and joined OpenTelemetry in June 2024.
 
@@ -1200,22 +1177,15 @@ Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ recommended · [Live Debugger 
 
 ---
 
-## What each approach gives you
+## Similar signals, different coverage
 
 | Approach | Traces | Metrics | Logs | Profiles |
 | --- | --- | --- | --- | --- |
 | Build time | SDK | SDK | SDK | SDK |
-| Injector | SDK | SDK | SDK | SDK |
+| Injector (in development) | SDK | SDK | SDK | SDK |
 | OBI | Yes | Yes | Correlation | No |
 | eBPF Profiler | No | No | No | CPU |
 | Live Debugger | Goal | Goal | Logpoints | No |
-
-<div class="small">
-
-SDK = depends on the SDK and integrations. Go injector: in development.
-OBI does not export logs. Live Debugger traces and metrics are goals, not release promises.
-
-</div>
 
 ---
 
@@ -1285,12 +1255,6 @@ I can find you in the hallway. Pretty please 😊
 
 Our answer: yes, if Go gives eBPF something stable to read.
 
-<div class="tiny">
-
-Go 1.27 moved HTTP/2 into `net/http/internal/http2` and added a field to `moduledata`. Tools that infer by symbol or offset had to catch up. · [golang/go#57175](https://github.com/golang/go/issues/57175)
-
-</div>
-
 ---
 
 ## Ask 1: USDT probes in Go
@@ -1319,8 +1283,6 @@ Go 1.27 moved HTTP/2 into `net/http/internal/http2` and added a field to `module
 ---
 
 ## Ask 2: a read contract for pprof labels
-
-No new goroutine-local storage. dd-trace-go already sets pprof labels through contexts.
 
 | Today | Ask |
 | --- | --- |
@@ -1364,8 +1326,6 @@ threadlocal.schema_version: "go_pprof_labels_v1"
 | Link mode | internal, external |
 | Build mode | exe, PIE, static |
 | `plugin` | the exact toolchain and dependency versions |
-
-Other runtimes give agents one documented door. Go gives agents a matrix.
 
 **Ask:** tell agent authors which door Go supports.
 
@@ -1518,7 +1478,9 @@ Both decks · research · [earlier FOSDEM version](https://youtu.be/0TvrSebuDPk)
 <!-- _paginate: false -->
 <!-- _class: end gopher-balloon -->
 
-# Questions?
+# Grazie!
+
+Find me in the hallway.
 
 [kakkoyun.me](https://kakkoyun.me) · [github.com/kakkoyun](https://github.com/kakkoyun)
 

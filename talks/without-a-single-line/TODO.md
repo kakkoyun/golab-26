@@ -6,7 +6,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** working narrative draft, 38-minute target. The time budgets need a
+**State:** working narrative draft, 43-minute target, hard stop at 45, no Q&A. The time budgets need a
 timed read-through.
 
 ---
