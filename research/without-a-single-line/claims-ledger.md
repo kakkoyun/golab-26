@@ -505,7 +505,7 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** <https://github.com/golang/go/issues/68785> (seankhliao, 2025-11-18; ianlancetaylor, 2025-11-20); #21355 and #69478 are closed; `src/runtime/runtime2.go` at go1.27.3 has `labels unsafe.Pointer // profiler labels` in `runtime.g`; dd-trace-go sets pprof labels (`internal/traceprof`)
-- **Notes:** seankhliao: "as I understand, we've rejected anything that could be used as goroutine local storage." ianlancetaylor: "The profile labeling code is designed around passing contexts with attached labels. That is intentional." The ask is a read contract for existing labels, not a new GLS API. Speaker-stated ask.
+- **Notes:** seankhliao: "as I understand, we've rejected anything that could be used as goroutine local storage." ianlancetaylor: "The profile labeling code is designed around passing contexts with attached labels. That is intentional." The deck cites this rejection as prior discussion for Ask 1 (C-083), which asks for goroutine-local trace-context storage. The pprof-label read contract is no longer an ask on the slides.
 
 ### [C-092] The Go team called golang/go#69887 a problem report, not a proposal
 
