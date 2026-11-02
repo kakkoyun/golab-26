@@ -536,3 +536,9 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED by the speaker as goals, not release commitments
 - **Source(s):** Speaker direction on 2026-11-02 ("plans on slides too"; the talk is not recorded); C-084 for the tracing horizon; C-051 for the injector plan
 - **Notes:** Live Debugger metrics are a goal. Traces are a longer-term goal of 12+ months. The Go injector is in development, and the plan is Go in Single-Step Instrumentation. The eBPF profiler has CPU profiles, and allocation profiling is merged on main. The injector mechanism stays undisclosed.
+
+### [C-097] The "The long version: Hooking into the Go Toolchain" slide links a guest post by the speaker that builds `-toolexec` up from a stopwatch wrapper to `otelc`
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://internals-for-interns.com/posts/hooking-into-the-go-toolchain/> (guest post by Kemal Akkoyun, fetched 2026-11-02)
+- **Notes:** Reference slide at the end of section 02. The page confirms the scope cited on the slide: the post "takes `go build -toolexec` apart, from a tiny stopwatch wrapper all the way to otelc itself", and the author is an otelc maintainer. No numbers from the post appear on the slide.
