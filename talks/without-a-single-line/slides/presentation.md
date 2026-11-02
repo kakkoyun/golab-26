@@ -336,7 +336,7 @@ advice:
 
 <br>
 
-![width:220](../../assets/memes/palpatine-unlimited-power.gif)
+![width:340](../../assets/memes/palpatine-unlimited-power.gif)
 
 </div>
 </div>
