@@ -8,13 +8,14 @@ THEME_CSS := $(THEME_DIR)/golab.css
 SLIDE_MARKDOWN := $(foreach talk,$(TALKS),talks/$(talk)/slides/presentation.md)
 THEME_MARKDOWN := $(THEME_DIR)/README.md $(THEME_DIR)/deck.md
 SLIDE_PDFS := talks/go-benchmarks-lying/slides/presentation.pdf talks/without-a-single-line/slides/presentation.pdf
+SLIDE_HTML := talks/go-benchmarks-lying/slides/presentation.html talks/without-a-single-line/slides/presentation.html
 GO_FILES := $(shell find talks/go-benchmarks-lying/demo -name '*.go' -type f -print | sort)
 MARP := npx marp
 
 .DEFAULT_GOAL := help
 
 .PHONY: all build/html build/pdf build/html/% build/pdf/% build/offline/% watch/% serve/% clean clean/% \
-	check check/fast check/slides check/css check/theme check/footer check/go check/fragments check/code-headers \
+	check check/fast check/slides check/css check/theme check/footer check/go check/fragments check/code-headers check/diagrams \
 	lint/md lint/md/% fix/md/% format/md format/md/% check/typos check/typos/% fix/typos/% \
 	pre-commit sync/theme hooks install help
 
@@ -48,12 +49,17 @@ check: check/slides check/go
 
 check/fast: check/theme check/code-headers lint/md check/typos check/fragments
 
-check/slides: check/css check/code-headers lint/md check/typos check/fragments build/html check/footer
+check/slides: check/css check/code-headers lint/md check/typos check/fragments build/html check/diagrams check/footer
 
 check/css: check/theme
 
 check/footer: build/pdf
 	python3 tools/check_slide_footer.py $(SLIDE_PDFS)
+
+# Kroki answers over the network while Marp renders, so a flaky connection leaves
+# a broken image on a slide and the build still reports success.
+check/diagrams: build/html
+	python3 tools/check_diagrams.py $(SLIDE_HTML)
 
 # Marp turns `*` bullets into progressive-reveal fragments. Prettier's markdown
 # printer rewrites them to `-`, silently destroying every reveal. `.prettierignore`
@@ -144,6 +150,7 @@ help:
 	@printf '%s\n' 'Verify:'
 	@printf '%s\n' '  make check/fast          Theme, Markdown, and typo checks'
 	@printf '%s\n' '  make check               Full slides, footer, CSS/theme, and Go checks'
+	@printf '%s\n' '  make check/diagrams      Fetch each diagram and fail when Kroki does not answer'
 	@printf '%s\n' '  make sync/theme          Stage output-local theme resources'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Hooks:'

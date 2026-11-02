@@ -52,11 +52,8 @@ def main() -> int:
         data = base64.b64encode(body).decode("ascii")
         html = html.replace(f'src="{url}"', f'src="data:{mime};base64,{data}"')
 
-    # The theme scales diagrams with img[src^="https://kroki.io/mermaid/"].
-    # Point that selector at the inlined SVGs so the size stays the same.
-    html = html.replace(
-        '[src^="https://kroki.io/mermaid/"]', '[src^="data:image/svg+xml"]'
-    )
+    # The theme sizes a diagram through its <marp-auto-scaling> wrapper, which
+    # does not depend on the URL, so the data URI needs no selector rewrite.
 
     try:
         with open(target, "w", encoding="utf-8") as handle:

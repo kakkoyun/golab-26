@@ -93,6 +93,29 @@ items have 18% opacity. The PDF shows the full list. Keep `*` as the only
 list marker in a talk deck. The theme hides the Marp `header:` text. Pagination
 stays visible in the yellow footer band.
 
+## Diagrams
+
+A `mermaid` fence becomes a diagram image when the talk's Marp config loads the
+Kroki plugin. The theme then sizes that image and fades the background art on
+its slide.
+
+Kroki draws the diagram on its own server and returns an image. The theme cannot
+reach inside an image, so the palette travels with the diagram source, in the
+plugin's Mermaid init directive. White nodes, deep-teal structure, a teal
+cluster, a yellow note, and graphite edges come from there, not from this
+stylesheet. A diagram that carries its own `%%{init}%%` directive keeps it.
+
+The image fills the 1128 px content band. A diagram taller than the band stops at
+400 px and centres. That band is the largest one that still clears the footer on
+a slide with two lines of text under the picture. A diagram that arrives too
+narrow or too tall to use the band needs a different Mermaid layout, not a
+bigger band. A five-step vertical flow reads better from left to right anyway.
+
+Diagram labels use a system sans. An image cannot load the document's fonts, so
+the directive asks for Rubik first and falls back to Helvetica and Arial. Do not
+set a bare `fontFamily` in Mermaid: it rejects a multi-name value and keeps
+Trebuchet, and a single unavailable name would fall back to a serif.
+
 ## Licences
 
 Rubik and JetBrains Mono are under the SIL Open Font License. The licences are in `fonts/OFL-Rubik.txt` and `fonts/OFL-JetBrainsMono.txt`. The gopher art credit is in

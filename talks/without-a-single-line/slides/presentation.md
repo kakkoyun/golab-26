@@ -19,7 +19,7 @@ style: |
   .signal-map { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 23px; }
   section.section .signal-map { grid-column: 2; grid-row: 2; margin-left: 55px; }
   section.section .section-meme { grid-column: 2; grid-row: 2; margin-left: 55px; }
-  section.section .section-meme p { color: #fff; font-size: 1.1em; font-weight: 700; margin-top: .4em; }
+  section.section .section-meme p { color: var(--ink); font-size: 1.1em; font-weight: 700; margin-top: .4em; }
   .signal-map span { padding: .45em .6em; border: 2px solid #006459; border-radius: 6px; background: #f5f5f5; color: #111; }
   .signal-map b { display: block; font-size: .8em; }
   .signal-map .signal-out { background: transparent; border-style: dashed; }
@@ -221,7 +221,7 @@ The projects did not collapse into one agent. They learned to compose.
 <div class="center">
 
 ```mermaid
-flowchart TD
+flowchart LR
     A[go build ./...] --> B[-toolexec otelc]
     B --> C[parse and rewrite .go]
     C --> D[go tool compile]
@@ -1227,7 +1227,7 @@ Add a layer when its signal earns the cost. Use live logpoints for missing evide
 **20% adoption growth** is evidence that Go users want the build-time path too.
 
 ---
-<!-- _class: section -->
+<!-- _class: section light -->
 <!-- _paginate: false -->
 
 ###### 08
