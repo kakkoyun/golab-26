@@ -25,6 +25,11 @@ short sentences, one idea each. `DO` lines are delivery cues, kept separate so
 the prose stays sayable. It is structured for memorisation — beats first, then
 the numbers — not as reference material.
 
+**Presenter notes are generated from the script.** Edit `speaker-notes.md`,
+then run `make sync/notes`. It writes each entry into its slide as a Marp
+presenter-view comment. `make check/notes` fails when they drift. Do not edit
+the notes comments in the deck by hand.
+
 **They must stay in sync.** Any change to a slide changes what gets said. When
 you edit one, edit the other in the same commit. Section headings in the script
 match slide titles verbatim so the speaker can find their place by what is on
@@ -55,6 +60,8 @@ Marp's bespoke template turns `*` list items into progressive-reveal fragments,
 which makes the marker load-bearing rather than a style choice.
 
 - Every list in a deck is an intentional reveal. A `-` bullet in a deck is a bug.
+- For a list that must not reveal, write an HTML `<ul>`. The theme styles it
+  the same, and no formatter rewrites it.
 - Prettier rewrites `*` to `-` and silently destroys every reveal. Decks are in
   `.prettierignore` and `make format/md` is a deliberate no-op on them.
 - Some editor and agent format-on-save hooks rewrite `-` to `*`, silently

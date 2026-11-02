@@ -55,9 +55,11 @@ def footer_overflow(pdf: Path) -> dict[int, list[str]]:
 
         word: str = html.unescape(re.sub(r"<.*?>", "", word_match.group(2)))
         # The theme owns these footer words. Deck content cannot use this band.
+        # The glyphs are delivery cues that a slide writes into the footer.
         if word in {
             "GOLAB", "the", "international", "conference", "on", "go", "in",
             "italy", "|", "November", "1st", "-", "3rd,", "2026",
+            "▸", "◆", "∙", "◦",
         } or word.isdecimal():
             continue
 

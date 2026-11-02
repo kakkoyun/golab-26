@@ -1,6 +1,6 @@
 # Outline: Zero-Touch Go Instrumentation
 
-> **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
+> **Format:** GoLab 2026. 45-minute hard stop: 43 minutes presented, 2 minutes buffer, no Q&A. Intermediate Go audience.
 > **Deck:** `slides/presentation.md` (working draft)
 > **Script:** `speaker-notes.md` (SAY/DO format)
 
@@ -19,24 +19,24 @@ zero operational cost. This is a working narrative, not a fixed sequence.
 
 | Section | Budget | Running | Purpose |
 | --- | ---: | ---: | --- |
-| Open and 01 Why Go resists | 4:00 | 4:00 | The production bug, coverage gaps, agent joke, lifecycle map, and four signals. |
-| 02 otelc | 4:00 | 8:00 | SDK-dependent signals, build ownership, runtime storage, and linkname fragility. |
-| 03 Injector | 3:00 | 11:00 | SDK capabilities at startup, the loader constraint, and the development teaser. |
-| 04 OBI | 9:00 | 20:00 | Explain eBPF through OBI. Traces and metrics, Go-specific mechanics, and operational costs. |
-| 05 Profiles | 2:30 | 22:30 | A kernel route to CPU profiles. Establish the need for request correlation. |
-| 06 Live debugging | 3:30 | 26:00 | Return to the bug. Capture logs and variables within explicit limits. |
-| 07 Choose the signal and the layer | 2:00 | 28:00 | Compare signal coverage and deployment constraints. Include live debugging. |
-| 08 Asks for the Go team | 4:00 | 32:00 | Four asks (USDT probes, a read contract for pprof labels, -toolexec gaps, one start-up door), then the tool plans. |
-| 09 From question to evidence | 4:00 | 36:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
-| Buffer | 2:00 | 38:00 | Pauses, audience reactions, and overruns. |
+| Open and 01 Why Go resists | 5:00 | 5:00 | The production bug, coverage gaps, agent joke, lifecycle map, and four signals. |
+| 02 otelc | 4:30 | 9:30 | SDK-dependent signals, build ownership, runtime storage, and linkname fragility. |
+| 03 Injector | 3:30 | 13:00 | SDK capabilities at startup, the loader constraint, and the development teaser. |
+| 04 OBI | 10:00 | 23:00 | Explain eBPF through OBI. Traces and metrics, Go-specific mechanics, and operational costs. |
+| 05 Profiles | 3:00 | 26:00 | A kernel route to CPU profiles. Establish the need for request correlation. |
+| 06 Live debugging | 4:30 | 30:30 | Return to the bug. Capture logs and variables within explicit limits. |
+| 07 Choose the signal and the layer | 2:00 | 32:30 | Compare signal coverage and deployment constraints. Include live debugging. |
+| 08 Asks for the Go team | 5:00 | 37:30 | Four asks (USDT probes, a read contract for pprof labels, -toolexec gaps, one start-up door), then the tool plans. |
+| 09 From question to evidence | 5:30 | 43:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
+| Buffer | 2:00 | 45:00 | Pauses, audience reactions, and overruns. |
 
 These are working budgets, not measurements. The future section needs a timed
 read-through. Removing the install slide does not prove the new material fits.
 The optional static-PIE anecdote needs about 1:25 within the OBI budget, or omit it.
 
-Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
-live debugging by 22:30, selection by 26:00, future work by 28:00, and the
-closing callback by 32:00. Revise after rehearsal.
+Checkpoints: otelc by 5:00, injector by 9:30, OBI by 13:00, profiles by 23:00,
+live debugging by 26:00, selection by 30:30, future work by 32:30, and the
+closing callback by 37:30. Revise after rehearsal.
 
 ## Cut ladder
 

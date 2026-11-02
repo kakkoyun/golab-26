@@ -6,7 +6,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** working narrative draft, 38-minute target. The time budgets need a
+**State:** working narrative draft, 43-minute target, hard stop at 45, no Q&A. The time budgets need a
 timed read-through.
 
 ---
@@ -61,11 +61,17 @@ None currently.
   still says "Development", so do not quote it.
 - **All three screenshots are cropped on purpose.** Originals keep an `_orig`
   suffix. Do not swap them back.
-- **Reveals remain selective.** The deck declares its fragment floor. Lists inside
-  `.columns` are not counted.
+- **Reveals only for the important beats.** Two lists reveal: the opening
+  loop and "What makes Go different". Every other list is an HTML `<ul>`. Reason:
+  a click per item slowed the talk and diluted the reveals that matter.
 - **The SIG call follows the takeaways.** Keep the resource links at the end.
 - **"Combine the layers" was absorbed.** The 20% line moved to the practical-
   combination slide. The table is "When to reach for what."
 - **The narrative stays editable.** Do not add a fixed-order test or remove
   slide punctuation to satisfy a heading comparison.
 - **No em dashes on slides.** Use colons and commas instead.
+- **Delivery cues sit in the footer.** A `_footer` glyph after GOLAB: `▸` speak
+  freely, `◆` checkpoint, `∙` pause, `◦` slow down. `◦` has no em-dash twin,
+  because slides use no em dashes. The legend is in the script contract. Reason:
+  the cue reads as footer typography, and the theme needs no CSS change. Meme
+  and full-image slides hide the footer, so the bare image is their cue.
