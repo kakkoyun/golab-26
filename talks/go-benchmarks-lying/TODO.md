@@ -7,106 +7,54 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 105
-pages, 16 sections, fragment floor 45. GoLab lists the talk as Intermediate, so
-the cut keeps the basics and both incidents and removes the depth slides. See
-`outline.md` for the cut list. The full `make check` surface passes.
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 54
+pages, 42 minutes presented, 3 minutes Q&A, fragment floor 3.
 
 ---
 
-## Open
+## Blocking
 
-### Record what the talk actually took
+### Time the GoLab cut against a clock
 
-The single most valuable missing number in this repo. Every timing figure here
-and in `outline.md` is still a *construction from section content*, never a
-measurement, and it has now been wrong three times running: once before the
-WHY-first restructure, once after it, and once after five slides were added on
-the day-before push.
+The times in `outline.md` are a word-count model. Earlier estimates in this
+repository were wrong three times. Read the script aloud at delivery pace with
+the final deck. Record the time at each divider. Write the real numbers into
+`outline.md` and `speaker-notes.md`. If the total is over 42 minutes, apply the
+cut ladder in `outline.md`.
 
-`outline.md` currently claims 59:30 against a 60-minute slot. Write down what it
-really was, section by section if you have it, and rebase `outline.md` and the
-per-part targets in `speaker-notes.md` on that. Until someone does, the cut
-ladder is being applied against a guess.
+### Test the presenter setup offline
 
-If the talk was recorded, the recording is the measurement.
+Serve the offline HTML with the network off. Check presenter view, the clicker,
+reveals, fonts, images, and notes. Keep the PDF and the script on the laptop.
+
+---
+
+## After GoLab
+
+### Re-capture the demo results under the golab-26 module path
+
+`demo/go.mod` declares `github.com/kakkoyun/golab-26/demo`. The captured files
+in `demo/results/` still print the old `gopherconuk-26` path. Re-capture them on
+a quiet machine. Do not edit captured output by hand.
+
+The `payload` string in `demo/bloop_bench_test.go` still says "GopherCon UK
+2026". It is benchmark input, so change it only in the same re-capture.
+
+### Re-measure the local container run on an idle machine
+
+The deck shows one run from August 2026 and labels it that way (ledger row 8).
+Two later attempts failed: one ran beside Marp and PDF builds, and `benchenv`
+refused the other because of load. Do not override that gate. Redo the run with
+nothing else running, then confirm or change the slide.
 
 ### Fold in Scott's marked-up PDF
 
 Still not received. When it lands, diff his notes against what is already
-addressed rather than working through it linearly.
+addressed.
 
 ### Send Scott the podcast link
 
 For marketing to help promote, once published.
-
----
-
-## Blocked
-
-### Time the GoLab cut against a clock
-
-**Blocking.** The GoLab cut targets 38 minutes. The word-count model in `outline.md` gives 36:00. Read the script aloud at
-delivery pace, record the split at each divider, and write the real numbers
-into `outline.md` and `speaker-notes.md`. If the total is over 38 minutes, apply
-the cut ladder in `outline.md`.
-
-### Re-capture the demo results under the golab-26 module path
-
-`demo/go.mod` now declares `github.com/kakkoyun/golab-26/demo`. The captured
-files in `demo/results/` (`idle.txt`, `noisy.txt`, `pinned.txt`,
-`gcflags-m-m.txt`) still print the old `gopherconuk-26` path. Re-capture them
-in the experiments phase, on a quiet machine, together with the CV re-measure
-below. Do not edit captured output by hand.
-
-The `payload` string in `demo/bloop_bench_test.go` still says "GopherCon UK
-2026". It is benchmark input. A change alters its byte length and invalidates
-the captured results, so change it only in the same re-capture.
-
-### Re-measure the Docker and macOS CV experiment on an idle machine
-
-**This is the last factual soft spot in the deck.** Ledger row 8 claims roughly
-a 1 to 2 percent CV floor for a pinned container on the Mac VM against about
-0.05 percent on bare-metal Linux. That number is not confirmed by anything in
-this repo.
-
-**Attempt 1** was made and thrown away, for a reason worth keeping: it ran
-concurrently with a Marp server and two PDF builds, so the "idle" baseline was
-not idle. It produced idle 3.16 percent, noisy 5.82 percent, pinned 2.42 percent,
-which contradicts both the committed evidence and row 8, and it also showed
-pinning making the mean 2.3x slower. None of that is trustworthy, so
-`demo/results/` still holds the older committed run and the deck still shows
-idle 4.75, noisy 18.88, pinned 5.25.
-
-**Attempt 2 was refused by our own tooling**, which is the useful part. Load
-average was 12.98 / 43.14 / 45.03 with a browser at 42 percent CPU, and `benchenv`
-reported `[warn] load average — close background applications before
-benchmarking`, dropping its summary from `3 ok, 2 warn` to `2 ok, 3 warn`. The
-gate on the closing slides did its job on the person who wrote it. Do not
-override it; wait for a quiet machine.
-
-Consequence: the `5.25% is not a triumph / It is a ceiling` slide rests on a run
-nobody has reproduced. Redo it on a quiet machine with nothing else running,
-then either confirm the slide or change both the slide and row 8.
-
-The irony of contaminating a measurement for this particular talk is noted, and
-is the reason it was discarded rather than shipped.
-
----
-
-## Cross-repo
-
-The three CLIs and the agent skills live in
-[github.com/kakkoyun/benchlab](https://github.com/kakkoyun/benchlab), not here.
-
-- **Two repos, one QR.** The QR on the closing slide points at the *talk* repo.
-  benchlab is a separate link beside it. The script carries a `DO` cue about not
-  conflating them on stage.
-- **The captured tool outputs are cross-repo evidence with no tripwire.** If
-  benchlab changes an output format, the slides go stale and nothing in this repo
-  notices. This bit once already: see the `benchenv` entry below. Re-check all
-  three panels against freshly built binaries before any future delivery, and
-  record the result in ledger row 25.
 
 ---
 
@@ -117,10 +65,11 @@ The three CLIs and the agent skills live in
 No slide references these files now: `bp-feedback-flow.png`,
 `brendan-gregg-shouting-at-datacenter.png`,
 `fosdem26_ka_how_to_reliabliy_measure_performance.png`,
+`gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png`,
 `go1.26_b_loop_change.png`, `golang_perf_dashboard_charts.png`,
 `golang_performance_dashboard.png`, `golang_performance_monitoring.png`,
-`golang_slowbot.png`. Some are the uncropped originals that the "Done" list
-keeps on purpose. Delete the others, or put them back on a slide.
+`golang_slowbot.png`, `golang_slowbot_quote.png`. Some are evidence for ledger
+rows. Delete the others after GoLab, or put them back on a slide.
 
 ---
 
@@ -129,66 +78,43 @@ keeps on purpose. Delete the others, or put them back on a slide.
 Kept short deliberately. These come up repeatedly, so they are recorded to stop
 them being "fixed" again.
 
-- **Talk is not microbenchmark-only.** It is two halves, local+micro and
-  CI+macro, answering the same three questions at both scales. The old scope
-  line was deleted on purpose.
-- **No internal vocabulary on slides.** "Arc 1", "CLOSE", "1A" were planning
-  scaffolding. Dividers are numbered `01`–`16`. The theme's number block fits
-  exactly two characters; longer labels overflow and clip.
-- **WHY-first order is deliberate.** The deck used to open on the OPERA cold
-  open; `outline.md` even argued for it ("Start with OPERA, not a biography or
-  an agenda"). The restructure reverses that on purpose: WHY, then why I care,
-  then the OPERA story, so the audience has the frame before the contract the
-  story sets up. Do not "fix" it back to OPERA-first. The craft risk is real
-  (opening on SLO framing is a colder open than opening on a story), but the
-  reversal is recorded here so it does not get quietly undone.
-- **Slides carry mottos, data, visuals, and links only.** Prose belongs in
-  `speaker-notes.md`. If you find yourself adding a paragraph to a slide, it
-  goes in the script instead.
-- **`*` is the only list marker on slides.** Every list is an intentional Marp
-  reveal. A `-` bullet in the deck is a bug. `make check/fragments` guards the
-  count; `.prettierignore` stops prettier rewriting the markers.
-- **The `b.Loop` removes-table is correct. Do not "fix" it.** All four rows were
-  checked against the release notes, including `DCE prevented: Yes`, which
-  survives the Go 1.26 change. **Go 1.26 is the fix, not the regression**, and
-  the direction is very easy to get backwards. What 1.26 removed is the *inlining
-  suppression* that 1.24 and 1.25 used to implement keepalive; the keepalive
-  itself remains. Ledger rows 39 to 41 carry the detail, including that the
-  #77654 regression did not reproduce on go1.26.5.
-- **CodSpeed's Go support is walltime-only.** Its interesting low-variance
-  CPU-simulation instrument does not support Go. The tools-table cell says so
-  deliberately. Do not "improve" it into claiming simulated execution for Go.
-  Ledger row 42.
-- **`perfgo` is not a continuous profiler, and the slide must not say it is.** It
-  wraps Linux `perf` and CPU PMU counters around a Go benchmark: cache-miss
-  hotspots, cache-to-cache transfers as a false-sharing tell, IPC. Calling it
-  continuous profiling miscredits it in front of its author, who presented it at
-  FOSDEM 2026. It also needs Linux, which the slide and script both say. Ledger
-  row 43. The slide has no logo because no asset exists here; do not invent one.
-- **The observer-effect numbers are Harsanyi's, not ours.** 15073 / 7358 reused
-  against 33547 / 35507 fresh, measured on an Intel i5-7360U. The claim on screen
-  is that the fifty percent gap disappears, *not* that the fresh pair are the
-  function's true timings, because allocating a matrix per iteration is itself
-  being measured. The post also declines to attribute the effect to cache lines
-  or prefetching, so neither does the slide. Ledger row 45.
-- **Ledger row 23 is cleared, and the slide stays generic anyway.** Row 23 moved
-  to `verified` as a scope-limited self citation on the row-30 precedent. The
-  macro-gate slide was deliberately *not* reverted to the Datadog-specific
-  framing, because nothing on screen depends on the specifics and there is no
-  reason to spend the risk. Restoring that framing would be a new decision.
-- **The `benchenv` panel was rebuilt against the real binary.** It used to list
-  six checks under a summary that counted nine, which does not add up in front of
-  an audience. It now carries all nine. The per-check explanations are omitted on
-  purpose: they overflow the code panel, which clips horizontally with no
-  warning, and paraphrasing them would misquote the tool.
-- **The two Go wiki screenshots are cropped on purpose.** Full-page browser grabs
-  are unreadable at slide size, and the dashboard grab overflowed the page and
-  pushed the pagination off. `golang_perf_dashboard_charts.png` and
-  `golang_slowbot_quote.png` are the cropped versions actually used; the
-  originals are kept beside them. Do not swap the originals back in.
-- **An editor or agent autofix strips the comma from `## Measure customer
-  happiness,`.** It happened twice in one session. That slide is one sentence
-  split across two headings, so the comma is load-bearing, and the repo sets
-  `MD026: false` precisely to allow it. The project's own `make lint/md` is not
-  the culprit; a formatter that ignores `.markdownlint-cli2.yaml` is. If the
-  comma disappears again, restore it and suspect format-on-save.
+* **Incident first, Datadog first.** The GoLab cut opens on the #4891 bot
+  comment, then Datadog's stake, then OPERA. The general "why benchmark"
+  material and most Go basics were cut on purpose. The audience is
+  Intermediate, and 92 pages in 45 minutes was too dense for the other talk.
+* **No maths on stage.** No formulas, no p-values, no CV definition. Say why a
+  check matters, not how the statistics work.
+* **Own tooling stays off the slides.** The benchlab panels and the tool list
+  were cut. The close points at the talk repository only.
+* **OPERA stays.** Drop it only if another story replaces it. The Ereditato
+  quote (row 46) is the improvement: "trivial things we are clever enough to
+  rule out", and then the cause was a loose connector.
+* **Datadog practice is on a slide, inside row 23.** Four items only:
+  dedicated hardware, per-SDK budget, several workloads per SDK, release gate.
+  No hardware counts, budget figures, archetype names, or scale. The archetype
+  table is the public FOSDEM taxonomy, not Datadog's list.
+* **The PGO number is one service.** −3.4% CPU on one large service (row 47),
+  not "production CPU".
+* **#643 was a local run, not a bot comment.** The slide title says "A second
+  red number" for that reason.
+* **The local container run is one run.** It is labelled with its date and
+  file. Do not compare it with the bare-metal numbers, which come from a
+  different benchmark (row 8).
+* **No internal vocabulary on slides.** Dividers are numbered `01`–`06`. Long
+  divider titles cross into the right panel. Check each one in the PDF.
+* **Slides carry mottos, data, visuals, and links only.** Prose belongs in
+  `speaker-notes.md`.
+* **`*` is the only list marker on slides.** Every list is an intentional Marp
+  reveal. `make check/fragments` guards the count.
+* **Presenter notes are generated.** Edit `speaker-notes.md`, then run
+  `make sync/notes`. `make check/notes` checks both talks.
+* **The `b.Loop` removes-table is correct. Do not "fix" it.** Go 1.26 is the
+  fix, not the regression. What 1.26 removed is the inlining suppression that
+  1.24 and 1.25 used to implement keepalive. The keepalive remains. Ledger rows
+  39 to 41.
+* **The #4891 "~390 ns" figure is gone.** The war-story notes give ~390 ns per
+  iteration and an 883 ns table side by side. The slide now says
+  "sub-microsecond" so it does not depend on either.
+* **An editor or agent autofix strips trailing commas from headings.** The
+  repository sets `MD026: false` on purpose. If punctuation disappears from a
+  heading, suspect format-on-save.
