@@ -381,7 +381,7 @@ Variable linknames are fragile. Unlike function linknames, variables have no
 definition/reference separation. When both sides were uninitialized BSS symbols,
 the linker chose by symbol loading order.
 
-Cherry Mui said it in golang/go 72032: the choice is arbitrary. In the
+The Go team said it in golang/go 72032: the choice is arbitrary. In the
 implementation it depends on the symbol loading order.
 
 This broke between Go 1.22 and 1.23. Go 1.25 now keeps the larger symbol.
@@ -508,7 +508,7 @@ LD_PRELOAD.
 
 With cgo, the binary is often dynamic. On glibc, the loader runs preloaded
 constructors, even with internal linking. On musl, internal linking skips them.
-Ian Lance Taylor said it plainly in that issue: anybody who wants to use
+The Go team said it plainly in that issue: anybody who wants to use
 LD_PRELOAD must force the use of external linking.
 
 **DO**
@@ -1286,11 +1286,11 @@ One beat. Deadpan. Do not explain the GIF.
 
 **SAY**
 
-In a runtime diagnostics sync, Rhys Hiltner said this:
+In a Go runtime diagnostics sync, the question came up like this:
 
 "We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?"
 
-Michael Knyszek answered: "Maybe eBPF is the answer?"
+The Go team answered: "Maybe eBPF is the answer?"
 
 Our answer is yes, if Go gives eBPF something stable to read.
 
@@ -1298,7 +1298,7 @@ Go 1.27 moved HTTP/2 into a new internal package. It also added a field to modul
 
 **DO**
 
-Say it as thanks, not blame. Use their full names.
+Say it as thanks, not blame. Say "the Go team". Do not name people.
 
 ---
 
@@ -1346,7 +1346,7 @@ Lead with "no new API". Then say "read contract". Present proposal 4947 as propo
 
 otelc and Orchestrion both build on `-toolexec`. A tool cannot add its own inputs to a package build ID. Then the build cache can reuse a stale result.
 
-Issue 69887 lists the gaps. On that issue, Austin Clements called it "a problem report, which is still very helpful".
+Issue 69887 lists the gaps. On that issue, the Go team called it "a problem report, which is still very helpful".
 
 The ask is to close those gaps. It is not a new build mode.
 

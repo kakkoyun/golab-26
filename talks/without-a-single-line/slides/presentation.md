@@ -359,7 +359,7 @@ When both sides were uninitialized BSS symbols, the linker chose by symbol loadi
 
 > "the choice is arbitrary. In the implementation it depends on the symbol loading order"
 >
-> Cherry Mui, [golang/go#72032](https://github.com/golang/go/issues/72032)
+> Go team, [golang/go#72032](https://github.com/golang/go/issues/72032)
 
 This broke between Go 1.22 and 1.23.
 
@@ -1248,11 +1248,11 @@ I will find you in the hallway.
 
 > "We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?"
 >
-> Rhys Hiltner, Go runtime diagnostics sync, 31 July 2025
+> Go runtime diagnostics sync, 31 July 2025
 
 > "Maybe eBPF is the answer?"
 >
-> Michael Knyszek, same meeting
+> Go team, same meeting
 
 Our answer: yes, if Go gives eBPF something stable to read.
 

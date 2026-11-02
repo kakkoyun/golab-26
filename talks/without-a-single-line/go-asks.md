@@ -8,11 +8,11 @@ The Go runtime diagnostics sync asked the question first.
 
 > "We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?"
 >
-> Rhys Hiltner, sync of 31 July 2025 ([notes](https://github.com/golang/go/issues/57175#issuecomment-3283520959), posted 12 September 2025)
+> Go runtime diagnostics sync, 31 July 2025 ([notes](https://github.com/golang/go/issues/57175#issuecomment-3283520959), posted 12 September 2025)
 
 > "Maybe eBPF is the answer?"
 >
-> Michael Knyszek, same meeting
+> Go team, same meeting
 
 Our answer is yes, if Go gives eBPF something stable to read. The asks below describe what that could look like.
 
@@ -30,8 +30,8 @@ A USDT probe is a NOP at the probe site and an ELF note. The note names the prob
 
 ### Prior discussion
 
-- The 19 December 2024 sync discussed USDT. thepudds: "it's more stable over time because it's in the source code". Rhys: "Years ago we were interested, but didn't know exactly what we'd use them for." Michael Knyszek: "How would this look?" ([notes](https://github.com/golang/go/issues/57175#issuecomment-2596101614), posted 16 January 2025).
-- [golang/go#22008](https://github.com/golang/go/issues/22008) (open). ianlancetaylor, 25 September 2017: "I don't see how we could support a dynamic probe executed by the kernel that refers to a local address on the stack." A USDT site is fixed at compile time. Its note says where each value lives at that site. The objection applies to dynamic probes, not to compiled-in sites.
+- The 19 December 2024 sync discussed USDT. One participant: "it's more stable over time because it's in the source code". Another: "Years ago we were interested, but didn't know exactly what we'd use them for." The Go team: "How would this look?" ([notes](https://github.com/golang/go/issues/57175#issuecomment-2596101614), posted 16 January 2025).
+- [golang/go#22008](https://github.com/golang/go/issues/22008) (open). The Go team, 25 September 2017: "I don't see how we could support a dynamic probe executed by the kernel that refers to a local address on the stack." A USDT site is fixed at compile time. Its note says where each value lives at that site. The objection applies to dynamic probes, not to compiled-in sites.
 
 ### Ask
 
@@ -51,7 +51,7 @@ Tools that need request context read it from the runtime. Build-time tools add f
 
 ### Prior discussion
 
-- [golang/go#68785](https://github.com/golang/go/issues/68785), closed as not planned. seankhliao, 18 November 2025: "as I understand, we've rejected anything that could be used as goroutine local storage." ianlancetaylor, 20 November 2025: "The profile labeling code is designed around passing contexts with attached labels. That is intentional."
+- [golang/go#68785](https://github.com/golang/go/issues/68785), closed as not planned. On the issue, 18 November 2025: "as I understand, we've rejected anything that could be used as goroutine local storage." The Go team, 20 November 2025: "The profile labeling code is designed around passing contexts with attached labels. That is intentional."
 - [golang/go#21355](https://github.com/golang/go/issues/21355) and [golang/go#69478](https://github.com/golang/go/issues/69478) are closed.
 
 ### Ask
@@ -70,8 +70,8 @@ otelc and Orchestrion both build on `-toolexec`. A tool cannot add its own input
 
 ### Prior discussion
 
-- matloob, 17 December 2024: "Adding dedicated support for source rewriting tools would result in a significant increase in complexity in the go command."
-- aclements, 24 December 2024: "This isn't so much a 'proposal' as it is a 'problem report', which is still very helpful!"
+- The Go team, 17 December 2024: "Adding dedicated support for source rewriting tools would result in a significant increase in complexity in the go command."
+- The Go team, 24 December 2024: "This isn't so much a 'proposal' as it is a 'problem report', which is still very helpful!"
 
 ### Ask
 
@@ -92,7 +92,7 @@ Other runtimes give an agent one documented door. Java has `JAVA_TOOL_OPTIONS`. 
 
 ### Prior discussion
 
-- The diagnostics sync noted that companies maintain patches to add hooks, and asked what Go should do. Rhys Hiltner, sync of 31 July 2025 ([notes](https://github.com/golang/go/issues/57175#issuecomment-3283520959)).
+- The diagnostics sync noted that companies maintain patches to add hooks, and asked what Go should do. Sync of 31 July 2025 ([notes](https://github.com/golang/go/issues/57175#issuecomment-3283520959)).
 
 ### Ask
 
