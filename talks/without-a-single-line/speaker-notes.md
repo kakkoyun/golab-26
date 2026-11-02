@@ -9,7 +9,7 @@ verbatim, so you can find your place by what is on screen.
 
 **SAY** lines are the words, written to be spoken. Short sentences, one idea
 each. **DO** lines are delivery cues, kept separate so the prose stays sayable.
-Memorise the beat (the bold line before each block), then let the words follow.
+Memorise the purpose of each slide, then let the words follow.
 
 ## Beat table
 
@@ -17,24 +17,34 @@ Memorise the beat (the bold line before each block), then let the words follow.
 | --- | --- |
 | Open | The debugging loop is slow. An agent alone does not fix it. |
 | 01 Why Go resists | Go compiled away the attachment point other runtimes have. |
-| 02 eBPF, from the ground up | One uprobe hit, and the three ways Go makes it harder. |
-| 03 OBI | Observe from the kernel. No rebuild. Linux and privileges are the cost. |
-| 04 otelc | Rewrite at build time. Rich semantics. The rebuild is the cost. |
-| 05 Injector | Every runtime gives the loader an entry point. A static Go binary has no loader. |
-| 06 Profiles | The fourth signal, from the kernel. Correlation is the bridge. |
-| 07 Live debugging | A uprobe at a source line. One variable, no redeploy. |
-| 08 When to reach for what | Start from the constraint you cannot change. |
-| 09 What comes next | The loop, without the redeploy. The agent now has the framework. |
+| 02 otelc | The build path can enable all four signals. Coverage depends on the SDK and integrations. |
+| 03 Injector | SDK capabilities through a different attachment path. The binary is the constraint. |
+| 04 OBI | Traces and metrics from the kernel. Explain eBPF through the OBI example. |
+| 05 Profiles | CPU profiles without rebuilding. Correlation needs shared request context. |
+| 06 Live debugging | Dynamic logs and snapshots answer the unplanned question. |
+| 07 Choose the signal and the layer | Match the evidence to the deployment constraint. |
+| 08 What comes next | Explicit probes, native libraries, stable context storage, correlation, and more signals. |
+| 09 From question to evidence | Resolve the opening bug and the agent joke. Invite concrete contributions. |
 
 ## Timing
 
-The times in `outline.md` are a word-count model: 3,422 SAY words at 130 words
-per minute, plus 25% for pauses and visuals, gives about 33 minutes. The
-cuttable static-PIE anecdote adds about 1:25. The rest of the 38 minutes is
-buffer for the silent beats. This version still needs a timed read-through.
+The times in `outline.md` are working budgets, not measurements. They reserve
+36 minutes for content and two minutes for pauses and overruns. The new future
+material needs rehearsal. Do not assume that removing the install slide makes
+room for all of it.
 
-Checkpoints: open the primer by ~4:00, OBI by ~11:30, otelc by ~16:00, the
-injector by ~19:30, live debugging by ~25:00, the decision section by ~28:30.
+Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
+live debugging by 22:30, selection by 26:00, future work by 28:00, and the
+closing callback by 32:00. Adjust these budgets together after a timed read.
+The optional static-PIE anecdote needs about 1:25 within the OBI budget.
+
+---
+
+## Zero-Touch
+
+**DO**
+
+Let the title establish the subject. Advance to the production bug.
 
 ---
 
@@ -77,6 +87,9 @@ The first service gets careful instrumentation. The fiftieth inherits gaps.
 
 At fleet scale, instrumentation coverage is a platform problem.
 
+Automatic instrumentation gives us a baseline. Later, we still need a way to
+ask the question that the baseline misses.
+
 **DO**
 
 Keep it concrete. Do not abstract. The line to land is "a platform problem."
@@ -100,40 +113,19 @@ Do not teach every mechanism. Point out that each has one. Go does not.
 
 ---
 
-## How I got here
+## Why we care
 
 **SAY**
 
-I maintained client_golang. I wrapped handlers by hand, for years.
+I wrapped handlers by hand for years. Then I worked on profiling at Parca.
+Now I work on compile-time instrumentation. Hand-written coverage decays.
 
-Then Parca, where the whole point was a profiler nobody has to install.
-
-Now OpenTelemetry compile-time instrumentation, which ships inside your binary.
-
-Every one of those jobs taught me the same thing: hand-written
-instrumentation decays. That is what this talk is about.
+Datadog builds at all three intervention points. I need the right combinations
+to work in customer services.
 
 **DO**
 
-Twenty seconds. Consequences, not achievements. The standing line at the
-bottom is small print. Do not read it out. Do not mention contribution counts.
-Do not imply work on OBI.
-
----
-
-## Why Datadog cares
-
-**SAY**
-
-Datadog builds at all three intervention points. Compile-time instrumentation.
-Startup injection. Kernel-level instrumentation and profiling.
-
-I do not need one approach to win. I need the right combinations to work in
-customer services.
-
-**DO**
-
-This is about the company's reason to care, not a second biography.
+Twenty seconds. Explain why the comparison matters. Do not imply work on OBI.
 
 ---
 
@@ -155,19 +147,19 @@ the fake-out.
 **SAY**
 
 Not really. The agent still has to pick a mechanism, and it has to know what
-that mechanism costs. That is the next twenty-five minutes.
+that mechanism costs. That is what we need to understand.
 
 **DO**
 
 The turn. This is the sentence that earns the rest of the talk. Ten seconds
 total for both slides. Do not explain the joke.
 
-This is a plant. It pays off twice: at the agentic close, and at the take-home
-skill, which is the framework the agent was missing.
+This is a plant. It pays off at the agentic close, when the agent has the
+framework that it was missing.
 
 ---
 
-## 01 Why Go resists instrumentation
+## Why Go resists instrumentation
 
 **SAY**
 
@@ -175,8 +167,9 @@ So why is Go the hard one?
 
 **DO**
 
-Section bridge. One sentence tying back: this is why the loop is slow, and the
-three approaches that follow each take the rebuild out of it in a different way.
+Tie the missing attachment point to the opening problem. Build-time
+instrumentation still requires a rebuild. Zero-touch does not mean that
+every approach avoids deployment.
 
 ---
 
@@ -198,6 +191,172 @@ Reveal each line. Do not rush. The last line is the one that matters.
 
 ---
 
+## Choose where to intervene
+
+**SAY**
+
+There are three practical places to intervene. Build time. Process start. The
+kernel.
+
+Build time preserves Go semantics but requires a rebuild. Process-start
+injection avoids source edits but depends on binary and linker surfaces.
+Kernel observation avoids the rebuild but inherits Linux, privilege, and
+compatibility constraints.
+
+We will follow that order: build, process start, then kernel.
+
+**DO**
+
+Point to each intervention point. This is the binary's lifecycle, not a
+requirement to install all three approaches.
+
+---
+
+## Three intervention points. Four signals
+
+**SAY**
+
+At each point, ask which evidence we can collect. Traces, metrics, logs, and
+profiles answer different questions about production.
+
+We will track those signals in the same order throughout the talk.
+
+**DO**
+
+Introduce the signal indicators. They describe capabilities, not a ranking.
+The SDK and integrations determine the build and injector coverage.
+
+---
+
+## otelc: instrument during the build
+
+**SAY**
+
+Start at the build, while source structure is still available. We can add
+instrumentation without writing wrappers throughout the application.
+
+This route can reach all four signals. The SDK and integrations determine
+which ones it produces. We still need a rebuild.
+
+**DO**
+
+Point to the four signal indicators. Say that these are capabilities of the
+build path, not a claim that upstream otelc enables every signal by default.
+
+---
+
+## Three organizations converged upstream
+
+**SAY**
+
+Three organizations converged. Datadog's Orchestrion, Alibaba's rules engine,
+Quesma's instrgen. They formed the OpenTelemetry Go compile-time SIG and
+built otelc, a vendor-neutral tool.
+
+Orchestrion remains a production Datadog distribution of the same core idea.
+
+**DO**
+
+Do not say Orchestrion was donated or renamed to otelc. It was not. Two separate
+tools, same mechanism, different codebases and default tracers.
+
+---
+
+## A short convergence timeline
+
+**SAY**
+
+The projects matured in parallel. Profiling, eBPF instrumentation, and
+compile-time instrumentation did not collapse into one agent. They learned to
+compose.
+
+This year both instrumentation projects reached v1. otelc in July. OBI in
+October.
+
+**DO**
+
+Move quickly. The dates corroborate; they are not the argument. Do not
+celebrate OBI here. The OBI section opens with that slide.
+
+---
+
+## `-toolexec` puts otelc before the compiler
+
+**SAY**
+
+otelc wraps the Go command. It becomes a proxy for tool invocations. It
+rewrites supported syntax before go tool compile sees it. The resulting binary
+contains normal SDK calls. There is no process to attach at startup.
+
+It covers your code, dependencies, and supported standard-library paths.
+
+**DO**
+
+The diagram is the point. Do not over-explain the proxy mechanism.
+
+---
+
+## Production evidence
+
+**SAY**
+
+Customer adoption of Orchestrion-based Go auto-instrumentation grew by about
+twenty percent. This is a production path, not a local debugging trick.
+
+**DO**
+
+Say exactly this. Do not add a customer denominator. Do not claim that most
+users were new. The approved wording is the percentage alone.
+
+---
+
+## Build-time instrumentation is portable
+
+**SAY**
+
+No runtime privilege. No Linux kernel dependency. One build-command change.
+Tested on Linux, macOS, and Windows. Go 1.25 or newer.
+
+The trade-off is build ownership, not operating-system access.
+
+**DO**
+
+Read across the table, not every row.
+
+---
+
+## Signal depth depends on the integration bundle
+
+**SAY**
+
+Upstream otelc today instruments traces, HTTP and gRPC metrics, runtime
+metrics, and supported log records.
+
+Orchestrion with dd-trace-go provides traces, runtime metrics, correlated
+logs, and continuous profiles.
+
+Not every Datadog integration has moved to otelc yet.
+
+**DO**
+
+Connect the examples to the section's four signal indicators. The build path
+can install SDK instrumentation. The selected bundle determines coverage.
+Do not say otelc alone automatically enables every profile type.
+
+---
+
+## And it can reach deep
+
+**SAY**
+
+Build-time rewriting can also reach Go runtime internals.
+
+**DO**
+
+Advance to the linkname example, then the goroutine-local storage aspect.
+
+---
+
 ## What Go actually has
 
 **SAY**
@@ -214,24 +373,131 @@ Read only the phrase "hall of shame." Do not read the whole code block.
 
 ---
 
-## Choose where to intervene
+## Compile time can reach Go internals! Dark Magic
 
 **SAY**
 
-There are three practical places to intervene. Build time. Process start. The
-kernel.
+Compile-time instrumentation can reach into Go internals. This aspect adds a
+field to runtime.g for goroutine-local storage, typed accessors, and exit
+cleanup.
 
-Build time preserves Go semantics but requires a rebuild. Process-start
-injection avoids source edits but depends on binary and linker surfaces.
-Kernel observation avoids the rebuild but inherits Linux, privilege, and
-compatibility constraints.
-
-This is the map for the rest of the talk.
+dd-trace-go owns this tracer-context integration. otelc supplies the rewriting
+engine.
 
 **DO**
 
-Point to the three positions on the lifecycle map. This slide recurs. The
-audience should see it as the spine.
+The aspect file belongs in dd-trace-go because it defines tracer-specific
+runtime context. That is why the path says dd-trace-go, not otelc.
+
+---
+
+## `go:linkname` variables are fragile
+
+**SAY**
+
+Variable linknames are fragile. Unlike function linknames, variables have no
+definition/reference separation. When both sides are uninitialized BSS symbols,
+the linker chooses by symbol loading order.
+
+Ian Lance Taylor said it in golang/go 72032: the choice is arbitrary. In the
+implementation it depends on the symbol loading order.
+
+This broke between Go 1.22 and 1.23.
+
+**DO**
+
+Keep the distinction between function and variable linknames. Do not
+over-explain BSS layout unless asked.
+
+---
+
+## the linker picks by symbol loading order
+
+**SAY**
+
+The linker picks by symbol loading order.
+
+**DO**
+
+Ten seconds. Do not explain the joke. The caption is the punchline to the
+linkname slide. Advance.
+
+---
+
+## The build path has boundaries too
+
+**SAY**
+
+The build path has boundaries. You need control of the Go build pipeline. You
+need Go 1.25 or newer. Coverage stops at the supported integration set.
+Toolchain internals like -toolexec and go:linkname can change.
+
+No root access and no kernel version gate, but the binary must be rebuilt.
+What if we cannot change the build?
+
+**DO**
+
+Use that question to move to process start. Do not imply that more signals
+make this approach available to every service.
+
+---
+
+## Process start: the injector
+
+**SAY**
+
+Next is process start. An injector activates instrumentation before the
+application runs. The SDK can supply the same signal types as the build path.
+The supported SDK and integrations still determine the coverage.
+
+The constraint changes from build ownership to a compatible startup path.
+
+**DO**
+
+Point to the same four signal indicators. This explains capability, not a
+claim that the development Go hook already implements every SDK feature.
+Startup injection does not mean attachment to an already running process.
+
+---
+
+## How process-start injection works
+
+**SAY**
+
+On Linux, a dynamically linked program does not start at main. It starts in
+the dynamic loader, ld.so.
+
+The loader reads LD_PRELOAD. It maps those libraries before all others. The
+ELF rules say that their initializers run before the program gains control.
+
+So the injector runs first. It sets startup environment variables. The language
+runtime does the rest: Java loads an agent, Node.js loads a module, .NET loads
+a profiler.
+
+**DO**
+
+The two quotes in the footer are the evidence. Read neither aloud.
+
+---
+
+## Runtime hooks that injectors use
+
+**SAY**
+
+Each non-Go runtime on this table has a designed entry point for an agent. The
+injector only has to find it.
+
+The OpenTelemetry injector is a small shared library. It covers Java, Node.js,
+.NET, Ruby, and Python. Datadog Single Step Instrumentation uses the same
+LD_PRELOAD mechanism on Linux and lists Java, Python, Ruby, Node.js, .NET, and
+PHP.
+
+Look at the last row. Go has no such entry point.
+
+**DO**
+
+The two language lists come from the public pages in the footer. Python is off
+by default in the OpenTelemetry injector. Say so if asked.
 
 ---
 
@@ -250,222 +516,100 @@ Datadog is working on a Go path for Single-Step Instrumentation.
 
 **DO**
 
-Do not promise a public release date. This slide sets up the injector section
-later.
+Do not promise a public release date. Separate the public language lists from
+the Go work in development. The next slides explain the Go restriction.
 
 ---
 
-## 02 eBPF, from the ground up
+## A static Go binary has no loader
 
 **SAY**
 
-OBI, the profiler, and the live debugger in this talk all run on eBPF. So before we use it, let us build it up from the bottom. Nine short steps. Each step needs the one before
-it.
+Now a default Go binary. With CGO_ENABLED=0 there is no interpreter entry in
+the ELF file. The kernel never starts ld.so. There is no libc. Nobody reads
+LD_PRELOAD.
+
+With cgo it is not much better. The internal linker does not run the
+constructors of preloaded libraries. Ian Lance Taylor said it plainly in that
+issue: if you want LD_PRELOAD, use external linking.
 
 **DO**
 
-Section bridge. Promise the room that the steps are short. Keep each primer
-slide under a minute. If you are behind at the OBI divider, say the CO-RE and
-field-offset slides in one sentence each.
+This is the problem statement for the section. Be exact: the variable is not
+ignored, it is never read.
 
 ---
 
-## A checked program runs at an event
+## `LD_PRELOAD` reaches only some Go binaries
 
 **SAY**
 
-eBPF lets you attach a small program to an event in Linux.
+The default Go binary gives the loader no entry point.
 
-A loader sends the program to the kernel. The verifier checks every memory
-access and every operation before the program can run. A supported JIT can turn the bytecode into native instructions.
-
-The program calls helpers for kernel services. It keeps state in maps. User
-space reads the maps.
-
-Loading, verification, and JIT compilation happen once, at load time. After that, the program runs each time
-the event occurs.
+LD_PRELOAD works when the build uses the external linker and a compatible
+dynamic path. It does not reach the default internally linked binary. Static
+cgo and pure-Go PIE builds narrow the surface further.
 
 **DO**
 
-Credit the diagram verbally to eBPF.io. Do not say the verifier proves the
-whole system safe. It checks this program.
+Be precise. Do not say LD_PRELOAD never works with Go. It works for some builds.
+This slide is the problem statement for the section.
 
 ---
 
-## CO-RE adapts kernel layouts, not Go layouts
+## The teaser
 
 **SAY**
 
-A field in a kernel struct can move between kernel builds. BTF describes the types of the current kernel. CO-RE uses BTF to adjust the field reads
-in the program before it loads. One compiled object can then work across supported kernel layouts.
+We made it work.
 
-Remember the limit. CO-RE knows kernel types. It knows nothing about a Go HTTP
-request. For Go, we need a separate source of layouts. We solve that later in this primer.
+I am not going to tell you how today. That is next year's talk.
+
+What you see is the invocation and the result. LD_PRELOAD, a service name,
+debug mode on. Span creation and trace-id extraction on stderr.
 
 **DO**
 
-Thirty seconds. The dotted branch on the diagram is the point.
+The contradiction is the device. The room will connect this slide to the
+LD_PRELOAD slide. Get there first.
+
+Do not be drawn on mechanism. Not the linking model, not the entry path, not
+.gopclntab. Not on a slide, not in the script, not if asked. Defer.
+
+The chip is amber: in development, not released.
 
 ---
 
-## Choose the place to observe
+## No rebuild
 
 **SAY**
 
-Next, choose where to look. A tracepoint is a named kernel event. A kprobe
-observes a kernel function. Fentry and fexit use a fast trampoline, but only
-for kernel and BPF functions.
-
-For a Go function, the hook is a uprobe: an instruction in a user-space
-binary. A uretprobe observes a return. Keep that one in mind, because Go
-breaks it.
+No rebuild. No source change. No kernel version gate. One line.
 
 **DO**
 
-Point at the uprobe row. Do not let the room think that fentry works for Go
-functions.
+One line. Advance.
 
 ---
 
-## A uprobe hit enters the kernel
+## OBI: observe from the kernel
 
 **SAY**
 
-Here is one uprobe hit. The loader finds the instruction from the symbol. The
-kernel puts a breakpoint into the mapped code of the process. The file on disk
-does not change.
+The third intervention point is the kernel. We can observe a deployed program
+without rebuilding it or loading an SDK at startup.
 
-When the goroutine reaches the breakpoint, the thread enters the kernel and our
-handler runs. Then the kernel must still do the work of the original
-instruction. It emulates the instruction, or it single-steps a copy. Then Go
-code continues.
-
-Newer kernels made this path scale much better. But each active hit still
-crosses into the kernel. That is the cost we see again in the OBI section.
+OBI supplies traces and metrics. Its log feature adds correlation, not log
+export. The costs are Linux, privileges, and compatibility.
 
 **DO**
 
-Fifty seconds. Do not quote a nanosecond number on stage. The kernel benchmark
-numbers in the research are for an empty probe, not for a real handler.
+Point to the signal indicators. Introduce OBI, explain one uprobe hit, then
+apply it. Keep the Go-specific details attached to the OBI example.
 
 ---
 
-## Read Go values, not C arguments
-
-**SAY**
-
-Now the Go part. Go does not pass arguments the way C does. On amd64, since Go
-1.17, the first integer arguments go in AX, BX, and CX. When enough registers remain, a string uses two of them. Otherwise Go passes it on the stack. A tracer that expects the C order reads garbage.
-
-Second problem. The goroutine can start a function on one thread and finish it
-on another. So the thread ID cannot tie entry and exit together. OBI uses the
-process ID and the address of the goroutine, the g pointer.
-
-**DO**
-
-Say amd64 out loud. arm64 uses different registers. The g pointer and the
-numeric goroutine ID are different values. Do not mix them.
-
----
-
-## Probe the RET, not the return address
-
-**SAY**
-
-Here is why uretprobes and Go do not mix. A uretprobe replaces the saved
-return address on the stack with a trampoline address.
-
-Go copies stacks when they grow. To do that, the runtime walks every frame.
-It finds an address that does not belong to any Go function. The runtime can
-reject the stack, and the process can crash.
-
-So OBI does not use uretprobes for Go. It disassembles the function, finds
-every RET instruction, and puts an ordinary uprobe on each one. The return
-address is never touched.
-
-**DO**
-
-Forty-five seconds. This is the most Go-specific idea in the primer. Do not
-skip it.
-
----
-
-## Find the instruction and the field
-
-**SAY**
-
-A tracer needs two different things. An instruction address, to attach the
-probe. And a field offset, to read the request inside the function.
-
-The function address comes from the symbol table or from Go's own runtime
-tables. Field offsets come from DWARF, if the binary still has debug
-information. If it does not, OBI reads the Go and library versions from the
-build information and looks the offsets up in a prepared database.
-
-A function address is not a type layout. That is the Go-side half of the CO-RE
-problem.
-
-**DO**
-
-Thirty-five seconds. Link back to the CO-RE slide.
-
----
-
-## User Statically-Defined Tracing (USDT)
-
-**SAY**
-
-USDT lets the program declare its own probes.
-
-The producer puts a NOP at the probe site and writes an ELF note. The note
-names the probe and gives a recipe for each argument: which register, which
-stack slot. A tracer reads the note and attaches an ordinary uprobe at the NOP.
-An optional semaphore tells the program that a tracer is present, so it can
-skip expensive argument preparation when nobody listens.
-
-USDT does not make a hit free. It makes the contract explicit.
-
-**DO**
-
-Expand the acronym before you use it. USDT runs on uprobes. It is not a
-separate kernel mechanism.
-
----
-
-## Go needs a USDT producer
-
-**SAY**
-
-The Go 1.26.0 source that we checked emits no native USDT probes. Salp and libstapsdt let an application
-add them through cgo. Polar Signals builds the other side, a Go tracer that
-reads USDT notes.
-
-My fork experiments with producer support in the toolchain itself. It is a
-proof of concept. It shows what a stable contract could look like, for eBPF
-tools and for injectors.
-
-**DO**
-
-The fork is a proof of concept. Do not claim that it builds today or that the
-commands on the slide run. Do not invent a reason why Go has no USDT.
-
----
-
-## 03 OBI: observe from the kernel
-
-**SAY**
-
-The first approach takes the rebuild out of the loop by observing from the
-kernel. No source change, no rebuild, no application rollout. The cost is
-Linux, privileges, and kernel contracts.
-
-**DO**
-
-Section bridge. Name the trade-off in one sentence.
-
----
-
-## OBI v1.0.0 shipped / 30 October. Three days ago.
+## OBI v1.0.0 shipped
 
 **SAY**
 
@@ -505,13 +649,76 @@ notes say that is a known follow-up.
 
 ---
 
+## A checked program runs at an event
+
+**SAY**
+
+eBPF lets you attach a small program to an event in Linux.
+
+A loader sends the program to the kernel. The verifier checks every memory
+access and every operation before the program can run. A supported JIT can turn the bytecode into native instructions.
+
+The program calls helpers for kernel services. It keeps state in maps. User
+space reads the maps.
+
+Loading, verification, and JIT compilation happen once, at load time. After that, the program runs each time
+the event occurs.
+
+**DO**
+
+Credit the diagram verbally to eBPF.io. Do not say the verifier proves the
+whole system safe. It checks this program.
+
+---
+
+## Choose the place to observe
+
+**SAY**
+
+Next, choose where to look. A tracepoint is a named kernel event. A kprobe
+observes a kernel function. Fentry and fexit use a fast trampoline, but only
+for kernel and BPF functions.
+
+For a Go function, the hook is a uprobe: an instruction in a user-space
+binary. A uretprobe observes a return. Keep that one in mind, because Go
+breaks it.
+
+**DO**
+
+Point at the uprobe row. Do not let the room think that fentry works for Go
+functions.
+
+---
+
+## A uprobe hit enters the kernel
+
+**SAY**
+
+Here is one uprobe hit. The loader finds the instruction from the symbol. The
+kernel puts a breakpoint into the mapped code of the process. The file on disk
+does not change.
+
+When the goroutine reaches the breakpoint, the thread enters the kernel and our
+handler runs. Then the kernel must still do the work of the original
+instruction. It emulates the instruction, or it single-steps a copy. Then Go
+code continues.
+
+Newer kernels made this path scale much better. But each active hit still
+crosses into the kernel. Keep that cost in mind as we apply the mechanism to OBI.
+
+**DO**
+
+Fifty seconds. Do not quote a nanosecond number on stage. The kernel benchmark
+numbers in the research are for an empty probe, not for a real handler.
+
+---
+
 ## OBI turns observations into spans
 
 **SAY**
 
-Now OBI is not a box any more. OBI finds the supported HTTP, gRPC, and SQL
-functions and their field offsets. It attaches uprobes at the entry and at
-each RET.
+OBI uses that mechanism at supported HTTP, gRPC, and SQL functions.
+It attaches uprobes at entry and at each RET instruction.
 
 The handlers read request data. They keep timestamps and trace context in a
 map keyed by process ID and goroutine. At the end site, a completed event goes
@@ -522,12 +729,89 @@ service continues the trace.
 
 **DO**
 
-Fifty seconds. Every box on this diagram is a step from the primer. Point at
-two of them, not all.
+Show the result before the Go-specific details. Explain that the next slides
+answer why OBI tracks goroutines, probes RET sites, and resolves field offsets.
+Do not teach those details twice.
 
 ---
 
-## No source change / No rebuild / No application rollout
+## Read Go values, not C arguments
+
+**SAY**
+
+Now the Go part. Go does not pass arguments the way C does. On amd64, since Go
+1.17, the first integer arguments go in AX, BX, and CX. When enough registers remain, a string uses two of them. Otherwise Go passes it on the stack. A tracer that expects the C order reads garbage.
+
+Second problem. The goroutine can start a function on one thread and finish it
+on another. So the thread ID cannot tie entry and exit together. OBI uses the
+process ID and the address of the goroutine, the g pointer.
+
+**DO**
+
+Say amd64 out loud. arm64 uses different registers. The g pointer and the
+numeric goroutine ID are different values. Do not mix them.
+
+---
+
+## Probe the RET, not the return address
+
+**SAY**
+
+Here is why uretprobes and Go do not mix. A uretprobe replaces the saved
+return address on the stack with a trampoline address.
+
+Go copies stacks when they grow. To do that, the runtime walks every frame.
+It finds an address that does not belong to any Go function. The runtime can
+reject the stack, and the process can crash.
+
+So OBI does not use uretprobes for Go. It disassembles the function, finds
+every RET instruction, and puts an ordinary uprobe on each one. The return
+address is never touched.
+
+**DO**
+
+Forty-five seconds. This explains OBI's RET-site probes. Do not skip it.
+
+---
+
+## CO-RE adapts kernel layouts, not Go layouts
+
+**SAY**
+
+A field in a kernel struct can move between kernel builds. BTF describes the types of the current kernel. CO-RE uses BTF to adjust the field reads
+in the program before it loads. One compiled object can then work across supported kernel layouts.
+
+Remember the limit. CO-RE knows kernel types. It knows nothing about a Go HTTP
+request. For Go, we need a separate source of layouts. That is the next step.
+
+**DO**
+
+Thirty seconds. The dotted branch on the diagram is the point.
+
+---
+
+## Find the instruction and the field
+
+**SAY**
+
+A tracer needs two different things. An instruction address, to attach the
+probe. And a field offset, to read the request inside the function.
+
+The function address comes from the symbol table or from Go's own runtime
+tables. Field offsets come from DWARF, if the binary still has debug
+information. If it does not, OBI reads the Go and library versions from the
+build information and looks the offsets up in a prepared database.
+
+A function address is not a type layout. That is the Go-side half of the CO-RE
+problem.
+
+**DO**
+
+Thirty-five seconds. Link back to the CO-RE slide.
+
+---
+
+## No source change. No rebuild. No rollout
 
 **SAY**
 
@@ -635,6 +919,18 @@ to turn on the Auto SDK.
 
 ---
 
+## But it still has a cost
+
+**SAY**
+
+The application avoids a rollout. The observer still has a cost.
+
+**DO**
+
+Pause before the cost slide.
+
+---
+
 ## Uprobes have real costs
 
 **SAY**
@@ -658,7 +954,7 @@ Compatibility: uprobes target compiled locations and inferred layouts. Go
 Credit Usama Saqib verbally for the two-category framing. Point to his public
 FOSDEM talk in the footer.
 
-**Static-PIE anecdote (cuttable, about 30 seconds):**
+**Static-PIE anecdote (cuttable, allow about 1:25):**
 
 Here is what that compatibility cost looks like in practice. A Kubernetes
 controller changed one build flag to static-PIE. No application code changed.
@@ -714,322 +1010,19 @@ bought. The caption is the punchline to the uprobe section. Advance.
 
 ---
 
-## 04 otelc: instrument during the build
+## Profiles: observe CPU from the kernel
 
 **SAY**
 
-The second approach takes the rebuild out of the debugging loop by moving the
-intervention earlier, where source structure and dependency information are
-still available. The cost is owning the build.
+We now know where to intervene. What evidence does the problem need?
+
+The build path can include profiling. This profiler gives us another route:
+CPU profiles from outside the application, without rebuilding it.
 
 **DO**
 
-Section bridge. Name the trade-off in one sentence.
-
----
-
-## Three organizations converged upstream
-
-**SAY**
-
-Three organizations converged. Datadog's Orchestrion, Alibaba's rules engine,
-Quesma's instrgen. They formed the OpenTelemetry Go compile-time SIG and
-built otelc, a vendor-neutral tool.
-
-Orchestrion remains a production Datadog distribution of the same core idea.
-
-**DO**
-
-Do not say Orchestrion was donated or renamed to otelc. It was not. Two separate
-tools, same mechanism, different codebases and default tracers.
-
----
-
-## A short convergence timeline
-
-**SAY**
-
-The projects matured in parallel. Profiling, eBPF instrumentation, and
-compile-time instrumentation did not collapse into one agent. They learned to
-compose.
-
-This year both instrumentation projects reached v1. otelc in July. OBI in
-October.
-
-**DO**
-
-Move quickly. The dates corroborate; they are not the argument. Do not
-celebrate OBI here. The OBI section opens with that slide.
-
----
-
-## `-toolexec` puts otelc before the compiler
-
-**SAY**
-
-otelc wraps the Go command. It becomes a proxy for tool invocations. It
-rewrites supported syntax before go tool compile sees it. The resulting binary
-contains normal SDK calls. There is no process to attach at startup.
-
-It covers your code, dependencies, and supported standard-library paths.
-
-**DO**
-
-The diagram is the point. Do not over-explain the proxy mechanism.
-
----
-
-## Production evidence
-
-**SAY**
-
-Customer adoption of Orchestrion-based Go auto-instrumentation grew by about
-twenty percent. This is a production path, not a local debugging trick.
-
-**DO**
-
-Say exactly this. Do not add a customer denominator. Do not claim that most
-users were new. The approved wording is the percentage alone.
-
----
-
-## Build-time instrumentation is portable
-
-**SAY**
-
-No runtime privilege. No Linux kernel dependency. One build-command change.
-Tested on Linux, macOS, and Windows. Go 1.25 or newer.
-
-The trade-off is build ownership, not operating-system access.
-
-**DO**
-
-Read across the table, not every row.
-
----
-
-## Signal depth depends on the integration bundle
-
-**SAY**
-
-Upstream otelc today instruments traces, HTTP and gRPC metrics, runtime
-metrics, and supported log records.
-
-Orchestrion with dd-trace-go provides traces, runtime metrics, correlated
-logs, and continuous profiles.
-
-Not every Datadog integration has moved to otelc yet.
-
-**DO**
-
-Keep the distinction between engine and integration bundle. Do not say otelc
-alone automatically enables every profile type.
-
----
-
-## Compile time can reach Go internals
-
-**SAY**
-
-Compile-time instrumentation can reach into Go internals. This aspect adds a
-field to runtime.g for goroutine-local storage, typed accessors, and exit
-cleanup.
-
-dd-trace-go owns this tracer-context integration. otelc supplies the rewriting
-engine.
-
-**DO**
-
-The aspect file belongs in dd-trace-go because it defines tracer-specific
-runtime context. That is why the path says dd-trace-go, not otelc.
-
----
-
-## `go:linkname` variables are fragile
-
-**SAY**
-
-Variable linknames are fragile. Unlike function linknames, variables have no
-definition/reference separation. When both sides are uninitialized BSS symbols,
-the linker chooses by symbol loading order.
-
-Ian Lance Taylor said it in golang/go 72032: the choice is arbitrary. In the
-implementation it depends on the symbol loading order.
-
-This broke between Go 1.22 and 1.23.
-
-**DO**
-
-Keep the distinction between function and variable linknames. Do not
-over-explain BSS layout unless asked.
-
----
-
-## the linker picks by symbol loading order
-
-**SAY**
-
-The linker picks by symbol loading order.
-
-**DO**
-
-Ten seconds. Do not explain the joke. The caption is the punchline to the
-linkname slide. Advance.
-
----
-
-## The build path has boundaries too
-
-**SAY**
-
-The build path has boundaries. You need control of the Go build pipeline. You
-need Go 1.25 or newer. Coverage stops at the supported integration set.
-Toolchain internals like -toolexec and go:linkname can change.
-
-No root access and no kernel version gate, but the binary must be rebuilt.
-
-**DO**
-
-This is the compile-time caveat. Build ownership replaces root access as the
-hard constraint.
-
----
-
-## 05 Process start: the injector
-
-**SAY**
-
-The third approach takes the rebuild out of the loop by loading at process
-start. No source change, no rebuild. The cost is the binary itself.
-
-**DO**
-
-Section bridge. Name the trade-off in one sentence.
-
----
-
-## How process-start injection works
-
-**SAY**
-
-On Linux, a dynamically linked program does not start at main. It starts in
-the dynamic loader, ld.so.
-
-The loader reads LD_PRELOAD. It maps those libraries before all others. The
-ELF rules say that their initializers run before the program gains control.
-
-So the injector runs first. It sets startup environment variables. The language
-runtime does the rest: Java loads an agent, Node.js loads a module, .NET loads
-a profiler.
-
-**DO**
-
-The two quotes in the footer are the evidence. Read neither aloud.
-
----
-
-## Runtime hooks that injectors use
-
-**SAY**
-
-Each non-Go runtime on this table has a designed entry point for an agent. The
-injector only has to find it.
-
-The OpenTelemetry injector is a small shared library. It covers Java, Node.js,
-.NET, Ruby, and Python. Datadog Single Step Instrumentation uses the same
-LD_PRELOAD mechanism on Linux and lists Java, Python, Ruby, Node.js, .NET, and
-PHP.
-
-Look at the last row. Go has no such entry point.
-
-**DO**
-
-The two language lists come from the public pages in the footer. Python is off
-by default in the OpenTelemetry injector. Say so if asked.
-
----
-
-## A static Go binary has no loader
-
-**SAY**
-
-Now a default Go binary. With CGO_ENABLED=0 there is no interpreter entry in
-the ELF file. The kernel never starts ld.so. There is no libc. Nobody reads
-LD_PRELOAD.
-
-With cgo it is not much better. The internal linker does not run the
-constructors of preloaded libraries. Ian Lance Taylor said it plainly in that
-issue: if you want LD_PRELOAD, use external linking.
-
-**DO**
-
-This is the problem statement for the section. Be exact: the variable is not
-ignored, it is never read.
-
----
-
-## `LD_PRELOAD` reaches only some Go binaries
-
-**SAY**
-
-Two slides ago I told you why this is supposed to be impossible.
-
-LD_PRELOAD works when the build uses the external linker and a compatible
-dynamic path. It does not reach the default internally linked binary. Static
-cgo and pure-Go PIE builds narrow the surface further.
-
-**DO**
-
-Be precise. Do not say LD_PRELOAD never works with Go. It works for some builds.
-This slide is the problem statement for the section.
-
----
-
-## The teaser
-
-**SAY**
-
-We made it work.
-
-I am not going to tell you how today. That is next year's talk.
-
-What you see is the invocation and the result. LD_PRELOAD, a service name,
-debug mode on. Span creation and trace-id extraction on stderr.
-
-**DO**
-
-The contradiction is the device. The room will connect this slide to the
-LD_PRELOAD slide. Get there first.
-
-Do not be drawn on mechanism. Not the linking model, not the entry path, not
-.gopclntab. Not on a slide, not in the script, not if asked. Defer.
-
-The chip is amber: in development, not released.
-
----
-
-## What it means
-
-**SAY**
-
-No rebuild. No source change. No kernel version gate. One line.
-
-**DO**
-
-One line. Advance.
-
----
-
-## 06 Profiles complete the four signals
-
-**SAY**
-
-The fourth signal is profiles. Traces tell you which request was slow.
-Profiles tell you where the CPU went.
-
-**DO**
-
-Section bridge. The two questions are the point.
+Point to profiles in the signal indicators. This is another way to collect
+that signal, not a claim that profiling only exists at the kernel layer.
 
 ---
 
@@ -1037,23 +1030,11 @@ Section bridge. The two questions are the point.
 
 **SAY**
 
-Traces tell you which request was slow.
+Traces tell you which request was slow. Profiles tell you where the CPU went.
 
 **DO**
 
-Pause. Let the question sit.
-
----
-
-## Profiles tell you where the CPU went
-
-**SAY**
-
-Profiles tell you where the CPU went.
-
-**DO**
-
-Advance immediately after.
+Pause between the two questions. Both lines appear on one slide.
 
 ---
 
@@ -1074,6 +1055,18 @@ The Profiles specification is Alpha.
 
 The profiler itself can still be useful, but do not imply a stable wire or
 data-model contract.
+
+---
+
+## But how does it read a stripped binary?
+
+**SAY**
+
+How does the profiler read a stripped Go binary?
+
+**DO**
+
+Advance to the runtime metadata.
 
 ---
 
@@ -1116,56 +1109,37 @@ Read across the table, not every row.
 
 ---
 
-## Correlation is the missing bridge
+## Traces and profiles. Apart
 
 **SAY**
 
-Correlation is the missing bridge.
+We have request timing and CPU samples. To connect a request to its samples,
+the profiler needs request context. We will return to the proposed bridge
+at the end.
 
-Native runtimes can publish request context through thread-local storage. Go
-cannot rely on that model. Goroutines move between OS threads, and crossing
-FFI on every event is too costly.
-
-The proposed Go path uses pprof labels. The scheme is go_pprof_labels_v1.
+Even with both signals, we can still miss the variable that explains the bug.
 
 **DO**
 
-Say "proposed" before explaining it. This is OTEP 4947. Credit Scott Gerring
-and Ivo Anjo verbally for connecting compile-time instrumentation to this
-profiling path. Link only to the public OTEP. Do not claim the complete OTEP
-path ships today.
+Establish the correlation need. Keep the OTEP mechanism in the future section.
+Return to the opening bug as you enter live debugging.
 
 ---
 
-## Compile time sets context. eBPF reads evidence
-
-**SAY**
-
-Compile-time instrumentation can arrange request context inside the Go process.
-An out-of-process profiler can read the resulting labels. One approach supplies
-semantics. The other supplies continuous evidence.
-
-Together, request context reaches profiles.
-
-**DO**
-
-Slow down. This is the synthesis. Do not claim the complete OTEP path is
-shipping today.
-
----
-
-## 07 Live debugging: probe a running process
+## Live debugging: probe a running process
 
 **SAY**
 
 Back to the bug from the opening. You need one variable, on one line, in
 production. Every tool so far adds telemetry that you planned. This one
-answers a question that you did not plan.
+answers a question that you did not plan. The signal here is a dynamic log,
+with a snapshot of the available variables.
 
 **DO**
 
-Section bridge. Name the opening loop: the log line, the redeploy, the wrong
-place.
+Point to logs in the signal indicators. Metrics and traces remain goals, not
+capabilities of this logpoint. Name the opening loop: the log line, the
+redeploy, the wrong place.
 
 ---
 
@@ -1193,7 +1167,7 @@ captures. Say so if someone asks why it is not instant.
 
 **SAY**
 
-This is the same uprobe from the primer, with one new input: DWARF.
+This is the same uprobe as OBI, with DWARF line and variable information.
 
 The DWARF line table maps file and line to machine addresses. The tool prefers a statement row for that line. If only other rows match, it uses the first one. That gives a PC. It turns the PC into a file offset
 and attaches the uprobe there.
@@ -1261,16 +1235,38 @@ snapshots.
 
 ---
 
-## 08 When to reach for what
+## Choose the signal and the layer
 
 **SAY**
 
-Start from the constraint you cannot change. Add a layer only when its signal
-pays for its operational cost.
+We can now choose on two grounds. Which signal answers the question?
+Which intervention point can our service support?
 
 **DO**
 
-Section bridge. The decision table is the point.
+Return to the lifecycle map in words. Compare signal coverage before the
+constraint table.
+
+---
+
+## What each approach gives you
+
+**SAY**
+
+The build and injector paths can activate SDK instrumentation across all four
+signals. Actual coverage depends on the bundle.
+
+OBI emits traces and metrics, and correlates existing logs. The eBPF Profiler
+emits profiles. Live Debugger gives us logs and variable snapshots.
+
+Similar signals do not mean identical coverage or deployment costs.
+
+**DO**
+
+Keep the same signal order as the section indicators. The Go injector is in
+development. Metrics and traces from live probes remain goals for the closing
+section. The table describes application evidence, not each agent's diagnostic
+telemetry.
 
 ---
 
@@ -1281,8 +1277,7 @@ Section bridge. The decision table is the point.
 No rebuild window: OBI. Non-Linux target: otelc or Orchestrion.
 Mixed-language boundary coverage: OBI. Rich Go library semantics: otelc or
 Orchestrion. No privileged runtime agent: otelc or Orchestrion. Whole-node
-CPU profiles: the eBPF Profiler. Request-correlated profiles: compile-time
-context plus the profiler.
+CPU profiles: the eBPF Profiler. A missing variable: a live logpoint.
 
 **DO**
 
@@ -1298,26 +1293,88 @@ decides the first tool.
 Use build-time instrumentation where you own the Go build. OBI for
 rebuild-free and mixed-language boundaries. The profiler for whole-node CPU.
 
+Use a live logpoint when that baseline does not answer the question.
 Add each layer only when the signal pays for its cost.
 
-Customer adoption grew twenty percent. Go users want the build-time path too.
+Those are choices we can make now. What should become easier to build?
 
 **DO**
 
-The default combination is intentionally not universal. The 20 percent line is
-in its approved wording: no denominator, no "mostly new users."
+This is an example, not a universal stack. Do not repeat the adoption number.
+Keep its approved wording on screen. Use the final question to enter the
+future section before the closing callback.
 
 ---
 
-## 09 What comes next
+## What comes next
 
 **SAY**
 
-So what comes next?
+We saw the same cost several times: tools infer details that Go does not
+publish as an instrumentation contract. What should Go expose so we infer less?
 
 **DO**
 
-Section bridge. This is where the arc lands.
+Separate proposals, experiments, and aspirations. This section answers the
+limitations from the lifecycle tour.
+
+---
+
+## User Statically-Defined Tracing (USDT)
+
+**SAY**
+
+USDT lets the program declare its own probes.
+
+The producer puts a NOP at the probe site and writes an ELF note. The note
+names the probe and gives a recipe for each argument: which register, which
+stack slot. A tracer reads the note and attaches an ordinary uprobe at the NOP.
+An optional semaphore tells the program that a tracer is present, so it can
+skip expensive argument preparation when nobody listens.
+
+USDT does not make a hit free. It makes the contract explicit.
+
+**DO**
+
+Expand the acronym before you use it. USDT runs on uprobes. It is not a
+separate kernel mechanism.
+
+---
+
+## Go needs a USDT producer
+
+**SAY**
+
+The Go 1.26.0 source that we checked emits no native USDT probes. Salp and libstapsdt let an application
+add them through cgo. Polar Signals builds the other side, a Go tracer that
+reads USDT notes.
+
+My fork experiments with producer support in the toolchain itself. It is a
+proof of concept. It shows what a stable contract could look like, for eBPF
+tools and for injectors.
+
+**DO**
+
+The fork is a proof of concept. Do not claim that it builds today or that the
+commands on the slide run. Do not invent a reason why Go has no USDT.
+
+---
+
+## Declared probes can reduce inference
+
+**SAY**
+
+I want us to explore shared probe contracts for OBI, injector tooling, and
+live debugging. Named events and declared arguments could remove some of the
+inference at those sites.
+
+That needs producer support and integrations. USDT does not provide a loader,
+or make every source variable available.
+
+**DO**
+
+Present this as an aspiration. Do not claim these integrations exist. Do not
+connect USDT to the undisclosed Go injector mechanism.
 
 ---
 
@@ -1335,8 +1392,12 @@ reference shared libraries on Linux.
 The Go team accepted the experiment, so the code can land behind a flag. The
 design itself is still in review.
 
-Why do I care? The injector section showed that a Go binary without a dynamic
-loader gives an injector nothing to attach to. This work teaches the internal linker to import shared libraries. It does not promise new linking defaults or preload support.
+The useful connection is native instrumentation libraries. If we need a
+prebuilt native library, this proposal could make it easier to call from Go
+without a C build toolchain.
+
+There may be a connection to an injector design, but that connection is weak.
+This work does not promise new linking defaults or preload support.
 
 **DO**
 
@@ -1344,6 +1405,115 @@ Say "accepted experiment" and "design in review". Do not say the proposal is
 accepted. Do not predict which binaries an injector can reach after it ships.
 That is the owner-review boundary in the outline. Re-check the issue labels
 the week of the talk.
+
+---
+
+## Give trace context a stable Go ABI
+
+**SAY**
+
+We also need a stable place to keep trace context while a goroutine handles
+a request. Instrumentation extracts context from the incoming request and
+injects it into the outgoing request.
+
+We use otelc rewriting to add goroutine-local storage for the dd-trace-go
+integration. You saw that runtime.g field earlier. The ask is a stable Go ABI
+for this storage, so integrations do not depend on private runtime layouts.
+
+Storage alone is not propagation. We still need extraction and injection
+hooks, and rules for context inheritance when work moves to another goroutine.
+
+**DO**
+
+Present the stable ABI as an ask, not an existing Go feature. Distinguish the
+current build-time integration from a standard runtime contract. Then connect
+request propagation to the profile-correlation proposal.
+
+---
+
+## Correlation is the missing bridge
+
+**SAY**
+
+Correlation is the missing bridge.
+
+Native runtimes can publish request context through thread-local storage. Go
+cannot rely on that model. Goroutines move between OS threads, and crossing
+FFI on every event is too costly.
+
+The proposed Go path uses pprof labels. The scheme is go_pprof_labels_v1.
+
+**DO**
+
+Say "proposed" before explaining it. This is OTEP 4947. Credit Scott Gerring
+and Ivo Anjo verbally for connecting compile-time instrumentation to this
+profiling path. Link only to the public OTEP. Do not claim the complete OTEP
+path ships today.
+
+---
+
+## Compile time sets context. eBPF reads evidence
+
+**SAY**
+
+Compile-time instrumentation can arrange request context inside the Go process.
+An out-of-process profiler can read the resulting labels. One approach supplies
+semantics. The other supplies continuous evidence.
+
+That is the goal: request context reaches profiles through a shared contract.
+
+**DO**
+
+Keep the proposal status visible. This is the reason to combine the layers,
+not a claim that the complete OTEP path ships today.
+
+---
+
+## Memory profiling is in progress
+
+**SAY**
+
+The eBPF profiler currently gives us CPU profiles. The profiler team is working
+on memory profiling too. That extends the questions we can answer with the
+same signal category.
+
+**DO**
+
+This is work in progress, not a release announcement. Do not promise a date
+or specific allocation and heap views.
+
+---
+
+## Live probes can grow beyond logs
+
+**SAY**
+
+A snapshot answers what happened in one event. A metric can answer how often
+it happens. Metrics are one goal. Tracing is another, on a longer horizon:
+twelve months or more.
+
+Those are goals, not release commitments. Today, the logpoints in this talk
+give us logs and variable snapshots.
+
+**DO**
+
+The horizon comes from the speaker, not the public documentation. Do not give
+a release date. Public docs distinguish Live Debugger logpoints from Dynamic
+Instrumentation metrics. Do not merge those product claims.
+
+---
+
+## From question to evidence
+
+**SAY**
+
+Those proposals can make the tools easier to build. Now return to the bug
+that we can investigate with the tools we already have.
+
+**DO**
+
+End the future section. The agent callback uses current preview capabilities,
+not a promise that depends on the proposals.
 
 ---
 
@@ -1375,6 +1545,14 @@ has it.
 
 ## Takeaways
 
+**DO**
+
+Pause. Advance to the two lines that the audience should remember.
+
+---
+
+## Start from the constraint you cannot change
+
 **SAY**
 
 Start from the constraint you cannot change.
@@ -1387,31 +1565,13 @@ Slow down. These two lines are the whole talk. Let them land.
 
 ---
 
-## Take it home
-
-**SAY**
-
-Take it home.
-
-go install the zeroins toolkit.
-
-That is the joke's payoff. The framework the agent was missing is the thing you
-take home.
-
-The kubectl wrappers are experimental and need an explicit telemetry endpoint.
-
-**DO**
-
-One command only. Do not walk the subcommands here; the take-it-with-you slide
-names them.
-
----
-
 ## Get involved in the SIGs
 
 **SAY**
 
-If you want to help build this, get involved in the SIGs.
+If you want to help, bring a concrete requirement: a probe site, a context
+contract, or a deployment restriction. The SIGs need those cases.
+
 github.com/open-telemetry/community has every SIG's calendar, notes, and
 channels.
 
@@ -1446,8 +1606,7 @@ Deadpan. Own the plug. Say the time and the room slowly enough to photograph.
 **SAY**
 
 The talk repository has both decks, the research, and the earlier FOSDEM
-recording. The zeroins toolkit has the four commands. The agent skills repo
-has more.
+recording. The zeroins toolkit has the four commands.
 
 Pick the constraint you cannot change. Then choose the layer that can still
 reach your service.
@@ -1457,6 +1616,12 @@ reach your service.
 End with this line. Stop. Let the questions slide stay up.
 
 ---
+
+## Questions?
+
+**DO**
+
+Stop. Leave the links visible for questions.
 
 ## Reserve answers
 

@@ -16,8 +16,14 @@ style: |
   .medium { font-size: 1.0em; }
   .small  { font-size: 0.8em; }
   .tiny   { font-size: 0.6em; }
+  .signal-map { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 23px; }
+  section.section .signal-map { grid-column: 2; grid-row: 2; margin-left: 55px; }
+  .signal-map span { padding: .45em .6em; border: 2px solid #006459; border-radius: 6px; background: #f5f5f5; color: #111; }
+  .signal-map b { display: block; font-size: .8em; }
+  .signal-map .signal-out { background: transparent; border-style: dashed; }
+  .signal-map small { grid-column: 1 / -1; font-size: 20px; line-height: 1.35; }
 ---
-
+<!-- markdownlint-disable MD026 -->
 <!-- _class: title gopher-network -->
 <!-- _paginate: false -->
 <!-- _header: "" -->
@@ -33,19 +39,6 @@ How to Instrument Go Without Changing a Single Line of Code
 ### Kemal Akkoyun · Datadog
 
 ---
-
-<!-- _paginate: false -->
-
-## Why observability matters
-
-<br>
-
-You cannot fix what you cannot *see*.
-
-**Traces**, **metrics**, **logs**, **profiles**: the four signals that tell you what your code is doing in production.
-
----
-
 <!-- _paginate: false -->
 
 ## The bug you cannot reproduce locally
@@ -56,14 +49,12 @@ You cannot fix what you cannot *see*.
 * Wrong place. Did it again.
 
 ---
-
 <!-- _class: vcenter -->
 <!-- _paginate: false -->
 
 # What if you did not have to?
 
 ---
-
 <!-- _class: vcenter -->
 
 # Every new dependency creates another place to forget
@@ -92,7 +83,6 @@ The fiftieth inherits gaps.
 ### Go made deployment simple. It made late instrumentation hard
 
 ---
-
 <!-- _class: vcenter -->
 
 ## Why we care
@@ -110,21 +100,18 @@ I wrapped handlers by hand for years. Every job taught me the same thing: hand-w
 Datadog builds at all three layers. Each solves a different constraint.
 
 ---
-
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
 ![bg contain](../assets/cc_opening_joke_1.png)
 
 ---
-
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
 ![bg contain](../assets/cc_opening_joke_2.png)
 
 ---
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -144,23 +131,6 @@ Datadog builds at all three layers. Each solves a different constraint.
 <br>
 
 There is no single point where an agent can safely rewrite every function at startup.
-
----
-
-## What Go actually has
-
-###### runtime/proc.go
-
-```go
-// gopark should be an internal detail,
-// but widely used packages access it using linkname.
-// Notable members of the hall of shame include:
-// ...
-```
-
-<br>
-
-The Go team calls this access pattern a "hall of shame," not an instrumentation API.
 
 ---
 
@@ -185,23 +155,48 @@ flowchart LR
 | **Kernel** | No rebuild; Linux, privileges, and kernel contracts |
 
 ---
-
-## Runtime injection is a narrower route
-
-* Dynatrace OneAgent supports eligible dynamically linked Go binaries.
-* The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.
-* Datadog is working on a Go path for Single-Step Instrumentation.
-
-<br>
-
-Runtime injection is useful, but Go's default static binary leaves less surface to attach to.
-
----
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-# Three open-source projects. *Three approaches.*
+# Three intervention points. *Four signals.*
+
+### Traces · Metrics · Logs · Profiles
+
+---
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 02
+
+# otelc: instrument during the build
+
+<div class="signal-map">
+<span>Traces<b>SDK / integrations</b></span>
+<span>Metrics<b>SDK / integrations</b></span>
+<span>Logs<b>SDK / integrations</b></span>
+<span>Profiles<b>SDK / integrations</b></span>
+<small>The build path can reach all four. Coverage depends on the bundle.</small>
+</div>
+
+---
+
+## Three organizations converged upstream
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[Datadog Orchestrion] --> D[OpenTelemetry Go compile-time SIG]
+    B[Alibaba rules engine] --> D
+    C[Quesma instrgen] --> D
+    D --> E[otelc]
+```
+
+</div>
+
+`otelc` is a vendor-neutral tool built by the SIG.
+
+Orchestrion remains a production Datadog distribution of the same core idea.
 
 ---
 
@@ -219,12 +214,339 @@ The projects did not collapse into one agent. They learned to compose.
 
 ---
 
+## `-toolexec` puts otelc before the compiler
+
+<div class="center">
+
+```mermaid
+flowchart TD
+    A[go build ./...] --> B[-toolexec otelc]
+    B --> C[parse and rewrite .go]
+    C --> D[go tool compile]
+    D --> E[binary with instrumentation]
+```
+
+</div>
+
+---
+<!-- _class: vcenter -->
+
+## Production evidence
+
+| | |
+| ---: | --- |
+| <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">v1</span> | <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">20%</span> |
+| Stable upstream tool | Growth in customers adopting auto-instrumentation |
+
+<br>
+
+One build-command change can standardize instrumentation across a fleet.
+
+---
+
+## Build-time instrumentation is portable
+
+| | otelc |
+| --- | --- |
+| Runtime privilege | None |
+| Linux kernel dependency | None |
+| Build pipeline change | `otelc go build` |
+| Tested build targets | Linux, macOS, Windows |
+| Go baseline | Go 1.25+ |
+| Runtime cost | Injected SDK and instrumentation code |
+
+<br>
+
+The trade-off is build ownership, not operating-system access.
+
+---
+
+## Signal depth depends on the integration bundle
+
+<div class="columns">
+<div>
+
+### Upstream otelc today
+
+* Traces
+* HTTP and gRPC metrics
+* Go runtime metrics
+* `slog` and Logrus records
+
+</div>
+<div>
+
+### Orchestrion + dd-trace-go
+
+* Traces
+* Runtime metrics
+* Correlated logs
+* Continuous profiles
+
+</div>
+</div>
+
+The build path can reach all four signals. The SDK and integrations determine coverage.
+
+Not every Datadog integration has moved to otelc yet.
+
+---
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+# And it can reach *deep*
+
+---
+
+## What Go actually has
+
+###### runtime/proc.go
+
+```go
+// gopark should be an internal detail,
+// but widely used packages access it using linkname.
+// Notable members of the hall of shame include:
+// ...
+```
+
+<br>
+
+The Go team calls this access pattern a "hall of shame," not an instrumentation API.
+
+---
+
+## Compile time can reach Go internals! Dark Magic!
+
+###### gls.orchestrion.yml
+
+```yaml
+join-point:
+  struct-definition: runtime.g
+advice:
+  - add-struct-field:
+      name: __dd_gls_v2
+      type: any
+```
+
+<div class="small">
+
+The aspect adds goroutine-local storage, typed accessors, and exit cleanup.
+
+`dd-trace-go` owns this tracer-context integration. otelc supplies the rewriting engine.
+
+</div>
+
+---
+
+## `go:linkname` variables are fragile
+
+Unlike function linknames, variables have no definition/reference separation.
+
+When both sides are uninitialized BSS symbols, the linker chooses by symbol loading order.
+
+> "the choice is arbitrary. In the implementation it depends on the symbol loading order"
+>
+> Ian Lance Taylor, [golang/go#72032](https://github.com/golang/go/issues/72032)
+
+This broke between Go 1.22 and 1.23.
+
+---
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../assets/meme_linker_loading_order.png)
+
+the linker picks by symbol loading order
+
+---
+
+## The build path has boundaries too
+
+* Requires control of the Go build pipeline.
+* Requires Go 1.25 or newer for current otelc.
+* Coverage stops at the supported integration set.
+* Toolchain internals such as `-toolexec` and `go:linkname` can change.
+
+<br>
+
+No root access and no kernel version gate, but the binary must be rebuilt.
+
+---
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 02
+###### 03
 
-# eBPF, from the ground up
+# Process start: the injector
+
+<div class="signal-map">
+<span>Traces<b>SDK capabilities</b></span>
+<span>Metrics<b>SDK capabilities</b></span>
+<span>Logs<b>SDK capabilities</b></span>
+<span>Profiles<b>SDK capabilities</b></span>
+<small>The SDK supplies the signals. The Go hook shown here is in development.</small>
+</div>
+
+---
+
+## How process-start injection works
+
+<div class="center">
+
+```mermaid
+sequenceDiagram
+    participant K as kernel exec
+    participant L as ld.so
+    participant P as preloaded library
+    participant R as language runtime
+    K->>L: start the dynamic loader
+    L->>P: map LD_PRELOAD first
+    L->>P: run its initializers
+    P->>R: set one environment variable
+    R->>R: load the agent before main
+```
+
+</div>
+
+<div class="tiny">
+
+[ld.so(8)](https://man7.org/linux/man-pages/man8/ld.so.8.html): preloaded objects load "before all others" · System V ABI: shared-object initializers run "before the executable file gains control"
+
+</div>
+
+---
+
+## Runtime hooks that injectors use
+
+| Runtime | The hook the injector sets |
+| --- | --- |
+| Java | `JAVA_TOOL_OPTIONS=-javaagent:…` |
+| Node.js | `NODE_OPTIONS=--require …` |
+| .NET | CLR profiler and startup-hook variables |
+| Python | `sitecustomize` on `PYTHONPATH` |
+| Ruby | `RUBYOPT=-r …` |
+| **Go** | **none** |
+
+<div class="small">
+
+[OpenTelemetry injector](https://github.com/open-telemetry/opentelemetry-injector): Java, Node.js, .NET, Ruby, Python · [Datadog SSI](https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/single-step-apm/): Java, Python, Ruby, Node.js, .NET, PHP
+
+</div>
+
+---
+
+## Runtime injection is a narrower route
+
+* Dynatrace OneAgent supports eligible dynamically linked Go binaries.
+* The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.
+* Datadog is working on a Go path for Single-Step Instrumentation.
+
+<br>
+
+Runtime injection is useful, but Go's default static binary leaves less surface to attach to.
+
+---
+
+## A static Go binary has no loader
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[kernel exec] --> B[no PT_INTERP]
+    B --> C[no ld.so]
+    C --> D[LD_PRELOAD never read]
+    D --> E[runtime.main]
+```
+
+</div>
+
+`CGO_ENABLED=0` gives no dynamic loader and no libc. Nothing reads the variable.
+
+Even with cgo, the internal linker runs no shared-object constructors ([golang/go#28909](https://github.com/golang/go/issues/28909)).
+
+---
+
+## `LD_PRELOAD` reaches only some Go binaries
+
+```bash
+LD_PRELOAD=./tracer.so ./python-app
+LD_PRELOAD=./tracer.so ./go-app
+
+go build -ldflags="-linkmode=external"
+```
+
+| Build | Result |
+| --- | --- |
+| Dynamically linked process | Injection can work |
+| Default internally linked Go binary | No dynamic-loader hook |
+| Static cgo or pure-Go PIE | No compatible library-injection path |
+
+---
+
+## The teaser
+
+```bash
+LD_PRELOAD=./libdd_go_hook.so \
+DD_SERVICE=my-service \
+DD_TRACE_DEBUG=1 \
+./my-go-app
+```
+
+`DD_TRACE_DEBUG=1` shows span creation and trace-id extraction on stderr.
+
+<span class="chip caution">in development</span>
+
+---
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+## No rebuild.
+
+## No source change.
+
+## No kernel version gate.
+
+### *One line.*
+
+---
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 04
+
+# OBI: observe from the kernel
+
+<div class="signal-map">
+<span>Traces<b>emitted</b></span>
+<span>Metrics<b>emitted</b></span>
+<span class="signal-out">Logs<b>correlation only</b></span>
+<span class="signal-out">Profiles<b>not emitted</b></span>
+<small>No rebuild. Linux and privileges.</small>
+</div>
+
+---
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+## OBI *v1.0.0* shipped
+
+### 30 October. Three days ago
+
+---
+
+## OpenTelemetry eBPF Instrumentation
+
+**OBI** is the upstream successor to Grafana Beyla, donated to OpenTelemetry in 2025.
+
+* No application rebuild.
+* One DaemonSet can observe a mixed-language node.
+* Network protocols provide broad coverage.
+* Go-specific uprobes add library-level detail.
+
+<br>
+
+<span class="chip note">v1.0.0, 30 Oct 2026: stable core</span> <span class="chip caution">Go module API and gRPC telemetry not yet stable</span>
 
 ---
 
@@ -243,27 +565,6 @@ Load once. The verifier checks it. It runs when the event occurs.
 Diagram: eBPF.io authors, "Loader", [ebpf.io/what-is-ebpf](https://ebpf.io/what-is-ebpf/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 </div>
-
----
-
-## CO-RE adapts kernel layouts, not Go layouts
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    A[BPF object + relocations] --> C[loader]
-    B[target kernel BTF] --> C
-    C --> D[adjusted field reads]
-    D --> E[verifier]
-    F[Go library layouts] -.->|separate resolver| G[Go field offsets]
-```
-
-</div>
-
-BTF describes the kernel's types. CO-RE fixes field reads at load time.
-
-**A Go HTTP request is not a kernel type.**
 
 ---
 
@@ -301,6 +602,27 @@ flowchart LR
 Conventional x86 path. The kernel patches the mapped code, not the file on disk. Every active hit has a cost.
 
 </div>
+
+---
+
+## OBI turns observations into spans
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[HTTP entry uprobe] --> D[state keyed by PID + g]
+    B[SQL and gRPC uprobes] --> D
+    C[RET-site uprobes] --> D
+    D --> E[ring buffer]
+    E --> F[OBI user space]
+    F --> G[OTLP spans + metrics]
+    D -.-> H[outgoing trace header]
+```
+
+</div>
+
+Probe sites give events. Correlation turns them into spans.
 
 ---
 
@@ -358,6 +680,27 @@ The caller address stays untouched.
 
 ---
 
+## CO-RE adapts kernel layouts, not Go layouts
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    A[BPF object + relocations] --> C[loader]
+    B[target kernel BTF] --> C
+    C --> D[adjusted field reads]
+    D --> E[verifier]
+    F[Go library layouts] -.->|separate resolver| G[Go field offsets]
+```
+
+</div>
+
+BTF describes the kernel's types. CO-RE fixes field reads at load time.
+
+**A Go HTTP request is not a kernel type.**
+
+---
+
 ## Find the instruction and the field
 
 <div class="center">
@@ -375,105 +718,6 @@ flowchart LR
 A function address is not a type layout.
 
 ---
-
-## User Statically-Defined Tracing (USDT)
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    N[ELF note] -->|name + argument recipe| T[tracer]
-    T -->|attach uprobe| P[NOP at the probe site]
-    T -.->|optional| S[semaphore]
-    S -.->|tracer present| P
-```
-
-</div>
-
-The producer names the probe and says where each value lives.
-
----
-
-## Go needs a USDT producer
-
-<div class="columns">
-<div>
-
-![width:480](../assets/github_kakkoyun_usdt_poc.png)
-
-</div>
-<div>
-
-* Go 1.26.0 emits no native USDT probes.
-* Salp and libstapsdt add them through cgo.
-* Polar Signals builds a Go tracer that reads them.
-
-```bash
-# github.com/kakkoyun/go/tree/poc_usdt
-go tool usdt list ./...
-```
-
-<span class="chip caution">proof of concept</span>
-
-</div>
-</div>
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 03
-
-# OBI: observe from the kernel
-
----
-
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
-
-## OBI *v1.0.0* shipped
-
-### 30 October. Three days ago.
-
----
-
-## OpenTelemetry eBPF Instrumentation
-
-**OBI** is the upstream successor to Grafana Beyla, donated to OpenTelemetry in 2025.
-
-* No application rebuild.
-* One DaemonSet can observe a mixed-language node.
-* Network protocols provide broad coverage.
-* Go-specific uprobes add library-level detail.
-
-<br>
-
-<span class="chip note">v1.0.0, 30 Oct 2026: stable core</span> <span class="chip caution">Go module API and gRPC telemetry not yet stable</span>
-
----
-
-## OBI turns observations into spans
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    A[HTTP entry uprobe] --> D[state keyed by PID + g]
-    B[SQL and gRPC uprobes] --> D
-    C[RET-site uprobes] --> D
-    D --> E[ring buffer]
-    E --> F[OBI user space]
-    F --> G[OTLP spans + metrics]
-    D -.-> H[outgoing trace header]
-```
-
-</div>
-
-Probe sites give events. Correlation turns them into spans.
-
----
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -486,23 +730,23 @@ Probe sites give events. Correlation turns them into spans.
 <div class="columns">
 <div>
 
-- `net/http`
-- `golang.org/x/net/http2`
-- `gorilla/mux`
-- `gin-gonic/gin`
-- `google.golang.org/grpc`
-- `net/rpc/jsonrpc`
-- `database/sql`
+* `net/http`
+* `golang.org/x/net/http2`
+* `gorilla/mux`
+* `gin-gonic/gin`
+* `google.golang.org/grpc`
+* `net/rpc/jsonrpc`
+* `database/sql`
 
 </div>
 <div>
 
-- `go-sql-driver/mysql`
-- `lib/pq`
-- `redis/go-redis/v9`
-- `segmentio/kafka-go`
-- `IBM/sarama`
-- `mongo-driver` v1 and v2
+* `go-sql-driver/mysql`
+* `lib/pq`
+* `redis/go-redis/v9`
+* `segmentio/kafka-go`
+* `IBM/sarama`
+* `mongo-driver` v1 and v2
 
 </div>
 </div>
@@ -584,22 +828,22 @@ v1 stable: HTTP and SQL spans and duration metrics. gRPC: release candidate. Go 
 
 ### OBI handles
 
-- Service boundaries
-- HTTP and gRPC spans
-- RED and runtime metrics
-- Supported library operations
-- Log correlation
+* Service boundaries
+* HTTP and gRPC spans
+* RED and runtime metrics
+* Supported library operations
+* Log correlation
 
 </div>
 <div>
 
 ### Application code still owns
 
-- Business events
-- Domain-specific attributes
-- Arbitrary internal functions
-- Unsupported libraries
-- Custom sampling decisions
+* Business events
+* Domain-specific attributes
+* Arbitrary internal functions
+* Unsupported libraries
+* Custom sampling decisions
 
 </div>
 </div>
@@ -611,7 +855,6 @@ Go spans you write with `otel.Tracer` and no SDK: OBI can export them through th
 </div>
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -670,7 +913,6 @@ Twenty-eight minutes, public, and it goes deeper than this section can.
 </div>
 
 ---
-
 <!-- _class: meme -->
 <!-- _paginate: false -->
 
@@ -679,306 +921,22 @@ Twenty-eight minutes, public, and it goes deeper than this section can.
 somehow, it works
 
 ---
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 04
-
-# otelc: instrument during the build
-
----
-
-## Three organizations converged upstream
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    A[Datadog Orchestrion] --> D[OpenTelemetry Go compile-time SIG]
-    B[Alibaba rules engine] --> D
-    C[Quesma instrgen] --> D
-    D --> E[otelc]
-```
-
-</div>
-
-`otelc` is a vendor-neutral tool built by the SIG.
-
-Orchestrion remains a production Datadog distribution of the same core idea.
-
----
-
-## `-toolexec` puts otelc before the compiler
-
-<div class="center">
-
-```mermaid
-flowchart TD
-    A[go build ./...] --> B[-toolexec otelc]
-    B --> C[parse and rewrite .go]
-    C --> D[go tool compile]
-    D --> E[binary with instrumentation]
-```
-
-</div>
-
----
-
-<!-- _class: vcenter -->
-
-## Production evidence
-
-| | |
-| ---: | --- |
-| <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">v1</span> | <span style="font-size: 2.5em; color: var(--purple); font-weight: 700;">20%</span> |
-| Stable upstream tool | Growth in customers adopting auto-instrumentation |
-
-<br>
-
-One build-command change can standardize instrumentation across a fleet.
-
----
-
-## Build-time instrumentation is portable
-
-| | otelc |
-| --- | --- |
-| Runtime privilege | None |
-| Linux kernel dependency | None |
-| Build pipeline change | `otelc go build` |
-| Tested build targets | Linux, macOS, Windows |
-| Go baseline | Go 1.25+ |
-| Runtime cost | Injected SDK and instrumentation code |
-
-<br>
-
-The trade-off is build ownership, not operating-system access.
-
----
-
-## Signal depth depends on the integration bundle
-
-<div class="columns">
-<div>
-
-### Upstream otelc today
-
-- Traces
-- HTTP and gRPC metrics
-- Go runtime metrics
-- `slog` and Logrus records
-
-</div>
-<div>
-
-### Orchestrion + dd-trace-go
-
-- Traces
-- Runtime metrics
-- Correlated logs
-- Continuous profiles
-
-</div>
-</div>
-
-Not every Alibaba and Datadog integration has moved to otelc yet. We will have much more.
-
----
-
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
-
-# And it can reach *deep*
-
----
-
-## Compile time can reach Go internals! Dark Magic!
-
-###### gls.orchestrion.yml
-
-```yaml
-join-point:
-  struct-definition: runtime.g
-advice:
-  - add-struct-field:
-      name: __dd_gls_v2
-      type: any
-```
-
-<div class="small">
-
-The aspect adds goroutine-local storage, typed accessors, and exit cleanup.
-
-`dd-trace-go` owns this tracer-context integration. otelc supplies the rewriting engine.
-
-</div>
-
----
-
-## `go:linkname` variables are fragile
-
-Unlike function linknames, variables have no definition/reference separation.
-
-When both sides are uninitialized BSS symbols, the linker chooses by symbol loading order.
-
-> "the choice is arbitrary. In the implementation it depends on the symbol loading order"
->
-> Ian Lance Taylor, [golang/go#72032](https://github.com/golang/go/issues/72032)
-
-This broke between Go 1.22 and 1.23.
-
----
-
-<!-- _class: meme -->
-<!-- _paginate: false -->
-
-![bg contain](../assets/meme_linker_loading_order.png)
-
-the linker picks by symbol loading order
-
----
-
-## The build path has boundaries too
-
-* Requires control of the Go build pipeline.
-* Requires Go 1.25 or newer for current otelc.
-* Coverage stops at the supported integration set.
-* Toolchain internals such as `-toolexec` and `go:linkname` can change.
-
-<br>
-
-No root access and no kernel version gate, but the binary must be rebuilt.
-
----
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
 ###### 05
 
-# Process start: the injector
+# Profiles: observe CPU from the kernel
 
----
-
-## How process-start injection works
-
-<div class="center">
-
-```mermaid
-sequenceDiagram
-    participant K as kernel exec
-    participant L as ld.so
-    participant P as preloaded library
-    participant R as language runtime
-    K->>L: start the dynamic loader
-    L->>P: map LD_PRELOAD first
-    L->>P: run its initializers
-    P->>R: set one environment variable
-    R->>R: load the agent before main
-```
-
-</div>
-
-<div class="tiny">
-
-[ld.so(8)](https://man7.org/linux/man-pages/man8/ld.so.8.html): preloaded objects load "before all others" · System V ABI: shared-object initializers run "before the executable file gains control"
-
+<div class="signal-map">
+<span class="signal-out">Traces<b>not emitted</b></span>
+<span class="signal-out">Metrics<b>not the application signal</b></span>
+<span class="signal-out">Logs<b>not the application signal</b></span>
+<span>Profiles<b>CPU samples</b></span>
+<small>A rebuild-free route to profiling. Linux node access required.</small>
 </div>
 
 ---
-
-## Runtime hooks that injectors use
-
-| Runtime | The hook the injector sets |
-| --- | --- |
-| Java | `JAVA_TOOL_OPTIONS=-javaagent:…` |
-| Node.js | `NODE_OPTIONS=--require …` |
-| .NET | CLR profiler and startup-hook variables |
-| Python | `sitecustomize` on `PYTHONPATH` |
-| Ruby | `RUBYOPT=-r …` |
-| **Go** | **none** |
-
-<div class="small">
-
-[OpenTelemetry injector](https://github.com/open-telemetry/opentelemetry-injector): Java, Node.js, .NET, Ruby, Python · [Datadog SSI](https://docs.datadoghq.com/tracing/trace_collection/automatic_instrumentation/single-step-apm/): Java, Python, Ruby, Node.js, .NET, PHP
-
-</div>
-
----
-
-## A static Go binary has no loader
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    A[kernel exec] --> B[no PT_INTERP]
-    B --> C[no ld.so]
-    C --> D[LD_PRELOAD never read]
-    D --> E[runtime.main]
-```
-
-</div>
-
-`CGO_ENABLED=0` gives no dynamic loader and no libc. Nothing reads the variable.
-
-Even with cgo, the internal linker runs no shared-object constructors ([golang/go#28909](https://github.com/golang/go/issues/28909)).
-
----
-
-## `LD_PRELOAD` reaches only some Go binaries
-
-```bash
-LD_PRELOAD=./tracer.so ./python-app
-LD_PRELOAD=./tracer.so ./go-app
-
-go build -ldflags="-linkmode=external"
-```
-
-| Build | Result |
-| --- | --- |
-| Dynamically linked process | Injection can work |
-| Default internally linked Go binary | No dynamic-loader hook |
-| Static cgo or pure-Go PIE | No compatible library-injection path |
-
----
-
-## The teaser
-
-```bash
-LD_PRELOAD=./libdd_go_hook.so \
-DD_SERVICE=my-service \
-DD_TRACE_DEBUG=1 \
-./my-go-app
-```
-
-`DD_TRACE_DEBUG=1` shows span creation and trace-id extraction on stderr.
-
-<span class="chip caution">in development</span>
-
----
-
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
-
-## No rebuild.
-## No source change.
-## No kernel version gate.
-
-### *One line.*
-
----
-
-<!-- _class: section -->
-<!-- _paginate: false -->
-
-###### 06
-
-# Profiles complete the four signals
-
----
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -1002,7 +960,6 @@ Originated as Elastic Universal Profiling and joined OpenTelemetry in June 2024.
 <span class="chip note">Profiles: Alpha specification</span>
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -1041,54 +998,29 @@ flowchart LR
 
 <br>
 
-The eBPF profiler will add memory profiling soon. But `pprof` still has the edge: more profile types, more granular data, and no kernel privileges.
+The signal is profiles. Choose the profiler by its coverage and deployment cost.
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
 # Traces and profiles. *Apart.*
 
 ---
-
-## Correlation is the missing bridge
-
-Native runtimes can publish request context through thread-local storage.
-
-Go cannot rely on that model: goroutines move between OS threads, and crossing FFI on every event is too costly.
-
-The proposed Go path uses **pprof labels**:
-
-<!-- code-header: none -->
-
-```yaml
-threadlocal.schema_version: "go_pprof_labels_v1"
-```
-
-<div class="tiny">
-
-[OTEP 4947: Alternative for Go support](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support)
-
-</div>
-
----
-
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
-
-### Compile time sets context. eBPF reads *evidence*.
-
-### Together, request context reaches profiles
-
----
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 07
+###### 06
 
 # Live debugging: probe a running process
+
+<div class="signal-map">
+<span class="signal-out">Traces<b>longer-term goal</b></span>
+<span class="signal-out">Metrics<b>goal</b></span>
+<span>Logs<b>logpoints + snapshots</b></span>
+<span class="signal-out">Profiles<b>not this logpoint</b></span>
+<small>Ask for missing evidence while the service runs.</small>
+</div>
 
 ---
 
@@ -1187,13 +1119,31 @@ Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ recommended · [Live Debugger 
 | Live Debugger logpoint | no | no | yes, bounded |
 
 ---
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 08
+###### 07
 
-# When to reach for what
+# Choose the signal and the layer
+
+---
+
+## What each approach gives you
+
+| Approach | Traces | Metrics | Logs | Profiles |
+| --- | --- | --- | --- | --- |
+| Build time | SDK | SDK | SDK | SDK |
+| Injector | SDK | SDK | SDK | SDK |
+| OBI | Yes | Yes | Correlation | No |
+| eBPF Profiler | No | No | No | CPU |
+| Live Debugger | Goal | Goal | Logpoints | No |
+
+<div class="small">
+
+SDK = depends on the SDK and integrations. Go injector: in development.
+OBI does not export logs. Live Debugger traces and metrics are goals, not release promises.
+
+</div>
 
 ---
 
@@ -1201,13 +1151,13 @@ Go: Linux 5.17+, Datadog Agent 7.73+, Go SDK 2.9+ recommended · [Live Debugger 
 
 | Constraint | Prefer |
 | --- | --- |
-| No rebuild window | OBI or injector |
+| No rebuild window | OBI on supported Linux hosts |
 | Non-Linux target | otelc |
 | Mixed-language boundary coverage | OBI |
 | Rich Go library semantics | otelc |
-| No privileged runtime agent | otelc or injector |
+| No privileged runtime agent | otelc |
 | Whole-node CPU profiles | eBPF Profiler |
-| Request-correlated profiles | Compile-time context + profiler |
+| A missing variable in production | Live Debugger logpoint |
 
 ---
 
@@ -1224,33 +1174,92 @@ flowchart TD
         B[OBI]
         C[eBPF Profiler]
     end
-    A -->|semantic spans, metrics, logs, pprof labels| OUT[Your backend]
+    A -->|SDK signals| OUT[Your backend]
     B -->|boundaries, mixed-language coverage| OUT
     C -->|whole-node CPU profiles| OUT
 ```
 
 </div>
 
-Start with the constraint you cannot change. Add the other layer when its signal earns the cost.
+Add a layer when its signal earns the cost. Use live logpoints for missing evidence.
 
 **20% adoption growth** is evidence that Go users want the build-time path too.
 
 ---
-
 <!-- _class: section -->
 <!-- _paginate: false -->
 
-###### 09
+###### 08
 
 # What comes next
+
+What should Go expose so these tools infer less?
+
+---
+
+## User Statically-Defined Tracing (USDT)
+
+<div class="center">
+
+```mermaid
+flowchart LR
+    N[ELF note] -->|name + argument recipe| T[tracer]
+    T -->|attach uprobe| P[NOP at the probe site]
+    T -.->|optional| S[semaphore]
+    S -.->|tracer present| P
+```
+
+</div>
+
+The producer names the probe and says where each value lives.
+
+---
+
+## Go needs a USDT producer
+
+<div class="columns">
+<div>
+
+![width:480](../assets/github_kakkoyun_usdt_poc.png)
+
+</div>
+<div>
+
+* Go 1.26.0 emits no native USDT probes.
+* Salp and libstapsdt add them through cgo.
+* Polar Signals builds a Go tracer that reads them.
+
+```bash
+# github.com/kakkoyun/go/tree/poc_usdt
+go tool usdt list ./...
+```
+
+<span class="chip caution">proof of concept</span>
+
+</div>
+</div>
+
+---
+
+## Declared probes can reduce inference
+
+| Potential consumer | Contract to explore |
+| --- | --- |
+| OBI | Named events and arguments |
+| Injector tooling | Declared observation sites |
+| Live debugging | Values at declared sites |
+
+<span class="chip caution">aspiration, not existing integrations</span>
+
+USDT covers declared sites. It does not replace a loader or expose every variable.
 
 ---
 
 ## cgo without a C toolchain
 
 * [#81450](https://github.com/golang/go/issues/81450): call prebuilt C libraries with no C compiler at build time
-* Bindings in Go syntax. Glue in Go and assembly. `runtime/cgo` without C.
-* The internal linker learns dynamic imports on Linux.
+* Potential use: native libraries for instrumentation.
+* Injector relevance remains uncertain.
 
 <br>
 
@@ -1258,6 +1267,77 @@ Start with the constraint you cannot change. Add the other layer when its signal
 
 ---
 
+## Give trace context a stable Go ABI
+
+Incoming request → goroutine-local context → outgoing request
+
+Build-time rewriting already supplies goroutine-local storage.
+
+<span class="chip caution">ask: a stable runtime contract</span>
+
+---
+
+## Correlation is the missing bridge
+
+Native runtimes can publish request context through thread-local storage.
+
+Go cannot rely on that model: goroutines move between OS threads, and crossing FFI on every event is too costly.
+
+The proposed Go path uses **pprof labels**:
+
+<!-- code-header: none -->
+
+```yaml
+threadlocal.schema_version: "go_pprof_labels_v1"
+```
+
+<div class="tiny">
+
+[OTEP 4947: Alternative for Go support](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support)
+
+</div>
+
+---
+<!-- _class: punchline dark -->
+<!-- _paginate: false -->
+
+### Compile time sets context. eBPF reads *evidence*.
+
+### Goal: request context reaches profiles
+
+<span class="chip caution">proposed correlation path</span>
+
+---
+
+## Memory profiling is in progress
+
+CPU profiles today.
+
+The profiler team is working on memory profiling.
+
+<span class="chip caution">work in progress, no release date</span>
+
+---
+
+## Live probes can grow beyond logs
+
+| Signal | Direction |
+| --- | --- |
+| Logs | Logpoints and variable snapshots today |
+| Metrics | Goal: count or aggregate observations |
+| Traces | Longer-term goal: 12+ months |
+
+<span class="chip caution">goals, not release commitments</span>
+
+---
+<!-- _class: section -->
+<!-- _paginate: false -->
+
+###### 09
+
+# From question to evidence
+
+---
 <!-- _class: vcenter -->
 
 ## The loop, without the redeploy
@@ -1275,34 +1355,18 @@ Bits Live Debugger does this today, in preview.
 Same move as the opening joke, except now the agent has the *framework*.
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
 # Takeaways
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
 ## Start from the *constraint* you cannot change.
 
 ## Add a layer only when its *signal* pays for its *operational cost*.
-
----
-
-<!-- _class: terminal -->
-
-# Take it home
-
-```bash
-go install github.com/kakkoyun/zeroins/cmd/...@latest
-```
-
-<br>
-
-<span class="chip caution">experimental</span> `kubectl-obi` and `kubectl-profiler` need an explicit OTLP endpoint.
 
 ---
 
@@ -1318,16 +1382,15 @@ go install github.com/kakkoyun/zeroins/cmd/...@latest
 
 [github.com/open-telemetry/community](https://github.com/open-telemetry/community) has every SIG's calendar, notes, and channels.
 
-- Go Compile-Time Instrumentation (`otelc`)
-- eBPF Instrumentation (OBI)
-- Injector
-- Profiling
+* Go Compile-Time Instrumentation (`otelc`)
+* eBPF Instrumentation (OBI)
+* Injector
+* Profiling
 
 </div>
 </div>
 
 ---
-
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -1340,7 +1403,6 @@ go install github.com/kakkoyun/zeroins/cmd/...@latest
 [golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them](https://golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them)
 
 ---
-
 <!-- _class: dark -->
 
 # Take it with you
@@ -1372,7 +1434,6 @@ Both decks · research · [earlier FOSDEM version](https://youtu.be/0TvrSebuDPk)
 </div>
 
 ---
-
 <!-- _paginate: false -->
 <!-- _class: end gopher-balloon -->
 

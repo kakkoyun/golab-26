@@ -6,15 +6,18 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (SAY/DO script) · `slides/presentation.md` (the deck) ·
 `../../research/without-a-single-line/claims-ledger.md` (every load-bearing claim).
 
-**State:** 86 pages, 38-minute target, 27 fragment reveals, 9 sections. The
-word-count model gives about 34 minutes plus a 1:25 cuttable anecdote. The
-actual read-through against a clock is still required before delivery.
-
-Count `---` separators minus one to get pages.
+**State:** working narrative draft, 38-minute target. Lifecycle order and
+signal tracking now connect the sections. Future asks remain near the end.
+The time budgets need a timed read-through.
 
 ---
 
-## TODO
+## Blocking
+
+- [ ] Review the exact public wording of the future claims in C-081 to C-086.
+  Live Debugger tracing has a speaker-stated 12+ month horizon, not a release
+  commitment. Memory profiling is work in progress. The stable context ABI is
+  an ask, and the cgo-to-injector connection remains tentative.
 
 - [ ] **Blocking: owner review of the new public-source claims.** The GoLab
   expansion adds ledger rows C-060 to C-075 from public sources. The owner
@@ -33,10 +36,13 @@ Count `---` separators minus one to get pages.
 - [ ] **Blocking: re-check the GoLab schedule the week of the talk.** The plug
   slide says the benchmarks talk is tomorrow, 10:45, Golab #2 (ledger C-080).
   If either slot moves, update the slide or drop the word "tomorrow".
-- [ ] **Timed read-through.** The OBI v1.0.0 refresh (2026-11-01) added about
-  100 spoken words, about 40 seconds. Read the SAY content aloud at delivery pace against
-  a clock. Record splits at each divider. Write the real number into `outline.md`
-  and `speaker-notes.md`. The word-count model is about 34 minutes.
+
+## Should-do
+
+- [ ] **Timed read-through.** Read the current SAY content aloud at delivery
+  pace. Record splits at each divider. Update the working budgets in
+  `outline.md` and `speaker-notes.md`. Pay particular attention to the expanded
+  future section. The removed install slide does not prove that everything fits.
 - [ ] **Diagram legibility pass.** Kroki renders Mermaid at a small native size.
   The theme now scales each diagram to the content width, but long
   left-to-right chains still have small labels. Check every diagram from the
@@ -47,6 +53,10 @@ Count `---` separators minus one to get pages.
   credit is legible.
 - [ ] **Rehearse the cut ladder.** If running long, follow the nine-rung
   ladder in `outline.md`. Never cut anything on the never-cut list.
+
+## Nice-to-have
+
+None currently.
 
 ---
 
@@ -59,25 +69,22 @@ recorded here.
   decision. The bug, the log line, the redeploy, the wrong place, the second
   redeploy. Then stop.
 - **The agent joke is a plant, not decoration.** It pays off at the agentic
-  close and at the take-home line. Do not move or cut it for time. It is two
+  close. Do not move or cut it for time. It is two
   slides, full-bleed, no title, no caption. The beat is spoken: deadpan fake-out,
   then the turn. Ten seconds total.
-- **The close is light on take-home mechanics.** The GopherCon UK delivery got
-  no traction from the command wall and the skills pointers. The take-home
-  slide keeps one install command and one caveat; the `npx skills` line, the
-  ollygarden skills repo, and the catalog lookups are gone. Do not add them
-  back. The SIG call to action stays. The shameless plug for the benchmarks
-  talk (C-080) is on purpose and stays.
+- **The install-command slide is removed.** The owner removed "Take it home"
+  during the narrative review. Keep the final resource links, the SIG call to
+  action, and the benchmarks plug. Do not restore an installation walkthrough.
 - **The injector is a teaser.** The Datadog Go injector mechanism is
   deliberately undisclosed, and the apparent contradiction with the LD_PRELOAD
   slide is the device, not a bug. The GoLab version explains process-start
   injection in general from public sources only. Never add the Datadog Go
   injector's linking model, entry path, or binary-compatibility detail to any
   slide or script line. If asked, defer to next year's talk.
-- **The primer replaces four old pages.** "How OBI works", the two `.gopclntab`
-  slides, and the old USDT slide became primer steps or the "OBI turns
-  observations into spans" and unwind-path slides. Do not add them back next to
-  the primer.
+- **Teach eBPF through OBI.** Keep the Go-specific uprobe, goroutine, RET-site,
+  and layout explanations attached to that example. USDT belongs in the future
+  section, where it answers the inference problem. Do not add duplicate primer
+  slides.
 - **The static-PIE account is script depth.** It lives in the uprobe-cost
   section of `speaker-notes.md`, marked cuttable. Not Kemal's incident, not a
   slide. It is the maintenance cost of inferring a layout you did not compile.
@@ -96,15 +103,15 @@ recorded here.
   content). The Usama FOSDEM grab is cropped to title plus poster. The USDT PoC
   and OTel agent skills screenshots are cropped to drop GitHub chrome. Originals
   are kept beside the crops with an `_orig` suffix. Do not swap them back in.
-- **Reveals are selective at 23, by decision.** Six lists use `*` fragment
-  bullets. Lists inside `.columns` are excluded on purpose. `fragment-floor`
-  is 23. This is not drift.
-- **Tooling sits at the end because takeaways precede the call to action.** The
-  take-home terminal slide and the SIG CTA come after the takeaways, not before.
+- **Reveals remain selective.** The deck declares its current fragment floor.
+  Lists inside `.columns` remain outside the fragment count.
+- **The SIG call follows the takeaways.** Ask for concrete probe, context, and
+  deployment requirements. Keep the resource links at the end.
 - **"Combine the layers" was absorbed.** It restated the decision table and the
   practical-combination slide. The 20% adoption line moved to the
   practical-combination slide in its cleared wording. The decision table is
   retitled "When to reach for what."
-- **Both mid-deck terminal slides were deleted.** Tooling was stranded
-  mid-deck. It now lives at the end as one take-home terminal slide.
+- **The narrative remains editable.** Review section flow with the speaker.
+  Do not impose a fixed-order test or remove slide punctuation to satisfy a
+  heading comparison.
 - **No em dashes on slides.** Colons and commas are used instead.

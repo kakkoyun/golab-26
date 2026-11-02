@@ -395,3 +395,43 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED
 - **Source(s):** golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them and golab.io/speakers/akkoyun, retrieved 2026-11-01
 - **Notes:** The plug slide says "Tomorrow · 10:45 · Golab #2". The word "tomorrow" depends on the zero-touch talk keeping its 2 November slot. Re-check the GoLab schedule in the week of the talk; if either slot moves, update the slide or drop the word "tomorrow".
+
+---
+
+## Lifecycle flow and future asks
+
+### [C-081] Build-time and startup instrumentation can enable SDK signals, but the SDK and integrations determine actual coverage
+
+- **Verdict:** CONFIRMED as a capability distinction, not a guarantee for every distribution
+- **Source(s):** C-023, C-051; <https://opentelemetry.io/docs/zero-code/go/compile-time/>; <https://docs.datadoghq.com/tracing/trace_collection/dd_libraries/go/>; <https://github.com/open-telemetry/opentelemetry-injector>
+- **Notes:** Public sources checked on 2026-11-02. Orchestrion-built applications include profiler instrumentation, enabled with `DD_PROFILING_ENABLED=true`. Upstream otelc and Orchestrion are distinct. The signal indicators describe the intervention path. They do not claim that upstream otelc ships every profile type or that the development Go injector implements every SDK feature. OBI log enrichment remains distinct from log export (C-015).
+
+### [C-082] The speaker asks for explicit probe contracts that could help OBI, injector tooling, and live debugging at declared sites
+
+- **Verdict:** CONFIRMED as a speaker-stated aspiration, not existing integrations
+- **Source(s):** C-066, C-067; speaker direction in the 2026-11-02 narrative review
+- **Notes:** USDT declares a site and argument locations. The proposed consumers still need integrations. USDT does not provide a dynamic loader, arbitrary source-line probes, or access to every variable. Do not connect this aspiration to the undisclosed injector mechanism.
+
+### [C-083] The speaker asks for ABI-stable goroutine-local trace-context storage and propagation contracts
+
+- **Verdict:** CONFIRMED as a speaker-stated ask; current build-time storage is verified in C-002
+- **Source(s):** C-002, C-002b, C-023; speaker direction in the 2026-11-02 narrative review
+- **Notes:** The current dd-trace-go integration uses build-time rewriting to add goroutine-local storage. The desired stable Go ABI is not a shipped runtime feature. Storage alone does not extract or inject protocol context. Propagation also needs library hooks and rules for inheritance across goroutines. Do not describe OTEP 4947 as the proposal for this storage ABI. It is a separate profile-correlation proposal.
+
+### [C-084] Live Debugger metrics are a goal, and tracing is a longer-term goal with a 12+ month horizon
+
+- **Verdict:** CONFIRMED by the speaker as goals, not release commitments
+- **Source(s):** Speaker direction in the 2026-11-02 narrative review; <https://docs.datadoghq.com/tracing/live_debugger/>; <https://docs.datadoghq.com/tracing/trace_collection/dynamic_instrumentation/>; <https://docs.datadoghq.com/tracing/trace_collection/library_config/go/>
+- **Notes:** The speaker supplied the tracing horizon. The public pages do not establish that horizon. Public docs distinguish Live Debugger logs and snapshots from Dynamic Instrumentation metrics, spans, and span tags. The Go configuration page mentions metric probes. Do not infer a Live Debugger release from that wording. The draft says "goals, not release commitments". Exact public wording remains subject to the final publication review.
+
+### [C-085] The eBPF profiler team is working on memory profiling
+
+- **Verdict:** CONFIRMED by the speaker as work in progress
+- **Source(s):** Speaker direction in the 2026-11-02 narrative review; C-034 for the current CPU scope
+- **Notes:** No release date, overhead number, or promised allocation or heap view. The future slide states work in progress. Exact public wording remains subject to the final publication review.
+
+### [C-086] Calling prebuilt native instrumentation libraries is a potential use of the cgo proposal
+
+- **Verdict:** CONFIRMED as a proposed use case, not shipped behavior
+- **Source(s):** C-072; speaker direction in the 2026-11-02 narrative review
+- **Notes:** The proposal covers calls to prebuilt C libraries without a C compiler at build time. Native instrumentation libraries are a potential application. Do not imply that the proposal embeds arbitrary binaries or establishes an injector path. The connection to injection is explicitly tentative. Keep the accepted experiment distinct from the design proposal under review.

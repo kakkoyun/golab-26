@@ -1,44 +1,47 @@
 # Outline: Zero-Touch Go Instrumentation
 
 > **Format:** GoLab 2026. 45-minute slot: 38 minutes presented, 7 minutes Q&A. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (86 pages)
+> **Deck:** `slides/presentation.md` (working draft)
 > **Script:** `speaker-notes.md` (SAY/DO format)
 
 ## Thesis
 
-The debugging loop is slow. An agent alone does not fix it. Three approaches take
-the rebuild out of it: build, process start, kernel. A live debugger then reads
-production state with no redeploy. Then the agent, holding the framework, closes
-the loop.
+Automatic instrumentation supplies baseline evidence without hand-written
+wrappers throughout the application. Follow the lifecycle: build, process
+start, then kernel. Track traces, metrics, logs, and profiles at each point.
+The SDK and integrations determine what each path can provide.
 
-GoLab lists the talk as Intermediate. The GoLab version builds eBPF up from the ground up before it uses it. It explains the process-start path and live debugging in depth. Those two topics are what this version adds.
+When the baseline misses a production question, a live probe can capture the
+missing values. The closing proposals address the limitations that the audience
+now understands. Then the agent returns to the opening bug with a useful
+mechanism and its constraints.
+
+Build-time instrumentation still requires a rebuild. Zero-touch does not mean
+zero operational cost. This remains a working narrative, not a fixed sequence.
 
 ## Beat sheet
 
-| Section | Est. | Running | Purpose |
+| Section | Budget | Running | Purpose |
 | --- | ---: | ---: | --- |
-| Open | 2:10 | 2:10 | The debugging loop, told straight. The agent joke. Why Go is different. |
-| 01 Why Go resists | 1:50 | 4:00 | Native code, static linking, movable stacks, go:linkname, the lifecycle map. |
-| 02 eBPF, from the ground up | 7:20 | 11:20 | Nine steps: checked program, CO-RE, hooks, one uprobe hit, Go registers and goroutine identity, RET-site probes, instruction and field offsets, USDT, the missing Go producer. |
-| 03 OBI | 4:35 | 15:55 | OBI as the primer applied. Coverage, signals, platform contract, privileges, uprobe costs, Usama reference. Meme A. |
-| 04 otelc | 3:30 | 19:25 | Three-org convergence, -toolexec, production adoption, portability, signal depth, GLS, variable-linkname fragility. Meme B. |
-| 05 Injector | 3:05 | 22:30 | The loader sequence, the runtime hooks that injectors use, why a static Go binary has no loader, the teaser. |
-| 06 Profiles | 2:40 | 25:10 | The fourth signal. The `.gopclntab` unwind path, deployment cost, OTEP 4947 correlation bridge. |
-| 07 Live debugging | 3:25 | 28:35 | Probe a running process. Line to address, unavailable variables, public limits, other ways. |
-| 08 When to reach for what | 1:00 | 29:35 | Decision table, practical combination, 20% adoption. |
-| 09 What comes next | 3:25 | 33:00 | cgo without a C toolchain, the agentic close, takeaways, take-home line, SIG call to action, the benchmarks-talk plug. |
+| Open and 01 Why Go resists | 4:00 | 4:00 | The production bug, coverage gaps, agent joke, lifecycle map, and four signals. |
+| 02 otelc | 4:00 | 8:00 | SDK-dependent signals, build ownership, runtime storage, and linkname fragility. |
+| 03 Injector | 3:00 | 11:00 | SDK capabilities at startup, the loader constraint, and the development teaser. |
+| 04 OBI | 9:00 | 20:00 | Explain eBPF through OBI. Traces and metrics, Go-specific mechanics, and operational costs. |
+| 05 Profiles | 2:30 | 22:30 | A kernel route to CPU profiles. Establish the need for request correlation. |
+| 06 Live debugging | 3:30 | 26:00 | Return to the bug. Capture logs and variables within explicit limits. |
+| 07 Choose the signal and the layer | 2:00 | 28:00 | Compare signal coverage and deployment constraints. Include live debugging. |
+| 08 What comes next | 4:00 | 32:00 | USDT, native libraries, a stable context ABI, profile correlation, memory profiling, and live-probe goals. |
+| 09 From question to evidence | 4:00 | 36:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
+| Buffer | 2:00 | 38:00 | Pauses, audience reactions, and overruns. |
 
-Timing is a **word-count model**, not a measurement: 3,558 SAY words at 130
-words per minute, plus 25% for pauses and visuals, gives about 34:10. The OBI
-v1.0.0 refresh (2026-11-01) added roughly 130 of those words; the section rows
-above still show the pre-refresh splits. The cuttable
-static-PIE anecdote adds about 1:25. This deck has more silent beats than the
-benchmarks talk (two jokes, two memes, thirteen punchline pages), so the real
-overhead is probably higher. The remaining minutes to 38:00 are buffer, not
-missing content. The timed read-through in `TODO.md` replaces the model.
+These are working budgets, not measurements. The expanded future section needs
+a timed read-through. Removing the install slide does not prove that the new
+material fits. Keep the optional static-PIE anecdote within the OBI budget,
+or omit it. Allow about 1:25 if included.
 
-Checkpoints: open the primer by ~4:00, OBI by ~11:30, otelc by ~16:00, the
-injector by ~19:30, live debugging by ~25:00, the decision section by ~28:30.
+Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
+live debugging by 22:30, selection by 26:00, future work by 28:00, and the
+closing callback by 32:00. Revise the budgets after rehearsal.
 
 ## Cut ladder
 
@@ -77,60 +80,61 @@ they exist to fix.
 - The OTEP correlation argument
 - The decision table
 - The lifecycle map
-- The take-home kit
-- The uprobe-hit and RET-site primer slides (the Go-specific core of the primer)
+- The final resource links
+- The uprobe-hit and RET-site slides (the Go-specific core of the kernel section)
 - "A static Go binary has no loader"
 
 ## Narrative transitions
 
-### Open to 01
+### Open and Go constraints to build time
 
-The loop is slow. The agent joke says the agent alone does not fix it. Why?
-Because Go compiled away the attachment point.
+The agent needs both a mechanism and a reason to choose it. Start where source
+structure remains available. Introduce the four signals as evidence, not a
+ranking of tools.
 
-### 01 to 02 (eBPF primer)
+### Build time to process start
 
-Two of the three paths run on eBPF. Build it from the ground up before you use it.
-Each step needs the one before it.
+The build path can enable SDK signals, but it needs build ownership. Ask what
+is possible when we cannot change the build. Startup injection changes the
+attachment path, not the SDK's capabilities.
 
-### 02 to 03 (OBI)
+### Process start to kernel
 
-The primer ends with Go missing a USDT producer. OBI is what you build when the
-program declares nothing: it infers sites and layouts from the outside. The
-cost is Linux, privileges, and kernel contracts.
+Go restricts the startup path. An external observer gives another option.
+Introduce OBI, explain one uprobe hit, then show how OBI turns events into spans.
+Attach the Go-specific details to that example instead of a standalone primer.
 
-### 03 to 04 (otelc)
+### Kernel to profiles
 
-OBI reaches deployed workloads without rebuilding, but cannot infer arbitrary
-business semantics. otelc moves the intervention earlier, where source
-structure is still available. The cost is owning the build.
+OBI supplies boundary traces and metrics. CPU profiles answer another question.
+The build path can include profiling too. This section offers a kernel route,
+not exclusive ownership of the profiling signal.
 
-### 04 to 05 (Injector)
+### Profiles to live debugging
 
-Build and kernel are two legs. The third is process start. Every other runtime has a designed entry point for an agent. A static Go binary never starts
-the loader. The binary is the constraint.
+Request context can connect profiles and traces, but both can still miss a
+variable. Return to the opening bug. A live logpoint asks for the missing
+value while the service runs.
 
-### 05 to 06 (Profiles)
+### Live debugging to selection
 
-Tracing follows requests. Profiling finds CPU cost. The two signals become
-stronger when they share request context.
+Compare both dimensions: the evidence needed and the intervention point that
+the service can support. Show one useful combination, not a universal stack.
 
-### 06 to 07 (Live debugging)
+### Selection to future work
 
-Every tool so far emits telemetry that you planned. The bug from the opening
-needs one variable that you did not plan. A live debugger puts a uprobe at a
-source line in a running process.
+The audience now knows the costs of inferred layouts, missing hooks, and
+separate context stores. USDT, native-library support, and stable context
+storage address those limits. Separate proposals and aspirations from current
+signals. Memory profiling is work in progress. Live Debugger metrics and
+tracing are goals, with tracing on a 12+ month horizon, not a release commitment.
 
-### 07 to 08 (Decision)
+### Future work to close
 
-Return to the lifecycle map. Start with the constraint you cannot change. Add
-the next layer only when its signal pays for its operational cost.
-
-### 08 to 09 (Close)
-
-The loop from the open, now short. The agent places the probe and reads
-production evidence. No redeploy. Same move as the joke, except now the agent
-has the framework.
+The future work can improve the tools. The agent callback uses evidence that
+current preview tools already capture. Resolve the opening joke and bug,
+state the decision rule, and invite specific contributions. Keep the resource
+links. Do not restore the install-command slide.
 
 ## Facts that must remain precise
 
@@ -156,7 +160,15 @@ has the framework.
 - Profiles are the fourth observability signal. The OpenTelemetry Profiles
   specification remains Alpha.
 - OTEP 4947 proposes a Go-specific pprof-label path. Present it as proposed
-  work, not a shipped guarantee.
+  work, not a shipped guarantee. It is distinct from the ask for ABI-stable
+  trace-context storage. Current build-time goroutine-local storage does not
+  establish a stable Go runtime API.
+- The Live Debugger metrics and tracing goals, including the 12+ month tracing
+  horizon, are speaker-attested aspirations. They are not release commitments.
+- Memory profiling is speaker-attested work in progress. Do not promise a date
+  or specific allocation and heap views.
+- Native instrumentation libraries are a potential use of the cgo proposal.
+  Its connection to the injector path remains tentative.
 - The OpenTelemetry host injector does not inject Go. The OpenTelemetry
   Operator has a separate feature-gated Go eBPF sidecar.
 - Do not imply that Kemal contributes to OBI. His eBPF experience comes from
