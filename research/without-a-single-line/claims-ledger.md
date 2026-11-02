@@ -27,7 +27,7 @@
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-TH-01 (runtime/proc.go "hall of shame"), S-TH-02 (internal/runtime/exithook), S-TH-03 (golang/go#28909 LD_PRELOAD), S-TH-04 (Dynatrace limitations)
-- **Notes:** Native machine code, no classloader, no bytecode, static linking by default. Only internal exit-time hook is scoped to program termination. LD_PRELOAD requires -linkmode=external (non-default) and blocked entirely for CGO_ENABLED=0+PIE. Go team labels go:linkname abusers a "hall of shame" in runtime/proc.go.
+- **Notes:** Native machine code, no classloader, no bytecode. Pure-Go builds are static. A default cgo build (for example one that imports net) is internally linked but dynamic, and on glibc the loader runs LD_PRELOAD constructors. Verified 2026-11-02 with Go 1.26.5 in Docker on Debian arm64 and Alpine. Only internal exit-time hook is scoped to program termination. Go team labels go:linkname abusers a "hall of shame" in runtime/proc.go.
 
 ### [C-002] Orchestrion injects a field `__dd_gls_v2 any` into `runtime.g` and exposes it via `go:linkname` get/set function variables
 
@@ -39,12 +39,14 @@
   3. **Patches** `runtime.goexit1` with `getg().__dd_gls_v2 = nil` to zero the field when a goroutine exits (prevents memory leaks).
   - dd-trace-go's `gls.go` then links to the symbols via go:linkname with no-op defaults when Orchestrion is absent.
   - The SHA "5fef9c1ba9ac9ff0ac966714d0342f7f85dbc4fa" does NOT exist — use b97e7cbb4 (v2.0.0) for the yml file.
+  - Orchestrion applies this aspect. Orchestrion's go.mod does not depend on otelc. otelc has its own rule (instrumentation/runtime/otelc.yaml) that adds otel_trace_context and otel_baggage_container to runtime.g.
 
 ### [C-002b] go:linkname for variables is fragile — BSS resolution is order-dependent; broke between Go 1.22 and 1.23
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-TH-06 (golang/go#72032)
 - **Notes:** Unlike function linkname (which supports bodiless forward declarations), variable linkname has no definition/reference separation. If both sides are uninitialized, linker choice is arbitrary. Manifested as breaking change Go 1.22 → 1.23. Go team documented in #72032.
+- The quote on the slide is Cherry Mui (cherrymui, 2025-03-03), not Ian Lance Taylor. CL 660696 fixed it: the linker keeps the larger BSS symbol. Go 1.25, backported to Go 1.23.9 (#73091) and 1.24.3 (#73092).
 
 ### [C-003] dd-trace-go has 51 integration wrappers in contrib/ (not ~54)
 
@@ -132,7 +134,8 @@
 
 - **Verdict:** CONFIRMED
 - **Source(s):** S-O-04, S-O-07, S-O-08
-- **Notes:** Official docs describe fleet-wide build-pipeline use. The repository builds/tests across Linux, macOS, and Windows. Current supported integrations produce traces, HTTP/gRPC metrics, runtime metrics, and supported slog/Logrus records. Runtime behavior still depends on the selected SDK and integration bundle.
+- **Notes:** Official docs describe fleet-wide build-pipeline use. The repository builds/tests across Linux, macOS, and Windows. Current supported integrations produce traces, HTTP/gRPC metrics, runtime metrics, and trace IDs in supported log output. Runtime behavior still depends on the selected SDK and integration bundle.
+- Re-checked at otelc v1.2.0 (2026-10-12): go.mod declares go 1.26.0 and the README badge says Go 1.26+. Log hooks for log, log/slog, logrus, and zap add trace and span IDs only and emit no OTel log records. CI runs on Linux, macOS, and Windows.
 
 ### [C-024] The OpenTelemetry host injector does not package Go; the Operator's Go option is a separate feature-gated eBPF sidecar
 
@@ -312,7 +315,7 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 08-ebpf-primer.md S15–S18 (E26–E30)
-- **Notes:** Polar Signals' work is a consumer, not Go compiler support. The speaker's fork is a proof of concept that this research did not build.
+- **Notes:** Re-checked against Go 1.27 (current 1.27.3); its release notes have no USDT support. Polar Signals' work is a consumer, not Go compiler support. The speaker's fork is a proof of concept that this research did not build.
 
 ### [C-068] ld.so maps LD_PRELOAD objects before all others, and shared-object initializers run before the executable gains control
 
@@ -323,6 +326,7 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 
 - **Verdict:** CONFIRMED
 - **Source(s):** 09-process-start-injection.md I-04, I-08 (golang/go#28909, Ian Lance Taylor)
+- **Notes:** #28909 is musl-specific (its title ends with 'and musl libc'). glibc runs preloaded constructors in the loader. The slide now says 'With musl'.
 
 ### [C-070] The OpenTelemetry injector ships Java, Node.js, .NET, Ruby, and Python (Python off by default). It does not inject Go
 
@@ -435,3 +439,9 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED as a proposed use case, not shipped behavior
 - **Source(s):** C-072; speaker direction in the 2026-11-02 narrative review
 - **Notes:** The proposal covers calls to prebuilt C libraries without a C compiler at build time. Native instrumentation libraries are a potential application. Do not imply that the proposal embeds arbitrary binaries or establishes an injector path. The connection to injection is explicitly tentative. Keep the accepted experiment distinct from the design proposal under review.
+
+### [C-087] Dynatrace OneAgent 1.203+ injects into statically linked pure-Go binaries on Linux when Go static monitoring is on and the parent process is dynamically linked
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/go/support/go-known-limitations> (checked 2026-11-02)
+- **Notes:** Not supported: static cgo binaries, CGO_ENABLED=0 with -buildmode=pie (no libc), a static container entrypoint under cloud-native full-stack injection. musl needs -linkmode=external.

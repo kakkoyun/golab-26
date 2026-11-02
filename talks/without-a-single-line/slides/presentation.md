@@ -124,7 +124,7 @@ Datadog builds at all three layers. Each solves a different constraint.
 ## What makes Go different
 
 * The compiler emits native machine code.
-* The internal linker produces static binaries by default.
+* Pure-Go builds are static by default.
 * There is no classloader or general runtime hook API.
 * Goroutines move between OS threads and use movable stacks.
 
@@ -188,7 +188,7 @@ flowchart LR
 flowchart LR
     A[Datadog Orchestrion] --> D[OpenTelemetry Go compile-time SIG]
     B[Alibaba rules engine] --> D
-    C[Quesma instrgen] --> D
+    C[Quesma: instrgen experience] --> D
     D --> E[otelc]
 ```
 
@@ -252,10 +252,8 @@ One build-command change can standardize instrumentation across a fleet.
 | Linux kernel dependency | None |
 | Build pipeline change | `otelc go build` |
 | Tested build targets | Linux, macOS, Windows |
-| Go baseline | Go 1.25+ |
+| Go baseline | Go 1.26+ |
 | Runtime cost | Injected SDK and instrumentation code |
-
-<br>
 
 The trade-off is build ownership, not operating-system access.
 
@@ -271,7 +269,7 @@ The trade-off is build ownership, not operating-system access.
 * Traces
 * HTTP and gRPC metrics
 * Go runtime metrics
-* `slog` and Logrus records
+* Trace IDs in `log`, `slog`, Logrus, and zap output
 
 </div>
 <div>
@@ -345,7 +343,7 @@ advice:
 
 The aspect adds goroutine-local storage, typed accessors, and exit cleanup.
 
-`dd-trace-go` owns this tracer-context integration. otelc supplies the rewriting engine.
+`dd-trace-go` owns this aspect. Orchestrion applies it. otelc ships its own `runtime.g` rule.
 
 </div>
 
@@ -355,13 +353,15 @@ The aspect adds goroutine-local storage, typed accessors, and exit cleanup.
 
 Unlike function linknames, variables have no definition/reference separation.
 
-When both sides are uninitialized BSS symbols, the linker chooses by symbol loading order.
+When both sides were uninitialized BSS symbols, the linker chose by symbol loading order.
 
 > "the choice is arbitrary. In the implementation it depends on the symbol loading order"
 >
-> Ian Lance Taylor, [golang/go#72032](https://github.com/golang/go/issues/72032)
+> Cherry Mui, [golang/go#72032](https://github.com/golang/go/issues/72032)
 
 This broke between Go 1.22 and 1.23.
+
+Go 1.25 now keeps the larger symbol. Go 1.23.9 and 1.24.3 got the fix too.
 
 ---
 <!-- _class: meme -->
@@ -369,14 +369,14 @@ This broke between Go 1.22 and 1.23.
 
 ![bg contain](../assets/meme_linker_loading_order.png)
 
-the linker picks by symbol loading order
+the linker picked by symbol loading order
 
 ---
 
 ## The build path has boundaries too
 
 * Requires control of the Go build pipeline.
-* Requires Go 1.25 or newer for current otelc.
+* Requires Go 1.26 or newer for current otelc.
 * Coverage stops at the supported integration set.
 * Toolchain internals such as `-toolexec` and `go:linkname` can change.
 
@@ -450,13 +450,13 @@ sequenceDiagram
 
 ## Runtime injection is a narrower route
 
-* Dynatrace OneAgent supports eligible dynamically linked Go binaries.
+* Dynatrace OneAgent injects into eligible Go binaries, including static pure-Go ones started by a dynamic parent.
 * The OpenTelemetry host injector ships Java, Node.js, .NET, Ruby, and Python agents. It does not inject Go.
 * Datadog is working on a Go path for Single-Step Instrumentation.
 
 <br>
 
-Runtime injection is useful, but Go's default static binary leaves less surface to attach to.
+Runtime injection works, but static Go binaries force vendor-specific workarounds.
 
 ---
 
@@ -476,7 +476,7 @@ flowchart LR
 
 `CGO_ENABLED=0` gives no dynamic loader and no libc. Nothing reads the variable.
 
-Even with cgo, the internal linker runs no shared-object constructors ([golang/go#28909](https://github.com/golang/go/issues/28909)).
+With musl, internal linking skips preloaded constructors ([golang/go#28909](https://github.com/golang/go/issues/28909)).
 
 ---
 
@@ -491,9 +491,9 @@ go build -ldflags="-linkmode=external"
 
 | Build | Result |
 | --- | --- |
-| Dynamically linked process | Injection can work |
-| Default internally linked Go binary | No dynamic-loader hook |
-| Static cgo or pure-Go PIE | No compatible library-injection path |
+| Dynamic, including a default cgo build | Injection can work |
+| `CGO_ENABLED=0` or static cgo | No dynamic-loader hook |
+| Pure-Go PIE | Loader runs, no libc |
 
 ---
 
@@ -802,6 +802,8 @@ OBI can enrich selected **JSON and plain-text logs** with `trace_id` and `span_i
 
 It leaves log shipping to your existing pipeline. It is not a log exporter.
 
+Needs Linux 6.0+ and no kernel lockdown.
+
 </div>
 </div>
 
@@ -832,9 +834,9 @@ v1 stable: HTTP and SQL spans and duration metrics. gRPC: release candidate. Go 
 | Mode | Additional access |
 | --- | --- |
 | Network flow capture | `CAP_BPF`, `CAP_NET_RAW` |
-| Application observability | Process/ELF access, `CAP_PERFMON`, uprobes |
+| Application observability | `CAP_PERFMON`, `CAP_NET_RAW`, process and ELF access |
 | Context propagation | `CAP_NET_ADMIN` |
-| Go library propagation | May require `CAP_SYS_ADMIN` |
+| Go library propagation | `CAP_SYS_ADMIN` on kernel 5.10+ |
 
 <br>
 
@@ -1136,7 +1138,7 @@ Some lines have no safe place for a probe.
 | Logpoint with variable capture | 1 execution per second |
 | Logpoint without capture | 5000 per second per service instance |
 | Lifetime | Expires with the debug session |
-| Sensitive values | Redacted before the data leaves the host |
+| Sensitive identifiers | Redacted before the data leaves the host |
 
 <div class="small">
 
@@ -1262,7 +1264,7 @@ The producer names the probe and says where each value lives.
 </div>
 <div>
 
-* Go 1.26.0 emits no native USDT probes.
+* Go 1.27 emits no native USDT probes.
 * Salp and libstapsdt add them through cgo.
 * Polar Signals builds a Go tracer that reads them.
 

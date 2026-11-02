@@ -30,12 +30,6 @@ The time budgets need a timed read-through.
     say so. Decide whether to add it.
   - The public docs do not label Go Live Debugger itself as GA or Preview. Only
     Bits Live Debugger is labelled Preview.
-- [ ] **Blocking: re-check golang/go#81450 and #81662 the week of the talk.** The
-  slide says the GOEXPERIMENT is accepted and the design is in review. Both can
-  change before 2 November 2026.
-- [ ] **Blocking: re-check the GoLab schedule the week of the talk.** The plug
-  slide says the benchmarks talk is tomorrow, 10:45, Golab #2 (ledger C-080).
-  If either slot moves, update the slide or drop the word "tomorrow".
 
 ## Should-do
 

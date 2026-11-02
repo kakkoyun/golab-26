@@ -177,8 +177,7 @@ every approach avoids deployment.
 
 **SAY**
 
-The compiler emits native machine code. The linker produces static binaries by
-default. There is no classloader, no general runtime hook API.
+The compiler emits native machine code. Pure-Go builds are static by default. There is no classloader, no general runtime hook API.
 
 And goroutines move between OS threads on movable stacks.
 
@@ -250,7 +249,7 @@ build path, not a claim that upstream otelc enables every signal by default.
 **SAY**
 
 Three organizations converged. Datadog's Orchestrion, Alibaba's rules engine,
-Quesma's instrgen. They formed the OpenTelemetry Go compile-time SIG and
+Quesma's instrgen experience. They formed the OpenTelemetry Go compile-time SIG and
 built otelc, a vendor-neutral tool.
 
 Orchestrion remains a production Datadog distribution of the same core idea.
@@ -315,7 +314,7 @@ users were new. The approved wording is the percentage alone.
 **SAY**
 
 No runtime privilege. No Linux kernel dependency. One build-command change.
-Tested on Linux, macOS, and Windows. Go 1.25 or newer.
+Tested on Linux, macOS, and Windows. Go 1.26 or newer.
 
 The trade-off is build ownership, not operating-system access.
 
@@ -330,7 +329,7 @@ Read across the table, not every row.
 **SAY**
 
 Upstream otelc today instruments traces, HTTP and gRPC metrics, runtime
-metrics, and supported log records.
+metrics, and trace IDs in supported log output.
 
 Orchestrion with dd-trace-go provides traces, runtime metrics, correlated
 logs, and continuous profiles.
@@ -381,8 +380,8 @@ Compile-time instrumentation can reach into Go internals. This aspect adds a
 field to runtime.g for goroutine-local storage, typed accessors, and exit
 cleanup.
 
-dd-trace-go owns this tracer-context integration. otelc supplies the rewriting
-engine.
+dd-trace-go owns this aspect. Orchestrion applies it. otelc ships its own
+`runtime.g` rule.
 
 **DO**
 
@@ -399,13 +398,14 @@ not name the film.
 **SAY**
 
 Variable linknames are fragile. Unlike function linknames, variables have no
-definition/reference separation. When both sides are uninitialized BSS symbols,
-the linker chooses by symbol loading order.
+definition/reference separation. When both sides were uninitialized BSS symbols,
+the linker chose by symbol loading order.
 
-Ian Lance Taylor said it in golang/go 72032: the choice is arbitrary. In the
+Cherry Mui said it in golang/go 72032: the choice is arbitrary. In the
 implementation it depends on the symbol loading order.
 
-This broke between Go 1.22 and 1.23.
+This broke between Go 1.22 and 1.23. Go 1.25 now keeps the larger symbol.
+Go 1.23.9 and 1.24.3 got the fix too.
 
 **DO**
 
@@ -414,11 +414,11 @@ over-explain BSS layout unless asked.
 
 ---
 
-## the linker picks by symbol loading order
+## the linker picked by symbol loading order
 
 **SAY**
 
-The linker picks by symbol loading order.
+The linker picked by symbol loading order.
 
 **DO**
 
@@ -432,7 +432,7 @@ linkname slide. Advance.
 **SAY**
 
 The build path has boundaries. You need control of the Go build pipeline. You
-need Go 1.25 or newer. Coverage stops at the supported integration set.
+need Go 1.26 or newer. Coverage stops at the supported integration set.
 Toolchain internals like -toolexec and go:linkname can change.
 
 No root access and no kernel version gate, but the binary must be rebuilt.
@@ -510,7 +510,8 @@ by default in the OpenTelemetry injector. Say so if asked.
 
 Runtime injection exists for Go, but it is narrow.
 
-Dynatrace supports eligible dynamically linked binaries. The OpenTelemetry
+Dynatrace OneAgent injects into eligible Go binaries, including static pure-Go
+ones started by a dynamic parent. The OpenTelemetry
 host injector ships Java, Node.js, .NET, Ruby, and Python. It does not inject
 Go.
 The OpenTelemetry Operator has a separate, feature-gated Go eBPF sidecar.
@@ -532,9 +533,10 @@ Now a default Go binary. With CGO_ENABLED=0 there is no interpreter entry in
 the ELF file. The kernel never starts ld.so. There is no libc. Nobody reads
 LD_PRELOAD.
 
-With cgo it is not much better. The internal linker does not run the
-constructors of preloaded libraries. Ian Lance Taylor said it plainly in that
-issue: if you want LD_PRELOAD, use external linking.
+With cgo, the binary is often dynamic. On glibc, the loader runs preloaded
+constructors, even with internal linking. On musl, internal linking skips them.
+Ian Lance Taylor said it plainly in that issue: anybody who wants to use
+LD_PRELOAD must force the use of external linking.
 
 **DO**
 
@@ -549,9 +551,10 @@ ignored, it is never read.
 
 The default Go binary gives the loader no entry point.
 
-LD_PRELOAD works when the build uses the external linker and a compatible
-dynamic path. It does not reach the default internally linked binary. Static
-cgo and pure-Go PIE builds narrow the surface further.
+LD_PRELOAD works when the Go binary is dynamically linked. A default cgo build
+is dynamic, so the loader runs preloaded constructors on glibc. A CGO_ENABLED=0
+binary has no loader at all. A pure-Go PIE has a loader, but no libc for the
+agent.
 
 **DO**
 
@@ -867,7 +870,8 @@ metrics.
 
 Its log feature enriches selected JSON and plain-text writes with trace and
 span IDs while a span is active. It leaves log shipping to your existing
-pipeline. It is not a log exporter.
+pipeline. It is not a log exporter. It needs Linux 6.0 or newer and no kernel
+lockdown.
 
 In v1, the stable part is HTTP and SQL: their spans and duration metrics.
 gRPC is a release candidate. Go runtime metrics are still in development.
@@ -901,9 +905,9 @@ Read across the table, not every row. This is the constraint, not the detail.
 Privileges are a ladder, not one list.
 
 Network capture needs BPF and raw-socket access. Application observability
-adds process and executable inspection, plus perf monitoring and uprobes.
+adds perf monitoring, raw sockets, and process and executable inspection.
 Context propagation adds network administration. Go library propagation may
-need SYS_ADMIN because it uses bpf_probe_write_user.
+need SYS_ADMIN on kernel 5.10 or newer because it uses bpf_probe_write_user.
 
 **DO**
 
@@ -1250,7 +1254,7 @@ A debugger in production needs hard limits.
 
 A logpoint that captures variables runs at most once per second. Without
 capture, the limit is five thousand per second per service instance.
-Logpoints expire when the debug session ends. The system probe redacts values with sensitive names, such as password, before the data leaves the host.
+Logpoints expire when the debug session ends. The system probe redacts values with sensitive identifiers, such as password, before the data leaves the host.
 
 For Go, you need Linux 5.17 or newer and Agent 7.73 or newer on the same host. The docs strongly recommend the Go SDK 2.9 or newer.
 
@@ -1388,7 +1392,7 @@ separate kernel mechanism.
 
 **SAY**
 
-The Go 1.26.0 source that we checked emits no native USDT probes. Salp and libstapsdt let an application
+Go 1.27 emits no native USDT probes. Salp and libstapsdt let an application
 add them through cgo. Polar Signals builds the other side, a Go tracer that
 reads USDT notes.
 

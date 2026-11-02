@@ -47,6 +47,8 @@ Logrus
 (?i)macrobenchmark
 Marp
 (?i)mathjax
+Mui
+(?i)musl
 (?i)ns
 OBI
 (?i)orchestrion
