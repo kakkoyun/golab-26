@@ -29,7 +29,7 @@ ask it, then wait.
 | 05 Profiles | CPU profiles without rebuilding. Correlation needs shared request context. |
 | 06 Live debugging | Dynamic logs and snapshots answer the unplanned question. |
 | 07 Choose the signal and the layer | Match the evidence to the deployment constraint. |
-| 08 Asks for the Go team | Four asks: USDT probes, a read contract for pprof labels, `-toolexec` gaps, one start-up door. Then the tool plans. |
+| 08 Asks for the Go team | Four asks: goroutine-local storage and context propagation, USDT probes, `-toolexec` gaps, one start-up door. Then the tool plans. |
 | 09 From question to evidence | Resolve the opening bug and the agent joke. Invite concrete contributions. |
 
 ## Timing
@@ -1343,7 +1343,34 @@ Say it as thanks, not blame. Say "the Go team". Do not name people.
 
 ---
 
-## Ask 1: USDT probes in Go
+## Ask 1: goroutine-local storage and context propagation
+
+**SAY**
+
+The first ask is the one the Go team has said no to. Goroutine-local storage.
+
+Look at what tools do today. Orchestrion adds a field to runtime.g at build
+time. otelc adds its own field. Two tools, two layouts, both rewriting the
+runtime to carry trace context.
+
+The ask is one supported place for trace context, with a layout that
+out-of-process readers can trust. And rules for what a new goroutine inherits.
+Storage alone does not propagate anything. Libraries still need hooks to
+extract and inject.
+
+I know the answer has been no: on 21355, on 69478, and again last year on
+68785. We ask again because it already exists, in every binary these tools
+build. It is just not supported.
+
+**DO**
+
+Say it with respect for the earlier answer, not as a complaint. Do not name
+people. Do not call OTEP 4947 the proposal for this storage. Do not claim that
+a stable Go API exists today.
+
+---
+
+## Ask 2: USDT probes in Go
 
 **SAY**
 
@@ -1360,24 +1387,6 @@ In the December 2024 sync, the Go team asked, "How would this look?" The fork is
 **DO**
 
 If someone cites golang/go#22008, a USDT site is fixed at compile time. Call the fork a proof of concept, not a plan.
-
----
-
-## Ask 2: a read contract for pprof labels
-
-**SAY**
-
-This ask does not add goroutine-local storage. The Go team rejected that many times.
-
-Profile labels already flow through contexts, as designed. dd-trace-go already sets pprof labels.
-
-OpenTelemetry proposal 4947 tells Go readers to read pprof labels. Today, eBPF readers infer where the label field lives in each release. Build-time tools add fields to runtime.g.
-
-The ask is to document where the labels live, and keep that layout stable for out-of-process readers.
-
-**DO**
-
-Lead with "no new API". Then say "read contract". Present proposal 4947 as proposed work.
 
 ---
 
@@ -1421,17 +1430,15 @@ Keep this generic. Never describe how the Datadog injector links or enters.
 
 **SAY**
 
-Four asks. USDT probes. A read contract for pprof labels. The `-toolexec` gaps. One start-up door.
+Four asks. Goroutine-local storage and context propagation. USDT probes. The `-toolexec` gaps. One start-up door.
 
 There is one bonus. Stable runtime offsets, such as moduledata.
-
-The QR code leads to draft problem reports in the talk repository.
 
 If you work on Go, I will find you in the hallway. If you do not, please introduce me.
 
 **DO**
 
-Pause on the QR code for three seconds.
+Pause. Let the table stand.
 
 ---
 

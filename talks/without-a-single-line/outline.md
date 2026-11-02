@@ -26,7 +26,7 @@ zero operational cost. This is a working narrative, not a fixed sequence.
 | 05 Profiles | 3:00 | 26:00 | A kernel route to CPU profiles. Establish the need for request correlation. |
 | 06 Live debugging | 4:30 | 30:30 | Return to the bug. Capture logs and variables within explicit limits. |
 | 07 Choose the signal and the layer | 2:00 | 32:30 | Compare signal coverage and deployment constraints. Include live debugging. |
-| 08 Asks for the Go team | 5:00 | 37:30 | Four asks (USDT probes, a read contract for pprof labels, -toolexec gaps, one start-up door), then the tool plans. |
+| 08 Asks for the Go team | 5:00 | 37:30 | Four asks (goroutine-local storage and context propagation, USDT probes, -toolexec gaps, one start-up door), then the tool plans. |
 | 09 From question to evidence | 5:30 | 43:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
 | Buffer | 2:00 | 45:00 | Pauses, audience reactions, and overruns. |
 
@@ -72,7 +72,7 @@ they exist to fix.
 - The injector teaser
 - The agentic close
 - The uprobe-cost slide
-- The OTEP correlation argument
+- The goroutine-local storage and context ask
 - The decision table
 - The lifecycle map
 - The final resource links

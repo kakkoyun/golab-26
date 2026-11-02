@@ -2424,7 +2424,50 @@ Say it as thanks, not blame. Say "the Go team". Do not name people.
 
 ---
 
-## Ask 1: USDT probes in Go
+## Ask 1: goroutine-local storage and context propagation
+
+| Today | Ask |
+| --- | --- |
+| Orchestrion adds `__dd_gls_v2` to `runtime.g` | One supported slot for trace context |
+| otelc adds `otel_trace_context` to `runtime.g` | One layout that eBPF readers can trust |
+| Each tool rewrites the runtime at build time | Rules for what a new goroutine inherits |
+
+**Ask:** give trace context a supported home. Two tools already build one.
+
+<div class="tiny">
+
+Prior: [golang/go#21355](https://github.com/golang/go/issues/21355), [#69478](https://github.com/golang/go/issues/69478), [#68785](https://github.com/golang/go/issues/68785): "we've rejected anything that could be used as goroutine local storage"
+
+</div>
+
+<!--
+SAY
+
+The first ask is the one the Go team has said no to. Goroutine-local storage.
+
+Look at what tools do today. Orchestrion adds a field to runtime.g at build
+time. otelc adds its own field. Two tools, two layouts, both rewriting the
+runtime to carry trace context.
+
+The ask is one supported place for trace context, with a layout that
+out-of-process readers can trust. And rules for what a new goroutine inherits.
+Storage alone does not propagate anything. Libraries still need hooks to
+extract and inject.
+
+I know the answer has been no: on 21355, on 69478, and again last year on
+68785. We ask again because it already exists, in every binary these tools
+build. It is just not supported.
+
+DO
+
+Say it with respect for the earlier answer, not as a complaint. Do not name
+people. Do not call OTEP 4947 the proposal for this storage. Do not claim that
+a stable Go API exists today.
+-->
+
+---
+
+## Ask 2: USDT probes in Go
 
 <div class="columns">
 <div>
@@ -2463,44 +2506,6 @@ In the December 2024 sync, the Go team asked, "How would this look?" The fork is
 DO
 
 If someone cites golang/go#22008, a USDT site is fixed at compile time. Call the fork a proof of concept, not a plan.
--->
-
----
-
-## Ask 2: a read contract for pprof labels
-
-| Today | Ask |
-| --- | --- |
-| Build-time rewriting adds fields to `runtime.g` | Use the labels Go already has |
-| eBPF readers infer offsets per release | Document where `g.labels` lives |
-| OTEP 4947 tells Go readers to read pprof labels | Keep that layout stable |
-
-<!-- code-header: none -->
-
-```yaml
-threadlocal.schema_version: "go_pprof_labels_v1"
-```
-
-<div class="tiny">
-
-[OTEP 4947: Alternative for Go support](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support) · [golang/go#68785](https://github.com/golang/go/issues/68785)
-
-</div>
-
-<!--
-SAY
-
-This ask does not add goroutine-local storage. The Go team rejected that many times.
-
-Profile labels already flow through contexts, as designed. dd-trace-go already sets pprof labels.
-
-OpenTelemetry proposal 4947 tells Go readers to read pprof labels. Today, eBPF readers infer where the label field lives in each release. Build-time tools add fields to runtime.g.
-
-The ask is to document where the labels live, and keep that layout stable for out-of-process readers.
-
-DO
-
-Lead with "no new API". Then say "read contract". Present proposal 4947 as proposed work.
 -->
 
 ---
@@ -2569,41 +2574,26 @@ Keep this generic. Never describe how the Datadog injector links or enters.
 <!-- _footer: "◦ " -->
 ## Four asks. I will find you in the hallway.
 
-<div class="columns">
-<div>
-
 | Ask | Prior art |
 | --- | --- |
+| Goroutine-local storage and context propagation | #21355, #69478, #68785 |
 | USDT probes | #57175 |
-| A read contract for pprof labels | OTEP 4947, #68785 |
 | `-toolexec` gaps | #69887 |
 | A start-up door | #28909, #12465 |
 | Bonus: stable runtime offsets | `moduledata` |
 
-</div>
-<div class="center">
-
-![w:250](../../assets/go-asks-qr.png)
-
-**Draft problem reports**
-
-</div>
-</div>
-
 <!--
 SAY
 
-Four asks. USDT probes. A read contract for pprof labels. The `-toolexec` gaps. One start-up door.
+Four asks. Goroutine-local storage and context propagation. USDT probes. The `-toolexec` gaps. One start-up door.
 
 There is one bonus. Stable runtime offsets, such as moduledata.
-
-The QR code leads to draft problem reports in the talk repository.
 
 If you work on Go, I will find you in the hallway. If you do not, please introduce me.
 
 DO
 
-Pause on the QR code for three seconds.
+Pause. Let the table stand.
 -->
 
 ---

@@ -18,8 +18,6 @@ timed read-through.
   speaker-stated 12+ month goal. Open points: the Live Debugger diagram
   simplifies the backend-to-`system-probe` hop. Decide whether the close slide
   needs Targeted redaction mode. The docs do not label Go Live Debugger GA or Preview.
-- [ ] Merge and push before 15:30 on 2 November. The section 08 QR code points
-  to `talks/without-a-single-line/go-asks.md` on `main`.
 
 ## Should-do
 
@@ -69,6 +67,10 @@ None currently.
   combination slide. The table is "When to reach for what."
 - **The narrative stays editable.** Do not add a fixed-order test or remove
   slide punctuation to satisfy a heading comparison.
+- **No QR code for the draft problem reports.** The owner removed it to wrap
+  up section 08. `go-asks.md` stays in the repository.
+- **Ask 1 is goroutine-local storage and context propagation.** It replaced the
+  pprof-label read contract. It cites the earlier rejections as prior discussion.
 - **No em dashes on slides.** Use colons and commas instead.
 - **Delivery cues sit in the footer.** A `_footer` glyph after GOLAB: `▸` speak
   freely, `◆` checkpoint, `∙` pause, `◦` slow down. `◦` has no em-dash twin,

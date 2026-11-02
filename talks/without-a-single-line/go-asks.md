@@ -16,7 +16,28 @@ The Go runtime diagnostics sync asked the question first.
 
 Our answer is yes, if Go gives eBPF something stable to read. The asks below describe what that could look like.
 
-## 1. USDT probes in Go
+## 1. Goroutine-local storage and context propagation
+
+### Problem
+
+Tracers need the current trace context on the current goroutine. Go has no supported place for it. Build-time tools rewrite the runtime to add one, and each tool picks its own field and layout. Out-of-process readers, such as eBPF profilers, cannot trust any of them.
+
+### Evidence
+
+- Orchestrion, with the dd-trace-go aspect, adds `__dd_gls_v2 any` to `runtime.g`.
+- otelc adds `otel_trace_context` and `otel_baggage_container` to `runtime.g`.
+- Storage alone does not propagate context. Libraries still need hooks to extract and inject it, and rules for what a new goroutine inherits.
+
+### Prior discussion
+
+- [golang/go#68785](https://github.com/golang/go/issues/68785), closed as not planned. On the issue, 18 November 2025: "as I understand, we've rejected anything that could be used as goroutine local storage." The Go team, 20 November 2025: "The profile labeling code is designed around passing contexts with attached labels. That is intentional."
+- [golang/go#21355](https://github.com/golang/go/issues/21355) and [golang/go#69478](https://github.com/golang/go/issues/69478) are closed.
+
+### Ask
+
+Give trace context one supported slot, with a layout that out-of-process readers can trust, and rules for what a new goroutine inherits. Two tools already build this slot outside the runtime.
+
+## 2. USDT probes in Go
 
 ### Problem
 
@@ -36,27 +57,6 @@ A USDT probe is a NOP at the probe site and an ELF note. The note names the prob
 ### Ask
 
 Let the toolchain emit SDT notes at a small set of runtime sites. Start with goroutine start and exit, GC phases, and allocation samples.
-
-## 2. A read contract for pprof labels
-
-### Problem
-
-Tools that need request context read it from the runtime. Build-time tools add fields to `runtime.g`. Out-of-process readers, such as eBPF profilers, infer where the label field lives, and that layout can change in each release.
-
-### Evidence
-
-- Profile labels already flow through contexts. dd-trace-go sets pprof labels.
-- Go 1.27 `runtime.g` has `labels unsafe.Pointer // profiler labels` ([src/runtime/runtime2.go](https://github.com/golang/go/blob/go1.27.3/src/runtime/runtime2.go)).
-- [OpenTelemetry OTEP 4947](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support) proposes the Go path: readers read pprof labels under `go_pprof_labels_v1`.
-
-### Prior discussion
-
-- [golang/go#68785](https://github.com/golang/go/issues/68785), closed as not planned. On the issue, 18 November 2025: "as I understand, we've rejected anything that could be used as goroutine local storage." The Go team, 20 November 2025: "The profile labeling code is designed around passing contexts with attached labels. That is intentional."
-- [golang/go#21355](https://github.com/golang/go/issues/21355) and [golang/go#69478](https://github.com/golang/go/issues/69478) are closed.
-
-### Ask
-
-This ask does not add goroutine-local storage. Document where the existing profile labels live, and keep that layout stable for out-of-process readers.
 
 ## 3. Close the `-toolexec` gaps
 
