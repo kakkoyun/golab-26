@@ -1227,7 +1227,7 @@ Add a layer when its signal earns the cost. Use live logpoints for missing evide
 **20% adoption growth** is evidence that Go users want the build-time path too.
 
 ---
-<!-- _class: section -->
+<!-- _class: section light -->
 <!-- _paginate: false -->
 
 ###### 08
