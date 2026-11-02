@@ -27,6 +27,7 @@ make help                  # list all targets
 make check/fast            # fast checks while you edit
 make check                 # full checks before you finish
 make build/pdf/<talk>      # build the PDF handout for one talk
+make build/offline/<talk>  # build an HTML deck that works without network
 make watch/<talk>          # rebuild one talk on change
 ```
 

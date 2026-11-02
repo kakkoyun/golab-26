@@ -13,7 +13,7 @@ MARP := npx marp
 
 .DEFAULT_GOAL := help
 
-.PHONY: all build/html build/pdf build/html/% build/pdf/% watch/% serve/% clean clean/% \
+.PHONY: all build/html build/pdf build/html/% build/pdf/% build/offline/% watch/% serve/% clean clean/% \
 	check check/fast check/slides check/css check/theme check/footer check/go check/fragments check/code-headers \
 	lint/md lint/md/% fix/md/% format/md format/md/% check/typos check/typos/% fix/typos/% \
 	pre-commit sync/theme hooks install help
@@ -24,6 +24,9 @@ build/html: build/html/go-benchmarks-lying build/html/without-a-single-line
 
 build/html/%: sync/theme
 	$(MARP) --config talks/$*/slides/marp/marp.config.js talks/$*/slides/presentation.md --allow-local-files --theme-set "$(THEME_SET)" -o talks/$*/slides/presentation.html
+
+build/offline/%: build/html/%
+	python3 tools/inline_kroki.py talks/$*/slides/presentation.html talks/$*/slides/presentation.offline.html
 
 build/pdf: build/pdf/go-benchmarks-lying build/pdf/without-a-single-line
 
@@ -135,6 +138,7 @@ help:
 	@printf '%s\n' 'Build:'
 	@printf '%s\n' '  make build/html          Build both HTML decks'
 	@printf '%s\n' '  make build/pdf           Build both PDF decks'
+	@printf '%s\n' '  make build/offline/<talk> Build one HTML deck with diagrams inlined for offline use'
 	@printf '%s\n' '  make watch/<talk>        Open a live preview for one talk'
 	@printf '%s\n' ''
 	@printf '%s\n' 'Verify:'
