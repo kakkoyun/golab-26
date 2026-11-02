@@ -172,6 +172,7 @@ Bare beat. Let "decays" land. Do not imply work on OBI.
 -->
 
 ---
+<!-- _class: fullscreen -->
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
@@ -184,10 +185,12 @@ Right. That is the talk. Thanks, everyone.
 
 DO
 
+Show only the full-screen screenshot. No footer or page number.
 Deadpan. Two seconds of silence. Do not explain the joke.
 -->
 
 ---
+<!-- _class: fullscreen -->
 <!-- _paginate: false -->
 <!-- _header: "" -->
 
@@ -201,6 +204,7 @@ that mechanism costs. That is what we need to understand.
 
 DO
 
+Show only the full-screen screenshot. No footer or page number.
 The turn. Ten seconds for both slides. Do not explain the joke.
 This is a plant. It pays off at the agentic close.
 -->

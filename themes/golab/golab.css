@@ -630,23 +630,17 @@ section:has(marp-auto-scaling) marp-auto-scaling img {
 .hl-blue { color: var(--reading) !important; }
 .hl-orange { color: var(--structure-deep) !important; }
 section.photo footer, section.photo::after { color: var(--ink) !important; }
-/* Marp duplicates photo slides for its background layer. Only the content layer owns chrome. */
-section.photo[data-marpit-advanced-background="pseudo"] {
+/* Keep the band with the real footer. The top pseudo layer would cover it. */
+section[data-marpit-advanced-background="content"][data-theme]::before {
+    display: block !important;
+}
+section[data-marpit-advanced-background="pseudo"] {
     background: transparent;
 }
-section.photo[data-marpit-advanced-background="pseudo"]::before {
-    content: "GOLAB      the international conference on go in italy | November 1st - 3rd, 2026";
-    inset: auto 0 0;
-    display: flex;
-    align-items: center;
-    height: 93px;
-    box-sizing: border-box;
-    padding-left: 86px;
-    font: 500 15px / 1 var(--mono);
-    background: var(--yellow);
-    color: var(--ink);
+section[data-marpit-advanced-background="pseudo"]::before {
+    content: none;
 }
-section.photo[data-marpit-advanced-background="pseudo"]::after {
+section[data-marpit-advanced-background="pseudo"]::after {
     content: attr(data-marpit-pagination) !important;
     display: block !important;
     position: absolute !important;
@@ -657,4 +651,10 @@ section.photo[data-marpit-advanced-background="pseudo"]::after {
     transform: translate(75px, 105px);
     color: var(--ink) !important;
     font: 400 21px / 1 var(--sans);
+}
+
+section.fullscreen[data-theme]::before,
+section.fullscreen[data-theme]::after,
+section.fullscreen footer {
+    display: none !important;
 }
