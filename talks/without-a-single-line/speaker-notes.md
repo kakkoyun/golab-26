@@ -10,6 +10,13 @@ verbatim, so you can find your place by what is on screen.
 **SAY** lines are the words, written to be spoken. **DO** lines are delivery
 cues. Memorise the purpose of each slide, then let the words follow.
 
+The slides carry delivery cues as a small glyph after GOLAB in the footer.
+`▸` means stop advancing and speak freely. `◆` is a checkpoint: look up,
+scan the room, check the time. `∙` means pause after the line, and a headline
+that ends in `…` says the same. `◦` means slow down, because the slide must
+land. A word in yellow or italics takes the stress. A question headline means
+ask it, then wait.
+
 ## Beat table
 
 | Section | One thing |

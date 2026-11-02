@@ -49,7 +49,7 @@ check: check/slides check/go
 
 check/fast: check/theme check/code-headers lint/md check/typos check/fragments check/notes
 
-check/slides: check/css check/code-headers lint/md check/typos check/fragments build/html check/diagrams check/footer
+check/slides: check/css check/code-headers lint/md check/typos check/fragments check/notes build/html check/diagrams check/footer
 
 check/css: check/theme
 

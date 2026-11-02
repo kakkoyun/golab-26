@@ -70,3 +70,8 @@ None currently.
 - **The narrative stays editable.** Do not add a fixed-order test or remove
   slide punctuation to satisfy a heading comparison.
 - **No em dashes on slides.** Use colons and commas instead.
+- **Delivery cues sit in the footer.** A `_footer` glyph after GOLAB: `▸` speak
+  freely, `◆` checkpoint, `∙` pause, `◦` slow down. `◦` has no em-dash twin,
+  because slides use no em dashes. The legend is in the script contract. Reason:
+  the cue reads as footer typography, and the theme needs no CSS change. Meme
+  and full-image slides hide the footer, so the bare image is their cue.

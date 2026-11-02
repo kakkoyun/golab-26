@@ -47,6 +47,7 @@ Let the title stand. Advance.
 -->
 
 ---
+<!-- _footer: "▸ " -->
 <!-- _paginate: false -->
 
 ## The bug you cannot reproduce locally
@@ -150,6 +151,7 @@ Point out that each runtime has one. Go does not.
 -->
 
 ---
+<!-- _footer: "▸ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -204,6 +206,7 @@ This is a plant. It pays off at the agentic close.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -252,6 +255,7 @@ Reveal each line. Do not rush. Land the last line.
 
 ---
 
+<!-- _footer: "◦ " -->
 ## Let the constraint pick the layer
 
 <div class="center">
@@ -294,10 +298,11 @@ Point to each intervention point. Not all three are required.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-# Three intervention points. *Four signals.*
+# Three intervention points. *Four signals…*
 
 ### Traces · Metrics · Logs · Profiles
 
@@ -318,6 +323,7 @@ Introduce the signal indicators. They show capabilities, not a ranking.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -540,6 +546,7 @@ Connect the examples to the four signal indicators. Do not say otelc alone enabl
 -->
 
 ---
+<!-- _footer: "▸ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -756,6 +763,7 @@ Short stop. Point at the link, not the screenshot. Then move to process start.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -901,6 +909,7 @@ Do not promise a release date. Separate public language lists from Go work in de
 
 ---
 
+<!-- _footer: "◦ " -->
 ## A static Go binary has no loader
 
 <div class="center">
@@ -970,6 +979,7 @@ Be precise. Do not say LD_PRELOAD never works with Go.
 
 ---
 
+<!-- _footer: "▸ " -->
 ## We made it work
 
 ```bash
@@ -1000,6 +1010,7 @@ or .gopclntab. Defer. The chip is amber: in development, not released.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -1009,7 +1020,7 @@ or .gopclntab. Defer. The chip is amber: in development, not released.
 
 ## No kernel version gate.
 
-### *One line.*
+### *One line…*
 
 <!--
 SAY
@@ -1022,6 +1033,7 @@ Advance.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -1052,6 +1064,7 @@ Point to the signal indicators. Explain one uprobe hit, then apply it to OBI.
 -->
 
 ---
+<!-- _footer: "▸ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -1301,6 +1314,7 @@ Say amd64 out loud. Do not mix the g pointer and the goroutine ID.
 
 ---
 
+<!-- _footer: "◦ " -->
 ## Probe the RET, not the return address
 
 <div class="columns">
@@ -1422,10 +1436,11 @@ Thirty-five seconds. Link back to CO-RE.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-# No source change. No rebuild. No *rollout*.
+# No source change. No rebuild. No *rollout…*
 
 <!--
 SAY
@@ -1654,10 +1669,11 @@ The honesty is the point. The otel.Tracer line needs SYS_ADMIN.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-# But it still has a *cost*
+# But it still has a *cost…*
 
 <!--
 SAY
@@ -1816,6 +1832,7 @@ Ten seconds. Do not explain the joke. Advance.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -1985,10 +2002,11 @@ Read across the table, not every row.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-# Traces and profiles. *Apart.*
+# Traces and profiles. *Apart…*
 
 <!--
 SAY
@@ -2023,6 +2041,7 @@ Two seconds. Advance.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -2225,6 +2244,7 @@ Read the last row, not the whole table. Delve tracepoints print events, not snap
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -2342,6 +2362,7 @@ This is an example, not a universal stack. Do not repeat the adoption number.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section light -->
 <!-- _paginate: false -->
 
@@ -2545,6 +2566,7 @@ Keep this generic. Never describe how the Datadog injector links or enters.
 
 ---
 
+<!-- _footer: "◦ " -->
 ## Four asks. I will find you in the hallway.
 
 <div class="columns">
@@ -2613,6 +2635,7 @@ Say "goals" out loud. Do not give a release date.
 -->
 
 ---
+<!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
 
@@ -2666,6 +2689,7 @@ This is the one place enthusiasm is the point. Name the product once. Give the s
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
@@ -2683,11 +2707,11 @@ Pause. Advance to the two lines to remember.
 -->
 
 ---
+<!-- _footer: "∙ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
-## Start from the *constraint* you cannot change.
-
+## Start from the *constraint* you cannot change…
 ## Add a layer only when its *signal* pays for its *operational cost*.
 
 <!--
@@ -2745,6 +2769,7 @@ Point to the community repo.
 -->
 
 ---
+<!-- _footer: "▸ " -->
 <!-- _class: punchline dark -->
 <!-- _paginate: false -->
 
