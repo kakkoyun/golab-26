@@ -30,7 +30,7 @@ zero operational cost. This remains a working narrative, not a fixed sequence.
 | 05 Profiles | 2:30 | 22:30 | A kernel route to CPU profiles. Establish the need for request correlation. |
 | 06 Live debugging | 3:30 | 26:00 | Return to the bug. Capture logs and variables within explicit limits. |
 | 07 Choose the signal and the layer | 2:00 | 28:00 | Compare signal coverage and deployment constraints. Include live debugging. |
-| 08 What comes next | 4:00 | 32:00 | USDT, native libraries, a stable context ABI, profile correlation, memory profiling, and live-probe goals. |
+| 08 Asks for the Go team | 4:00 | 32:00 | Four asks (USDT probes, a read contract for pprof labels, -toolexec gaps, one start-up door), then the tool plans. |
 | 09 From question to evidence | 4:00 | 36:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
 | Buffer | 2:00 | 38:00 | Pauses, audience reactions, and overruns. |
 
@@ -124,10 +124,11 @@ the service can support. Show one useful combination, not a universal stack.
 ### Selection to future work
 
 The audience now knows the costs of inferred layouts, missing hooks, and
-separate context stores. USDT, native-library support, and stable context
-storage address those limits. Separate proposals and aspirations from current
-signals. Memory profiling is work in progress. Live Debugger metrics and
-tracing are goals, with tracing on a 12+ month horizon, not a release commitment.
+separate context stores. The Go asks address those limits: USDT probes, a read
+contract for pprof labels, `-toolexec` gaps, and one start-up door. Separate
+asks from current signals. The tool plans follow the asks: Live Debugger metrics
+and tracing are goals, with tracing on a 12+ month horizon, not a release
+commitment. Memory profiling is work in progress.
 
 ### Future work to close
 

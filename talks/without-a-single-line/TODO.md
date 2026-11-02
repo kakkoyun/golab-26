@@ -14,10 +14,14 @@ The time budgets need a timed read-through.
 
 ## Blocking
 
-- [ ] Review the exact public wording of the future claims in C-081 to C-086.
+- [ ] Review the exact public wording of the future claims in C-081 to C-096.
   Live Debugger tracing has a speaker-stated 12+ month horizon, not a release
-  commitment. Memory profiling is work in progress. The stable context ABI is
-  an ask, and the cgo-to-injector connection remains tentative.
+  commitment. Memory profiling is work in progress. The read contract for
+  pprof labels is an ask, and the cgo-to-injector connection remains tentative.
+  Section 08 claims are C-088 to C-096.
+
+- [ ] Merge and push before 15:30 on 2 November. The section 08 QR code points
+  to `talks/without-a-single-line/go-asks.md` on `main`.
 
 - [ ] **Blocking: owner review of the new public-source claims.** The GoLab
   expansion adds ledger rows C-060 to C-075 from public sources. The owner
@@ -37,6 +41,9 @@ The time budgets need a timed read-through.
   pace. Record splits at each divider. Update the working budgets in
   `outline.md` and `speaker-notes.md`. Pay particular attention to the expanded
   future section. The removed install slide does not prove that everything fits.
+- [ ] Layout pass on section 08: the divider caption sits under the GIF in the
+  right panel. Check the Ask 1 slide and the recap table from the back of the
+  room.
 - [ ] **Diagram legibility pass.** Kroki renders Mermaid at a small native size.
   The theme now scales each diagram to the content width, but long
   left-to-right chains still have small labels. Check every diagram from the

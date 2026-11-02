@@ -445,3 +445,59 @@ appear on a slide only after the owner approves them (see the talk `TODO.md`).
 - **Verdict:** CONFIRMED
 - **Source(s):** <https://docs.dynatrace.com/docs/ingest-from/technology-support/application-software/go/support/go-known-limitations> (checked 2026-11-02)
 - **Notes:** Not supported: static cgo binaries, CGO_ENABLED=0 with -buildmode=pie (no libc), a static container entrypoint under cloud-native full-stack injection. musl needs -linkmode=external.
+
+## Asks for the Go team
+
+### [C-088] The 31 July 2025 Go runtime diagnostics sync notes record Rhys and Michael Knyszek on instrumentation hooks and eBPF
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/golang/go/issues/57175#issuecomment-3283520959> (notes posted by mknyszek, 2025-09-12)
+- **Notes:** The notes record Rhys: "We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?" and Michael K: "Maybe eBPF is the answer?" The notes use first names. The slide uses Rhys Hiltner and Michael Knyszek. Present it as thanks, not blame.
+
+### [C-089] The 19 December 2024 sync discussed USDT, and the Go team asked how it would look
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/golang/go/issues/57175#issuecomment-2596101614> (posted 2025-01-16)
+- **Notes:** Felix raised USDT. thepudds: "it's more stable over time because it's in the source code". Rhys: "Years ago we were interested, but didn't know exactly what we'd use them for." Michael K: "How would this look?"
+
+### [C-090] Go 1.27 moved HTTP/2 into net/http/internal/http2 and added typedesclen to the runtime moduledata
+
+- **Verdict:** CONFIRMED
+- **Source(s):** GitHub contents API, checked 2026-11-02: `src/net/http/internal/http2` exists at go1.27.3 and not at go1.26.10; `src/runtime/symtab.go` has `typedesclen` at go1.27.3 and not at go1.26.10
+- **Notes:** This is the receipt for the cost of inference without a contract. Present it as a fact about the release, not as blame on the Go team.
+
+### [C-091] The Go team rejects goroutine-local storage, and pprof labels flow through contexts by design
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/golang/go/issues/68785> (seankhliao, 2025-11-18; ianlancetaylor, 2025-11-20); #21355 and #69478 are closed; `src/runtime/runtime2.go` at go1.27.3 has `labels unsafe.Pointer // profiler labels` in `runtime.g`; dd-trace-go sets pprof labels (`internal/traceprof`)
+- **Notes:** seankhliao: "as I understand, we've rejected anything that could be used as goroutine local storage." ianlancetaylor: "The profile labeling code is designed around passing contexts with attached labels. That is intentional." The ask is a read contract for existing labels, not a new GLS API. Speaker-stated ask.
+
+### [C-092] The Go team called golang/go#69887 a problem report, not a proposal
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/golang/go/issues/69887> (matloob, 2024-12-17; aclements, 2024-12-24)
+- **Notes:** matloob: "Adding dedicated support for source rewriting tools would result in a significant increase in complexity in the go command". aclements: "This isn't so much a 'proposal' as it is a 'problem report', which is still very helpful!" Trap: #69887 lists seven toolchain directions, not five (dedicated support, build-ID influence, build-graph edges, go/ast, source mapping, -p, shared build flags). The deck says "the gaps" without a count.
+
+### [C-093] A dynamic probe that refers to a stack address is the objection in golang/go#22008
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/golang/go/issues/22008> (open; ianlancetaylor, 2017-09-25)
+- **Notes:** ianlancetaylor: "I don't see how we could support a dynamic probe executed by the kernel that refers to a local address on the stack." Q&A only. A USDT site is fixed at compile time, and its note gives value locations at that site.
+
+### [C-094] The OpenTelemetry eBPF profiler reads allocator USDT probes for allocation profiling, but not the Go heap
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://github.com/open-telemetry/opentelemetry-ebpf-profiler/pull/1746> (merged 2026-10-20); live heap is PR #1747 (open); the latest tag v0.0.202640 (2026-10-02) predates the merge
+- **Notes:** PR #1746 consumes `otel_memory` USDT probes from an instrumented allocator such as jemalloc. This does not profile the Go heap. It narrows C-085 to allocation profiling merged on main, not in a tag.
+
+### [C-095] The plugin package needs the exact toolchain and dependency versions
+
+- **Verdict:** CONFIRMED
+- **Source(s):** <https://pkg.go.dev/plugin> (src/plugin/plugin.go at go1.27.3)
+- **Notes:** The package warns that "Runtime crashes are likely to occur unless all parts of the program (the application and all its plugins) are compiled using exactly the same version of the toolchain, the same build tags, and the same values of certain flags and environment variables." The start-up matrix (libc, link mode, build mode) is generic and also confirmed by C-001, C-069, C-087. The speaker attests the vendor cost.
+
+### [C-096] Datadog plans on the "Where our tools go next" slide are goals, not release commitments
+
+- **Verdict:** CONFIRMED by the speaker as goals, not release commitments
+- **Source(s):** Speaker direction on 2026-11-02 ("plans on slides too"; the talk is not recorded); C-084 for the tracing horizon; C-051 for the injector plan
+- **Notes:** Live Debugger metrics are a goal. Traces are a longer-term goal of 12+ months. The Go injector is in development, and the plan is Go in Single-Step Instrumentation. The eBPF profiler has CPU profiles, and allocation profiling is merged on main. The injector mechanism stays undisclosed.

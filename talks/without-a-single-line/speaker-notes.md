@@ -23,7 +23,7 @@ Memorise the purpose of each slide, then let the words follow.
 | 05 Profiles | CPU profiles without rebuilding. Correlation needs shared request context. |
 | 06 Live debugging | Dynamic logs and snapshots answer the unplanned question. |
 | 07 Choose the signal and the layer | Match the evidence to the deployment constraint. |
-| 08 What comes next | Explicit probes, native libraries, stable context storage, correlation, and more signals. |
+| 08 Asks for the Go team | Four asks: USDT probes, a read contract for pprof labels, `-toolexec` gaps, one start-up door. Then the tool plans. |
 | 09 From question to evidence | Resolve the opening bug and the agent joke. Invite concrete contributions. |
 
 ## Timing
@@ -1353,200 +1353,147 @@ future section before the closing callback.
 
 ---
 
-## What comes next
+## Asks for the Go team
 
 **SAY**
 
-We saw the same cost several times: tools infer details that Go does not
-publish as an instrumentation contract. What should Go expose so we infer less?
+These are asks, not demands. I have four, and a bonus.
+
+If you work on Go, I will find you in the hallway.
 
 **DO**
 
-Separate proposals, experiments, and aspirations. This section answers the
-limitations from the lifecycle tour.
+Show the Puss in Boots GIF. One beat. Deadpan. Do not explain it.
 
 ---
 
-## User Statically-Defined Tracing (USDT)
+## They already asked the question
 
 **SAY**
 
-USDT lets the program declare its own probes.
+In a runtime diagnostics sync, Rhys Hiltner said this:
 
-The producer puts a NOP at the probe site and writes an ELF note. The note
-names the probe and gives a recipe for each argument: which register, which
-stack slot. A tracer reads the note and attaches an ordinary uprobe at the NOP.
-An optional semaphore tells the program that a tracer is present, so it can
-skip expensive argument preparation when nobody listens.
+"We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?"
 
-USDT does not make a hit free. It makes the contract explicit.
+Michael Knyszek answered: "Maybe eBPF is the answer?"
+
+Our answer is yes, if Go gives eBPF something stable to read.
+
+Go 1.27 moved HTTP/2 into a new internal package. It also added a field to moduledata. Tools that inferred by symbol or offset had to catch up.
 
 **DO**
 
-Expand the acronym before you use it. USDT runs on uprobes. It is not a
-separate kernel mechanism.
+Say it as thanks, not blame. They asked the question first. Use their full names, as on the slide.
 
 ---
 
-## Go needs a USDT producer
+## Ask 1: USDT probes in Go
 
 **SAY**
 
-Go 1.27 emits no native USDT probes. Salp and libstapsdt let an application
-add them through cgo. Polar Signals builds the other side, a Go tracer that
-reads USDT notes.
+USDT lets a program declare its own probes. The producer puts a NOP at the probe site and writes an ELF note. The note names the probe and says where each value lives.
 
-My fork experiments with producer support in the toolchain itself. It is a
-proof of concept. It shows what a stable contract could look like, for eBPF
-tools and for injectors.
+Go 1.27 emits no USDT probes. Salp adds them through cgo. My fork is a proof of concept. It shows the toolchain side.
+
+The OpenTelemetry eBPF profiler now reads allocator USDT probes for memory profiles. The Go allocator has none.
+
+So the ask is simple. Let the toolchain emit these notes. Start with runtime sites: goroutine start and exit, GC phases, and allocation samples.
+
+In the December 2024 sync, the Go team asked, "How would this look?" The fork is one answer.
 
 **DO**
 
-The fork is a proof of concept. Do not claim that it builds today or that the
-commands on the slide run. Do not invent a reason why Go has no USDT.
+If someone cites golang/go#22008, answer this way. A USDT site is fixed at compile time. Its note says where each value lives at that site. Call the fork a proof of concept, not a plan.
 
 ---
 
-## Declared probes can reduce inference
+## Ask 2: a read contract for pprof labels
 
 **SAY**
 
-I want us to explore shared probe contracts for OBI, injector tooling, and
-live debugging. Named events and declared arguments could remove some of the
-inference at those sites.
+This ask does not add goroutine-local storage. The Go team rejected that many times.
 
-That needs producer support and integrations. USDT does not provide a loader,
-or make every source variable available.
+Profile labels already flow through contexts, as designed. dd-trace-go already sets pprof labels.
+
+OpenTelemetry proposal 4947 tells Go readers to read pprof labels. Today, eBPF readers infer where the label field lives in each release. Build-time tools add fields to runtime.g.
+
+The ask is to document where the labels live, and keep that layout stable for out-of-process readers.
 
 **DO**
 
-Present this as an aspiration. Do not claim these integrations exist. Do not
-connect USDT to the undisclosed Go injector mechanism.
+Lead with "no new API". Then say "read contract". Present the link to OpenTelemetry proposal 4947 as proposed work.
 
 ---
 
-## cgo without a C toolchain
+## Ask 3: close the `-toolexec` gaps
 
 **SAY**
 
-One more thing to watch. Today, a standard cgo build needs a C compiler at build time.
+otelc and Orchestrion both build on `-toolexec`. A tool cannot add its own inputs to a package build ID. Then the build cache can reuse a stale result.
 
-Proposal 81450 removes that need for prebuilt C libraries. You write the
-bindings in Go syntax. The cgo tool generates the glue in Go and assembly.
-The proposal also rewrites runtime/cgo in Go and assembly. And the internal linker learns to
-reference shared libraries on Linux.
+Issue 69887 lists the gaps. On that issue, Austin Clements called it "a problem report, which is still very helpful".
 
-The Go team accepted the experiment, so the code can land behind a flag. The
-design itself is still in review.
-
-The useful connection is native instrumentation libraries. If we need a
-prebuilt native library, this proposal could make it easier to call from Go
-without a C build toolchain.
-
-There may be a connection to an injector design, but that connection is weak.
-This work does not promise new linking defaults or preload support.
+The ask is to close those gaps. It is not a new build mode.
 
 **DO**
 
-Say "accepted experiment" and "design in review". Do not say the proposal is
-accepted. Do not predict which binaries an injector can reach after it ships.
-That is the owner-review boundary in the outline. Re-check the issue labels
-the week of the talk.
+Mention the 20% adoption growth only as a reason the path matters. Do not repeat the number as a claim about Go users.
 
 ---
 
-## Give trace context a stable Go ABI
+## Ask 4: one supported start-up door
 
 **SAY**
 
-We also need a stable place to keep trace context while a goroutine handles
-a request. Instrumentation extracts context from the incoming request and
-injects it into the outgoing request.
+Other runtimes give an agent one documented door. Java has JAVA_TOOL_OPTIONS.
 
-We use otelc rewriting to add goroutine-local storage for the dd-trace-go
-integration. You saw that runtime.g field earlier. The ask is a stable Go ABI
-for this storage, so integrations do not depend on private runtime layouts.
+Go gives an agent a matrix. The agent must handle libc, which is glibc, musl, or none. It must handle link mode, internal or external. It must handle build mode, exe, PIE, or static.
 
-Storage alone is not propagation. We still need extraction and injection
-hooks, and rules for context inheritance when work moves to another goroutine.
+The plugin package does not solve this. Its documentation says crashes are likely unless the application and its plugins use the same toolchain version, build tags, flags, and dependency sources. For a vendor, the support matrix grows fast.
+
+The ask is simple. Tell agent authors which door Go supports.
+
+Native agent libraries may fit cgo without a C toolchain. The accepted experiment is GOEXPERIMENT cgobindings. The fit is still open.
 
 **DO**
 
-Present the stable ABI as an ask, not an existing Go feature. Distinguish the
-current build-time integration from a standard runtime contract. Then connect
-request propagation to the profile-correlation proposal.
+Keep this generic. Never describe how the Datadog injector links, enters, or which binaries it supports.
 
 ---
 
-## Correlation is the missing bridge
+## Four asks. I will find you in the hallway.
 
 **SAY**
 
-Correlation is the missing bridge.
+Four asks. USDT probes. A read contract for pprof labels. The `-toolexec` gaps. One start-up door.
 
-Native runtimes can publish request context through thread-local storage. Go
-cannot rely on that model. Goroutines move between OS threads, and crossing
-FFI on every event is too costly.
+There is one bonus. Stable runtime offsets, such as moduledata.
 
-The proposed Go path uses pprof labels. The scheme is go_pprof_labels_v1.
+The QR code leads to draft problem reports in the talk repository.
+
+If you work on Go, I will find you in the hallway. If you do not, please introduce me.
 
 **DO**
 
-Say "proposed" before explaining it. This is OTEP 4947. Credit Scott Gerring
-and Ivo Anjo verbally for connecting compile-time instrumentation to this
-profiling path. Link only to the public OTEP. Do not claim the complete OTEP
-path ships today.
+Pause on the QR code for three seconds.
 
 ---
 
-## Compile time sets context. eBPF reads evidence
+## Where our tools go next
 
 **SAY**
 
-Compile-time instrumentation can arrange request context inside the Go process.
-An out-of-process profiler can read the resulting labels. One approach supplies
-semantics. The other supplies continuous evidence.
+Live Debugger has logpoints and variable snapshots today. Metrics are a goal. Traces are a longer-term goal, more than twelve months away.
 
-That is the goal: request context reaches profiles through a shared contract.
+The Go injector is in development. The plan is Go in Single-Step Instrumentation.
 
-**DO**
+The eBPF profiler has CPU profiles today. Allocation profiling is merged on main. Live heap is in review.
 
-Keep the proposal status visible. This is the reason to combine the layers,
-not a claim that the complete OTEP path ships today.
-
----
-
-## Memory profiling is in progress
-
-**SAY**
-
-The eBPF profiler currently gives us CPU profiles. The profiler team is working
-on memory profiling too. That extends the questions we can answer with the
-same signal category.
+These are goals, not release commitments.
 
 **DO**
 
-This is work in progress, not a release announcement. Do not promise a date
-or specific allocation and heap views.
-
----
-
-## Live probes can grow beyond logs
-
-**SAY**
-
-A snapshot answers what happened in one event. A metric can answer how often
-it happens. Metrics are one goal. Tracing is another, on a longer horizon:
-twelve months or more.
-
-Those are goals, not release commitments. Today, the logpoints in this talk
-give us logs and variable snapshots.
-
-**DO**
-
-The horizon comes from the speaker, not the public documentation. Do not give
-a release date. Public docs distinguish Live Debugger logpoints from Dynamic
-Instrumentation metrics. Do not merge those product claims.
+Say "goals" out loud. Do not give a release date.
 
 ---
 

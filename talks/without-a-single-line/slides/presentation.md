@@ -18,6 +18,7 @@ style: |
   .tiny   { font-size: 0.6em; }
   .signal-map { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; font-size: 23px; }
   section.section .signal-map { grid-column: 2; grid-row: 2; margin-left: 55px; }
+  section.section .section-meme { grid-column: 2; grid-row: 2; margin-left: 55px; }
   .signal-map span { padding: .45em .6em; border: 2px solid #006459; border-radius: 6px; background: #f5f5f5; color: #111; }
   .signal-map b { display: block; font-size: .8em; }
   .signal-map .signal-out { background: transparent; border-style: dashed; }
@@ -1230,31 +1231,39 @@ Add a layer when its signal earns the cost. Use live logpoints for missing evide
 
 ###### 08
 
-# What comes next
+# Asks for the Go team
 
-What should Go expose so these tools infer less?
+<div class="section-meme">
 
----
+![width:340](../../assets/memes/pretty-please-puss.gif)
 
-## User Statically-Defined Tracing (USDT)
-
-<div class="center">
-
-```mermaid
-flowchart LR
-    N[ELF note] -->|name + argument recipe| T[tracer]
-    T -->|attach uprobe| P[NOP at the probe site]
-    T -.->|optional| S[semaphore]
-    S -.->|tracer present| P
-```
+I will find you in the hallway.
 
 </div>
 
-The producer names the probe and says where each value lives.
+---
+
+## They already asked the question
+
+> "We don't have a great way to add instrumentation in general. Companies will maintain patches to add hooks. What should we do?"
+>
+> Rhys Hiltner, Go runtime diagnostics sync, 31 July 2025
+
+> "Maybe eBPF is the answer?"
+>
+> Michael Knyszek, same meeting
+
+Our answer: yes, if Go gives eBPF something stable to read.
+
+<div class="tiny">
+
+Go 1.27 moved HTTP/2 into `net/http/internal/http2` and added a field to `moduledata`. Tools that infer by symbol or offset had to catch up. · [golang/go#57175](https://github.com/golang/go/issues/57175)
+
+</div>
 
 ---
 
-## Go needs a USDT producer
+## Ask 1: USDT probes in Go
 
 <div class="columns">
 <div>
@@ -1264,14 +1273,11 @@ The producer names the probe and says where each value lives.
 </div>
 <div>
 
-* Go 1.27 emits no native USDT probes.
-* Salp and libstapsdt add them through cgo.
-* Polar Signals builds a Go tracer that reads them.
+* A probe is a NOP plus an ELF note: a name and where each value lives.
+* Go 1.27 emits none. Salp adds them through cgo.
+* The eBPF profiler reads allocator USDT probes. The Go allocator has none.
 
-```bash
-# github.com/kakkoyun/go/tree/poc_usdt
-go tool usdt list ./...
-```
+**Ask:** let the toolchain emit SDT notes. Start with runtime sites.
 
 <span class="chip caution">proof of concept</span>
 
@@ -1280,49 +1286,15 @@ go tool usdt list ./...
 
 ---
 
-## Declared probes can reduce inference
+## Ask 2: a read contract for pprof labels
 
-| Potential consumer | Contract to explore |
+No new goroutine-local storage. dd-trace-go already sets pprof labels through contexts.
+
+| Today | Ask |
 | --- | --- |
-| OBI | Named events and arguments |
-| Injector tooling | Declared observation sites |
-| Live debugging | Values at declared sites |
-
-<span class="chip caution">aspiration, not existing integrations</span>
-
-USDT covers declared sites. It does not replace a loader or expose every variable.
-
----
-
-## cgo without a C toolchain
-
-* [#81450](https://github.com/golang/go/issues/81450): call prebuilt C libraries with no C compiler at build time
-* Potential use: native libraries for instrumentation.
-* Injector relevance remains uncertain.
-
-<br>
-
-<span class="chip note">GOEXPERIMENT=cgobindings accepted (#81662)</span> <span class="chip caution">design still in review</span>
-
----
-
-## Give trace context a stable Go ABI
-
-Incoming request → goroutine-local context → outgoing request
-
-Build-time rewriting already supplies goroutine-local storage.
-
-<span class="chip caution">ask: a stable runtime contract</span>
-
----
-
-## Correlation is the missing bridge
-
-Native runtimes can publish request context through thread-local storage.
-
-Go cannot rely on that model: goroutines move between OS threads, and crossing FFI on every event is too costly.
-
-The proposed Go path uses **pprof labels**:
+| Build-time rewriting adds fields to `runtime.g` | Use the labels Go already has |
+| eBPF readers infer offsets per release | Document where `g.labels` lives |
+| OTEP 4947 tells Go readers to read pprof labels | Keep that layout stable |
 
 <!-- code-header: none -->
 
@@ -1332,39 +1304,73 @@ threadlocal.schema_version: "go_pprof_labels_v1"
 
 <div class="tiny">
 
-[OTEP 4947: Alternative for Go support](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support)
+[OTEP 4947: Alternative for Go support](https://github.com/open-telemetry/opentelemetry-specification/blob/main/oteps/profiles/4947-thread-ctx.md#alternative-for-go-support) · [golang/go#68785](https://github.com/golang/go/issues/68785)
 
 </div>
 
 ---
-<!-- _class: punchline dark -->
-<!-- _paginate: false -->
 
-### Compile time sets context. eBPF reads *evidence*.
+## Ask 3: close the `-toolexec` gaps
 
-### Goal: request context reaches profiles
+* otelc and Orchestrion both build on `-toolexec`.
+* A tool cannot add its own inputs to a package's build ID.
+* [golang/go#69887](https://github.com/golang/go/issues/69887) lists the gaps, from build-ID influence to new build-graph edges.
 
-<span class="chip caution">proposed correlation path</span>
+<br>
 
----
-
-## Memory profiling is in progress
-
-CPU profiles today.
-
-The profiler team is working on memory profiling.
-
-<span class="chip caution">work in progress, no release date</span>
+**Ask:** close those gaps. A problem report, not a new build mode.
 
 ---
 
-## Live probes can grow beyond logs
+## Ask 4: one supported start-up door
 
-| Signal | Direction |
+| Variable | Values an agent must handle |
 | --- | --- |
-| Logs | Logpoints and variable snapshots today |
-| Metrics | Goal: count or aggregate observations |
-| Traces | Longer-term goal: 12+ months |
+| libc | glibc, musl, none |
+| Link mode | internal, external |
+| Build mode | exe, PIE, static |
+| `plugin` | the exact toolchain and dependency versions |
+
+Other runtimes give agents one documented door. Go gives agents a matrix.
+
+**Ask:** tell agent authors which door Go supports.
+
+<span class="chip note">cgo without a C toolchain: GOEXPERIMENT accepted (#81662)</span> <span class="chip caution">fit for agents still open</span>
+
+---
+
+## Four asks. I will find you in the hallway.
+
+<div class="columns">
+<div>
+
+| Ask | Prior art |
+| --- | --- |
+| USDT probes | #57175 |
+| A read contract for pprof labels | OTEP 4947, #68785 |
+| `-toolexec` gaps | #69887 |
+| A start-up door | #28909, #12465 |
+| Bonus: stable runtime offsets | `moduledata` |
+
+</div>
+<div class="center">
+
+![w:250](../../assets/go-asks-qr.png)
+
+**Draft problem reports**
+
+</div>
+</div>
+
+---
+
+## Where our tools go next
+
+| Tool | Today | Plan |
+| --- | --- | --- |
+| Live Debugger | Logpoints and variable snapshots | Goal: metrics. Then traces, 12+ months |
+| Go injector | In development | Go in Single-Step Instrumentation |
+| eBPF Profiler | CPU profiles | Allocation profiling merged on `main`. Live heap in review |
 
 <span class="chip caution">goals, not release commitments</span>
 
