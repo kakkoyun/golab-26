@@ -1,5 +1,10 @@
 # Research Corpus: "Why Your Go Benchmarks Are Lying"
 
+> [!INFO]
+> There is a recorded version of this talk, eventhough outdated.
+> See: https://kakkoyun.me/talks/why-your-go-benchmarks-are-lying
+
+
 Reading order matches the talk's three layers.
 
 | File | Question answered | Status |

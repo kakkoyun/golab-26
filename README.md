@@ -5,10 +5,10 @@ and a list of open work.
 
 ## Talks
 
-| Talk | Slot | Room | Link | Deck |
-| --- | --- | --- | --- | --- |
-| How to instrument Go without changing a single line of code | November 2nd, 2026, 15:30. 45 minutes. | Golab #1 | [golab.io](https://golab.io/talks/how-to-instrument-go-without-changing-a-single-line-of-code) | `talks/without-a-single-line/slides/presentation.md` |
-| Why Your Go Benchmarks Are Lying (And How to Stop Them) | November 3rd, 2026, 10:45. 45 minutes. | Golab #2 | [golab.io](https://golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them) | `talks/go-benchmarks-lying/slides/presentation.md` |
+| Talk | Slot | Room | Link | Deck | Old Recording
+| --- | --- | --- | --- | --- | --- |
+| How to instrument Go without changing a single line of code | November 2nd, 2026, 15:30. 45 minutes. | Golab #1 | [golab.io](https://golab.io/talks/how-to-instrument-go-without-changing-a-single-line-of-code) | `talks/without-a-single-line/slides/presentation.md` | https://kakkoyun.me/talks/instrument-go-without-changing-a-single-line
+| Why Your Go Benchmarks Are Lying (And How to Stop Them) | November 3rd, 2026, 10:45. 45 minutes. | Golab #2 | [golab.io](https://golab.io/talks/why-your-go-benchmarks-are-lying-and-how-to-stop-them) | `talks/go-benchmarks-lying/slides/presentation.md` | https://kakkoyun.me/talks/why-your-go-benchmarks-are-lying
 
 Both talks plan for 38 minutes presented and 7 minutes of Q&A.
 

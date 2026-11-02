@@ -3,6 +3,10 @@
 > **Talk:** "How to Instrument Go Without Changing a Single Line of Code"
 > GoLab 2026 — 45-minute slot: 38 minutes presented, 7 minutes Q&A (intermediate)
 
+> [!INFO]
+> There is a recorded version of this talk, eventhough outdated.
+> See: https://kakkoyun.me/talks/instrument-go-without-changing-a-single-line
+
 ## Reading order
 
 | Doc | Topic | Blog post |
