@@ -7,9 +7,8 @@ verbatim, so you can find your place by what is on screen.
 
 ## Contract
 
-**SAY** lines are the words, written to be spoken. Short sentences, one idea
-each. **DO** lines are delivery cues, kept separate so the prose stays sayable.
-Memorise the purpose of each slide, then let the words follow.
+**SAY** lines are the words, written to be spoken. **DO** lines are delivery
+cues. Memorise the purpose of each slide, then let the words follow.
 
 ## Beat table
 
@@ -28,15 +27,14 @@ Memorise the purpose of each slide, then let the words follow.
 
 ## Timing
 
-The times in `outline.md` are working budgets, not measurements. They reserve
-36 minutes for content and two minutes for pauses and overruns. The new future
-material needs rehearsal. Do not assume that removing the install slide makes
-room for all of it.
+The `outline.md` times are working budgets, not measurements. They reserve 36
+minutes for content and two minutes for pauses and overruns. Rehearse the new
+future material. Removing the install slide does not make room for all of it.
 
 Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
 live debugging by 22:30, selection by 26:00, future work by 28:00, and the
-closing callback by 32:00. Adjust these budgets together after a timed read.
-The optional static-PIE anecdote needs about 1:25 within the OBI budget.
+closing callback by 32:00. Adjust these together after a timed read. The
+optional static-PIE anecdote needs about 1:25 within the OBI budget.
 
 ---
 
@@ -44,7 +42,7 @@ The optional static-PIE anecdote needs about 1:25 within the OBI budget.
 
 **DO**
 
-Let the title establish the subject. Advance to the production bug.
+Let the title stand. Advance.
 
 ---
 
@@ -60,8 +58,7 @@ Wrong place. You add another log line. You redeploy again.
 
 **DO**
 
-Let it sit. Two beats of silence after "again." Do not rescue the silence.
-The discomfort is the point.
+Two beats of silence after "again." Do not rescue the silence.
 
 ---
 
@@ -73,7 +70,7 @@ What if you did not have to?
 
 **DO**
 
-Say only this. Let the question stand. Advance.
+Let the question stand. Advance.
 
 ---
 
@@ -92,7 +89,7 @@ ask the question that the baseline misses.
 
 **DO**
 
-Keep it concrete. Do not abstract. The line to land is "a platform problem."
+Land "a platform problem."
 
 ---
 
@@ -109,7 +106,7 @@ instrumentation hard.
 
 **DO**
 
-Do not teach every mechanism. Point out that each has one. Go does not.
+Point out that each runtime has one. Go does not.
 
 ---
 
@@ -125,7 +122,7 @@ to work in customer services.
 
 **DO**
 
-Twenty seconds. Explain why the comparison matters. Do not imply work on OBI.
+Do not imply work on OBI.
 
 ---
 
@@ -137,8 +134,7 @@ Right. That is the talk. Thanks, everyone.
 
 **DO**
 
-Deadpan. Beat. Two seconds of silence. Do not explain the joke. Do not milk
-the fake-out.
+Deadpan. Two seconds of silence. Do not explain the joke.
 
 ---
 
@@ -151,11 +147,8 @@ that mechanism costs. That is what we need to understand.
 
 **DO**
 
-The turn. This is the sentence that earns the rest of the talk. Ten seconds
-total for both slides. Do not explain the joke.
-
-This is a plant. It pays off at the agentic close, when the agent has the
-framework that it was missing.
+The turn. Ten seconds for both slides. Do not explain the joke.
+This is a plant. It pays off at the agentic close.
 
 ---
 
@@ -168,8 +161,7 @@ So why is Go the hard one?
 **DO**
 
 Tie the missing attachment point to the opening problem. Build-time
-instrumentation still requires a rebuild. Zero-touch does not mean that
-every approach avoids deployment.
+still requires a rebuild.
 
 ---
 
@@ -186,7 +178,7 @@ startup.
 
 **DO**
 
-Reveal each line. Do not rush. The last line is the one that matters.
+Reveal each line. Do not rush. Land the last line.
 
 ---
 
@@ -206,8 +198,7 @@ We will follow that order: build, process start, then kernel.
 
 **DO**
 
-Point to each intervention point. This is the binary's lifecycle, not a
-requirement to install all three approaches.
+Point to each intervention point. Not all three are required.
 
 ---
 
@@ -222,8 +213,7 @@ We will track those signals in the same order throughout the talk.
 
 **DO**
 
-Introduce the signal indicators. They describe capabilities, not a ranking.
-The SDK and integrations determine the build and injector coverage.
+Introduce the signal indicators. They show capabilities, not a ranking.
 
 ---
 
@@ -239,8 +229,7 @@ which ones it produces. We still need a rebuild.
 
 **DO**
 
-Point to the four signal indicators. Say that these are capabilities of the
-build path, not a claim that upstream otelc enables every signal by default.
+Point to the four signal indicators. Upstream otelc does not enable every signal by default.
 
 ---
 
@@ -256,8 +245,7 @@ Orchestrion remains a production Datadog distribution of the same core idea.
 
 **DO**
 
-Do not say Orchestrion was donated or renamed to otelc. It was not. Two separate
-tools, same mechanism, different codebases and default tracers.
+Do not say Orchestrion was donated or renamed to otelc. Two separate tools.
 
 ---
 
@@ -274,8 +262,7 @@ October.
 
 **DO**
 
-Move quickly. The dates corroborate; they are not the argument. Do not
-celebrate OBI here. The OBI section opens with that slide.
+Move quickly. Do not celebrate OBI here.
 
 ---
 
@@ -291,7 +278,7 @@ It covers your code, dependencies, and supported standard-library paths.
 
 **DO**
 
-The diagram is the point. Do not over-explain the proxy mechanism.
+The diagram is the point. Do not over-explain the proxy.
 
 ---
 
@@ -304,8 +291,7 @@ twenty percent. This is a production path, not a local debugging trick.
 
 **DO**
 
-Say exactly this. Do not add a customer denominator. Do not claim that most
-users were new. The approved wording is the percentage alone.
+Say exactly this. Do not add a denominator or claim that most users were new.
 
 ---
 
@@ -338,9 +324,7 @@ Not every Datadog integration has moved to otelc yet.
 
 **DO**
 
-Connect the examples to the section's four signal indicators. The build path
-can install SDK instrumentation. The selected bundle determines coverage.
-Do not say otelc alone automatically enables every profile type.
+Connect the examples to the four signal indicators. Do not say otelc alone enables every profile type.
 
 ---
 
@@ -352,7 +336,7 @@ Build-time rewriting can also reach Go runtime internals.
 
 **DO**
 
-Advance to the linkname example, then the goroutine-local storage aspect.
+Advance to the linkname example.
 
 ---
 
@@ -368,7 +352,7 @@ instrumentation API.
 
 **DO**
 
-Read only the phrase "hall of shame." Do not read the whole code block.
+Read only the phrase "hall of shame."
 
 ---
 
@@ -385,11 +369,7 @@ dd-trace-go owns this aspect. Orchestrion applies it. otelc ships its own
 
 **DO**
 
-The aspect file belongs in dd-trace-go because it defines tracer-specific
-runtime context. That is why the path says dd-trace-go, not otelc.
-
-Give the Palpatine GIF one beat. It cackles at the dark magic with you. Do
-not name the film.
+Give the Palpatine GIF one beat. Do not name the film.
 
 ---
 
@@ -409,8 +389,7 @@ Go 1.23.9 and 1.24.3 got the fix too.
 
 **DO**
 
-Keep the distinction between function and variable linknames. Do not
-over-explain BSS layout unless asked.
+Keep the function and variable linkname distinction. Do not explain BSS layout unless asked.
 
 ---
 
@@ -422,8 +401,7 @@ The linker picked by symbol loading order.
 
 **DO**
 
-Ten seconds. Do not explain the joke. The caption is the punchline to the
-linkname slide. Advance.
+Ten seconds. Do not explain the joke. Advance.
 
 ---
 
@@ -440,8 +418,7 @@ What if we cannot change the build?
 
 **DO**
 
-Use that question to move to process start. Do not imply that more signals
-make this approach available to every service.
+Move to process start. Do not imply more signals reach every service.
 
 ---
 
@@ -457,9 +434,7 @@ The constraint changes from build ownership to a compatible startup path.
 
 **DO**
 
-Point to the same four signal indicators. This explains capability, not a
-claim that the development Go hook already implements every SDK feature.
-Startup injection does not mean attachment to an already running process.
+Point to the four signal indicators. Startup injection is not attachment to a running process.
 
 ---
 
@@ -499,8 +474,7 @@ Look at the last row. Go has no such entry point.
 
 **DO**
 
-The two language lists come from the public pages in the footer. Python is off
-by default in the OpenTelemetry injector. Say so if asked.
+Python is off by default in the OpenTelemetry injector. Say so if asked.
 
 ---
 
@@ -520,8 +494,7 @@ Datadog is working on a Go path for Single-Step Instrumentation.
 
 **DO**
 
-Do not promise a public release date. Separate the public language lists from
-the Go work in development. The next slides explain the Go restriction.
+Do not promise a release date. Separate public language lists from Go work in development.
 
 ---
 
@@ -540,8 +513,7 @@ LD_PRELOAD must force the use of external linking.
 
 **DO**
 
-This is the problem statement for the section. Be exact: the variable is not
-ignored, it is never read.
+Be exact: the variable is not ignored, it is never read.
 
 ---
 
@@ -558,8 +530,7 @@ agent.
 
 **DO**
 
-Be precise. Do not say LD_PRELOAD never works with Go. It works for some builds.
-This slide is the problem statement for the section.
+Be precise. Do not say LD_PRELOAD never works with Go.
 
 ---
 
@@ -576,13 +547,8 @@ debug mode on. Span creation and trace-id extraction on stderr.
 
 **DO**
 
-The contradiction is the device. The room will connect this slide to the
-LD_PRELOAD slide. Get there first.
-
-Do not be drawn on mechanism. Not the linking model, not the entry path, not
-.gopclntab. Not on a slide, not in the script, not if asked. Defer.
-
-The chip is amber: in development, not released.
+Get there first. Do not be drawn on mechanism: not the linking model, entry path,
+or .gopclntab. Defer. The chip is amber: in development, not released.
 
 ---
 
@@ -594,7 +560,7 @@ No rebuild. No source change. No kernel version gate. One line.
 
 **DO**
 
-One line. Advance.
+Advance.
 
 ---
 
@@ -610,8 +576,7 @@ export. The costs are Linux, privileges, and compatibility.
 
 **DO**
 
-Point to the signal indicators. Introduce OBI, explain one uprobe hit, then
-apply it. Keep the Go-specific details attached to the OBI example.
+Point to the signal indicators. Explain one uprobe hit, then apply it to OBI.
 
 ---
 
@@ -625,10 +590,7 @@ and contributors.
 
 **DO**
 
-Celebrate it. Smile, pause, let the room clap if it wants to. Ten seconds,
-no more. Do not explain "stable" here: the next slide does that. Do not name
-maintainers. If the talk moves off 2 November, change "Three days ago" on
-the slide.
+Smile, pause, let the room clap. Ten seconds. Do not explain "stable" here. If the talk moves off 2 November, change "Three days ago" on the slide.
 
 ---
 
@@ -640,9 +602,7 @@ Somehow, it works.
 
 **DO**
 
-Two seconds. The Palpatine GIF is the wink at the v1.0.0 news. Do not
-explain it. This is the first beat of a two-part gag: the callback lands
-after the pitfalls section, before Profiles.
+Two seconds. Do not explain the Palpatine GIF. The callback comes after the pitfalls section.
 
 ---
 
@@ -662,10 +622,7 @@ And gRPC telemetry is still a release candidate.
 
 **DO**
 
-Reveal each line. Two chips: teal for the stable core, amber for what is
-outside it. Say "stable core", never "OBI is stable". Do not quote the README:
-at the v1.0.0 tag it still has the old "Development" wording, and the release
-notes say that is a known follow-up.
+Reveal each line. Two chips: teal for the stable core, amber for what is outside it. Say "stable core", never "OBI is stable". Do not quote the README.
 
 ---
 
@@ -686,8 +643,7 @@ the event occurs.
 
 **DO**
 
-Credit the diagram verbally to eBPF.io. Do not say the verifier proves the
-whole system safe. It checks this program.
+Credit the diagram verbally to eBPF.io. Do not say the verifier proves the system safe.
 
 ---
 
@@ -705,8 +661,7 @@ breaks it.
 
 **DO**
 
-Point at the uprobe row. Do not let the room think that fentry works for Go
-functions.
+Point at the uprobe row. Do not imply fentry works for Go functions.
 
 ---
 
@@ -728,8 +683,7 @@ crosses into the kernel. Keep that cost in mind as we apply the mechanism to OBI
 
 **DO**
 
-Fifty seconds. Do not quote a nanosecond number on stage. The kernel benchmark
-numbers in the research are for an empty probe, not for a real handler.
+Fifty seconds. Do not quote a nanosecond number on stage.
 
 ---
 
@@ -749,9 +703,7 @@ service continues the trace.
 
 **DO**
 
-Show the result before the Go-specific details. Explain that the next slides
-answer why OBI tracks goroutines, probes RET sites, and resolves field offsets.
-Do not teach those details twice.
+Show the result first. The next slides explain the Go details.
 
 ---
 
@@ -768,8 +720,7 @@ process ID and the address of the goroutine, the g pointer.
 
 **DO**
 
-Say amd64 out loud. arm64 uses different registers. The g pointer and the
-numeric goroutine ID are different values. Do not mix them.
+Say amd64 out loud. Do not mix the g pointer and the goroutine ID.
 
 ---
 
@@ -790,7 +741,7 @@ address is never touched.
 
 **DO**
 
-Forty-five seconds. This explains OBI's RET-site probes. Do not skip it.
+Forty-five seconds. Do not skip it.
 
 ---
 
@@ -806,7 +757,7 @@ request. For Go, we need a separate source of layouts. That is the next step.
 
 **DO**
 
-Thirty seconds. The dotted branch on the diagram is the point.
+Thirty seconds. The dotted branch is the point.
 
 ---
 
@@ -827,7 +778,7 @@ problem.
 
 **DO**
 
-Thirty-five seconds. Link back to the CO-RE slide.
+Thirty-five seconds. Link back to CO-RE.
 
 ---
 
@@ -839,8 +790,7 @@ No source change. No rebuild. No application rollout.
 
 **DO**
 
-Pause after each line. Then add: the DaemonSet still has a deployment and
-security cost. Zero-touch describes the application, not the platform.
+Pause after each line. Then add: the DaemonSet still has a deployment and security cost.
 
 ---
 
@@ -855,9 +805,7 @@ slide deck.
 
 **DO**
 
-Do not read all thirteen. Point to a few categories. Call out the corrected names
-only if useful: github.com/redis/go-redis/v9, not the old v8 path. Gin excludes
-v1.7.5.
+Do not read all thirteen. Point to a few categories.
 
 ---
 
@@ -878,9 +826,7 @@ gRPC is a release candidate. Go runtime metrics are still in development.
 
 **DO**
 
-Say explicitly: correlation is log support, but OBI is not a log exporter.
-The stability line is the small print at the bottom. Say it once. It tells
-the room which dashboards are safe to build on.
+Say explicitly: correlation is log support, not a log exporter. Say the stability line once.
 
 ---
 
@@ -894,7 +840,7 @@ cluster.
 
 **DO**
 
-Read across the table, not every row. This is the constraint, not the detail.
+Read across the table, not every row.
 
 ---
 
@@ -911,11 +857,7 @@ need SYS_ADMIN on kernel 5.10 or newer because it uses bpf_probe_write_user.
 
 **DO**
 
-Speak the ladder as four rungs, never as a table. CAP_SYS_PTRACE inspects
-/proc. It does not PTRACE_ATTACH. If asked about perf_event_paranoid: since
-v0.14.0, OBI falls back to tracefs, so most probes attach without SYS_ADMIN.
-The write helper still needs SYS_ADMIN. Secure Boot and kernel lockdown can
-still turn it off even when a manifest looks correct.
+Speak the ladder as four rungs, never as a table. CAP_SYS_PTRACE inspects /proc. It does not PTRACE_ATTACH. Since v0.14.0, most probes attach without SYS_ADMIN. The write helper still needs SYS_ADMIN. Secure Boot and kernel lockdown can still turn it off.
 
 ---
 
@@ -934,9 +876,7 @@ OBI can now export it. You still write the span. You do not need the SDK.
 
 **DO**
 
-This is the boundary slide. The honesty is the point. The otel.Tracer line
-is the small print: it needs SYS_ADMIN, because OBI writes into the process
-to turn on the Auto SDK.
+The honesty is the point. The otel.Tracer line needs SYS_ADMIN.
 
 ---
 
@@ -960,8 +900,7 @@ Zero-touch does not mean zero cost.
 
 **DO**
 
-Let the meme ask the question. The next slide answers with the table. Two
-seconds, then advance. Do not answer the meme aloud.
+Two seconds, then advance. Do not answer the meme aloud.
 
 ---
 
@@ -985,8 +924,7 @@ Compatibility: uprobes target compiled locations and inferred layouts. Go
 
 **DO**
 
-Credit Usama Saqib verbally for the two-category framing. Point to his public
-FOSDEM talk in the footer.
+Credit Usama Saqib verbally. Point to his FOSDEM talk in the footer.
 
 **Static-PIE anecdote (cuttable, allow about 1:25):**
 
@@ -1008,10 +946,7 @@ not compile.
 
 **DO**
 
-This anecdote is marked cuttable. If running long, skip it and keep only the
-PR 1851 line on the slide. Present these as evidence of maintenance cost, not
-as current unfixed defects. The issue was fixed. The team changed build flags,
-not application code.
+Cuttable. If running long, skip it and keep only the PR 1851 line. Present it as maintenance cost, not an unfixed defect.
 
 ---
 
@@ -1027,7 +962,7 @@ Twenty-eight minutes, public, and it goes deeper than this section can.
 
 **DO**
 
-Credit him verbally. Point to the slide link. Do not read the screenshot.
+Credit him verbally. Do not read the screenshot.
 
 ---
 
@@ -1039,9 +974,7 @@ Somehow, it works.
 
 **DO**
 
-Ten seconds. Do not explain the joke. Explaining the joke spends the time it
-bought. The caption is the punchline to the uprobe section. This is the
-callback to the Palpatine gag at the v1.0.0 news. Advance.
+Ten seconds. Do not explain the joke. Advance.
 
 ---
 
@@ -1056,8 +989,7 @@ CPU profiles from outside the application, without rebuilding it.
 
 **DO**
 
-Point to profiles in the signal indicators. This is another way to collect
-that signal, not a claim that profiling only exists at the kernel layer.
+Point to profiles in the signal indicators.
 
 ---
 
@@ -1069,7 +1001,7 @@ Traces tell you which request was slow. Profiles tell you where the CPU went.
 
 **DO**
 
-Pause between the two questions. Both lines appear on one slide.
+Pause between the two questions.
 
 ---
 
@@ -1088,8 +1020,7 @@ The Profiles specification is Alpha.
 
 **DO**
 
-The profiler itself can still be useful, but do not imply a stable wire or
-data-model contract.
+Do not imply a stable wire or data-model contract.
 
 ---
 
@@ -1101,7 +1032,7 @@ How does the profiler read a stripped Go binary?
 
 **DO**
 
-Advance to the runtime metadata.
+Advance.
 
 ---
 
@@ -1122,8 +1053,7 @@ no special debug build.
 
 **DO**
 
-Forty seconds. Let the room read the quote while you finish. Do not say that
-the profiler ignores frame pointers.
+Forty seconds. Do not say the profiler ignores frame pointers.
 
 ---
 
@@ -1156,8 +1086,7 @@ Even with both signals, we can still miss the variable that explains the bug.
 
 **DO**
 
-Establish the correlation need. Keep the OTEP mechanism in the future section.
-Return to the opening bug as you enter live debugging.
+Establish the correlation need. Keep the OTEP mechanism for the future section.
 
 ---
 
@@ -1169,7 +1098,7 @@ Each signal points at the other one for the missing context.
 
 **DO**
 
-Two seconds. The Spider-Man GIF carries the beat. Advance.
+Two seconds. Advance.
 
 ---
 
@@ -1184,9 +1113,7 @@ with a snapshot of the available variables.
 
 **DO**
 
-Point to logs in the signal indicators. Metrics and traces remain goals, not
-capabilities of this logpoint. Name the opening loop: the log line, the
-redeploy, the wrong place.
+Point to logs in the signal indicators. Metrics and traces are goals, not capabilities. Name the opening loop.
 
 ---
 
@@ -1203,10 +1130,8 @@ captures the values. The snapshot appears in your debug session.
 
 **DO**
 
-The diagram is simplified. The public docs do not describe the hop from the
-backend to the system probe in detail, so do not add steps to it on stage.
-It can take a couple of minutes after you create a logpoint before it
-captures. Say so if someone asks why it is not instant.
+Do not add steps to the diagram. A logpoint can take a couple of minutes to
+capture. If asked why it is not instant, say so.
 
 ---
 
@@ -1224,8 +1149,8 @@ PC: in a register, or on the stack.
 
 **DO**
 
-The mechanism comes from the public datadog-agent repository. Present it as
-how the code works, not as a product guarantee.
+The source is the public datadog-agent code. Present it as how the code works,
+not as a product guarantee.
 
 ---
 
@@ -1241,8 +1166,7 @@ Some lines have no safe place for a probe at all, and the tool tells you.
 
 **DO**
 
-If the room laughs at "unavailable", let it. Every Go developer who used a
-debugger on an optimised binary has seen it.
+If the room laughs at "unavailable", let it.
 
 ---
 
@@ -1260,7 +1184,7 @@ For Go, you need Linux 5.17 or newer and Agent 7.73 or newer on the same host. T
 
 **DO**
 
-Every number on this slide is from the public docs in the footer. Do not add an overhead percentage. The public docs give no measured overhead figure for Go.
+Do not add an overhead percentage. The public docs give none for Go.
 
 ---
 
@@ -1276,9 +1200,7 @@ A logpoint gives bounded variable snapshots with no code change and no pause. Yo
 
 **DO**
 
-Read the last row, not the whole table. Delve tracepoints do not stop the
-program. If someone says so, agree, and say that they print events, not
-snapshots.
+Read the last row, not the whole table. Delve tracepoints print events, not snapshots.
 
 ---
 
@@ -1291,8 +1213,7 @@ Which intervention point can our service support?
 
 **DO**
 
-Return to the lifecycle map in words. Compare signal coverage before the
-constraint table.
+Compare signal coverage before the constraint table.
 
 ---
 
@@ -1310,10 +1231,7 @@ Similar signals do not mean identical coverage or deployment costs.
 
 **DO**
 
-Keep the same signal order as the section indicators. The Go injector is in
-development. Metrics and traces from live probes remain goals for the closing
-section. The table describes application evidence, not each agent's diagnostic
-telemetry.
+Keep the signal order. The Go injector is in development. Live probe metrics and traces remain goals.
 
 ---
 
@@ -1328,8 +1246,7 @@ CPU profiles: the eBPF Profiler. A missing variable: a live logpoint.
 
 **DO**
 
-Read examples across the table, not every row. The first constraint usually
-decides the first tool.
+Read examples across the table, not every row.
 
 ---
 
@@ -1348,8 +1265,6 @@ Those are choices we can make now. What should become easier to build?
 **DO**
 
 This is an example, not a universal stack. Do not repeat the adoption number.
-Keep its approved wording on screen. Use the final question to enter the
-future section before the closing callback.
 
 ---
 
@@ -1363,7 +1278,7 @@ If you work on Go, I will find you in the hallway.
 
 **DO**
 
-Show the Puss in Boots GIF. One beat. Deadpan. Do not explain it.
+One beat. Deadpan. Do not explain the GIF.
 
 ---
 
@@ -1383,7 +1298,7 @@ Go 1.27 moved HTTP/2 into a new internal package. It also added a field to modul
 
 **DO**
 
-Say it as thanks, not blame. They asked the question first. Use their full names, as on the slide.
+Say it as thanks, not blame. Use their full names.
 
 ---
 
@@ -1403,7 +1318,7 @@ In the December 2024 sync, the Go team asked, "How would this look?" The fork is
 
 **DO**
 
-If someone cites golang/go#22008, answer this way. A USDT site is fixed at compile time. Its note says where each value lives at that site. Call the fork a proof of concept, not a plan.
+If someone cites golang/go#22008, a USDT site is fixed at compile time. Call the fork a proof of concept, not a plan.
 
 ---
 
@@ -1421,7 +1336,7 @@ The ask is to document where the labels live, and keep that layout stable for ou
 
 **DO**
 
-Lead with "no new API". Then say "read contract". Present the link to OpenTelemetry proposal 4947 as proposed work.
+Lead with "no new API". Then say "read contract". Present proposal 4947 as proposed work.
 
 ---
 
@@ -1437,7 +1352,7 @@ The ask is to close those gaps. It is not a new build mode.
 
 **DO**
 
-Mention the 20% adoption growth only as a reason the path matters. Do not repeat the number as a claim about Go users.
+Do not repeat the 20% number as a claim about Go users.
 
 ---
 
@@ -1457,11 +1372,11 @@ Native agent libraries may fit cgo without a C toolchain. The accepted experimen
 
 **DO**
 
-Keep this generic. Never describe how the Datadog injector links, enters, or which binaries it supports.
+Keep this generic. Never describe how the Datadog injector links or enters.
 
 ---
 
-## Four asks. I will find you in the hallway.
+## Four asks. I will find you in the hallway
 
 **SAY**
 
@@ -1506,8 +1421,7 @@ that we can investigate with the tools we already have.
 
 **DO**
 
-End the future section. The agent callback uses current preview capabilities,
-not a promise that depends on the proposals.
+End the future section. The agent callback uses current preview capabilities.
 
 ---
 
@@ -1527,13 +1441,7 @@ Same move as the opening joke. Except now the agent has the framework.
 
 **DO**
 
-This is the one place enthusiasm is the point. Still bounded. Name the product
-once. The specifics: system-probe, the kernel floor at 5.17, logpoints that
-expire automatically, the preview tier. These go here in the script because the
-slide carries the idea, not the product spec.
-
-This is the callback to the joke. The agent was missing the framework. Now it
-has it.
+This is the one place enthusiasm is the point. Name the product once. Give the specifics here: system-probe, kernel 5.17, logpoints that expire, preview tier.
 
 ---
 
@@ -1541,7 +1449,7 @@ has it.
 
 **DO**
 
-Pause. Advance to the two lines that the audience should remember.
+Pause. Advance to the two lines to remember.
 
 ---
 
@@ -1555,7 +1463,7 @@ Add a layer only when its signal pays for its operational cost.
 
 **DO**
 
-Slow down. These two lines are the whole talk. Let them land.
+Slow down. These two lines are the whole talk.
 
 ---
 
@@ -1573,7 +1481,7 @@ Go Compile-Time Instrumentation. eBPF Instrumentation. The Injector. Profiling.
 
 **DO**
 
-Point to the community repo. All channels are listed there.
+Point to the community repo.
 
 ---
 
@@ -1591,7 +1499,7 @@ it got faster.
 
 **DO**
 
-Deadpan. Own the plug. Say the time and the room slowly enough to photograph.
+Deadpan. Say the time and the room slowly enough to photograph.
 
 ---
 
@@ -1607,7 +1515,7 @@ reach your service.
 
 **DO**
 
-End with this line. Stop. Let the questions slide stay up.
+End with this line. Stop.
 
 ---
 
@@ -1615,7 +1523,7 @@ End with this line. Stop. Let the questions slide stay up.
 
 **DO**
 
-Stop. Leave the links visible for questions.
+Stop. Leave the links visible.
 
 ## Reserve answers
 

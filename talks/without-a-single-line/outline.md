@@ -6,18 +6,14 @@
 
 ## Thesis
 
-Automatic instrumentation supplies baseline evidence without hand-written
-wrappers throughout the application. Follow the lifecycle: build, process
-start, then kernel. Track traces, metrics, logs, and profiles at each point.
-The SDK and integrations determine what each path can provide.
-
-When the baseline misses a production question, a live probe can capture the
-missing values. The closing proposals address the limitations that the audience
-now understands. Then the agent returns to the opening bug with a useful
-mechanism and its constraints.
+Automatic instrumentation supplies baseline evidence without wrappers throughout
+the application. Follow the lifecycle: build, process start, then kernel. Track
+traces, metrics, logs, and profiles at each point. When the baseline misses a
+question, a live probe captures the missing values. The closing proposals address
+the limits. Then the agent returns to the opening bug.
 
 Build-time instrumentation still requires a rebuild. Zero-touch does not mean
-zero operational cost. This remains a working narrative, not a fixed sequence.
+zero operational cost. This is a working narrative, not a fixed sequence.
 
 ## Beat sheet
 
@@ -34,14 +30,13 @@ zero operational cost. This remains a working narrative, not a fixed sequence.
 | 09 From question to evidence | 4:00 | 36:00 | Agent callback, takeaways, concrete SIG asks, benchmarks plug, and resources. |
 | Buffer | 2:00 | 38:00 | Pauses, audience reactions, and overruns. |
 
-These are working budgets, not measurements. The expanded future section needs
-a timed read-through. Removing the install slide does not prove that the new
-material fits. Keep the optional static-PIE anecdote within the OBI budget,
-or omit it. Allow about 1:25 if included.
+These are working budgets, not measurements. The future section needs a timed
+read-through. Removing the install slide does not prove the new material fits.
+The optional static-PIE anecdote needs about 1:25 within the OBI budget, or omit it.
 
 Checkpoints: otelc by 4:00, injector by 8:00, OBI by 11:00, profiles by 20:00,
 live debugging by 22:30, selection by 26:00, future work by 28:00, and the
-closing callback by 32:00. Revise the budgets after rehearsal.
+closing callback by 32:00. Revise after rehearsal.
 
 ## Cut ladder
 
@@ -86,56 +81,20 @@ they exist to fix.
 
 ## Narrative transitions
 
-### Open and Go constraints to build time
-
-The agent needs both a mechanism and a reason to choose it. Start where source
-structure remains available. Introduce the four signals as evidence, not a
-ranking of tools.
-
-### Build time to process start
-
-The build path can enable SDK signals, but it needs build ownership. Ask what
-is possible when we cannot change the build. Startup injection changes the
-attachment path, not the SDK's capabilities.
-
-### Process start to kernel
-
-Go restricts the startup path. An external observer gives another option.
-Introduce OBI, explain one uprobe hit, then show how OBI turns events into spans.
-Attach the Go-specific details to that example instead of a standalone primer.
-
-### Kernel to profiles
-
-OBI supplies boundary traces and metrics. CPU profiles answer another question.
-The build path can include profiling too. This section offers a kernel route,
-not exclusive ownership of the profiling signal.
-
-### Profiles to live debugging
-
-Request context can connect profiles and traces, but both can still miss a
-variable. Return to the opening bug. A live logpoint asks for the missing
-value while the service runs.
-
-### Live debugging to selection
-
-Compare both dimensions: the evidence needed and the intervention point that
-the service can support. Show one useful combination, not a universal stack.
-
-### Selection to future work
-
-The audience now knows the costs of inferred layouts, missing hooks, and
-separate context stores. The Go asks address those limits: USDT probes, a read
-contract for pprof labels, `-toolexec` gaps, and one start-up door. Separate
-asks from current signals. The tool plans follow the asks: Live Debugger metrics
-and tracing are goals, with tracing on a 12+ month horizon, not a release
-commitment. Memory profiling is work in progress.
-
-### Future work to close
-
-The future work can improve the tools. The agent callback uses evidence that
-current preview tools already capture. Resolve the opening joke and bug,
-state the decision rule, and invite specific contributions. Keep the resource
-links. Do not restore the install-command slide.
+- Open to build time: the agent needs a mechanism and a reason to choose it.
+- Build time to process start: the build path needs build ownership. Startup
+  injection changes the attachment path, not the SDK capabilities.
+- Process start to kernel: Go restricts the startup path. Teach eBPF through
+  OBI, with the Go details attached to one uprobe hit.
+- Kernel to profiles: the kernel route is one way to get profiles, not the only one.
+- Profiles to live debugging: request context joins profiles and traces, but
+  a variable can still be missing. Return to the opening bug.
+- Live debugging to selection: compare the evidence needed and the layer the
+  service can support. Show a combination, not a universal stack.
+- Selection to future work: the asks address the limits (inference, missing
+  hooks, separate context stores). Separate asks from current signals.
+- Future work to close: the agent callback uses current preview capabilities.
+  Resolve the opening bug, state the decision rule, invite contributions.
 
 ## Facts that must remain precise
 
