@@ -29,7 +29,7 @@
 - **Source(s):** S-TH-01 (runtime/proc.go "hall of shame"), S-TH-02 (internal/runtime/exithook), S-TH-03 (golang/go#28909 LD_PRELOAD), S-TH-04 (Dynatrace limitations)
 - **Notes:**
   - Go builds native machine code. There is no classloader and no bytecode.
-  - Pure-Go builds are static. A default cgo build is dynamic, and on glibc the loader runs LD_PRELOAD constructors.
+  - Pure-Go builds are static. A default cgo build is dynamic, and on glibc the loader runs LD_PRELOAD constructors. Docker test with Go 1.26.5 on Debian arm64 and Alpine, 2026-11-02.
   - The only internal exit hook is scoped to program termination. The Go team lists go:linkname abusers in a "hall of shame" in runtime/proc.go.
 
 ### [C-002] Orchestrion injects a field `__dd_gls_v2 any` into `runtime.g` and exposes it via `go:linkname` get/set function variables
@@ -51,7 +51,7 @@
 - **Notes:**
   - Variable linkname has no definition and reference separation. If both sides are uninitialized, the linker choice is arbitrary.
   - Trap: the slide quote is from Cherry Mui (cherrymui, 2025-03-03), not Ian Lance Taylor.
-  - CL 660696 fixed it. The linker keeps the larger BSS symbol. Backported to Go 1.23.9 (#73091) and 1.24.3 (#73092).
+  - CL 660696 fixed it in Go 1.25. The linker keeps the larger BSS symbol. Backported to Go 1.23.9 (#73091) and 1.24.3 (#73092).
 
 ### [C-003] dd-trace-go has 51 integration wrappers in contrib/, not ~54
 

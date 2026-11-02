@@ -25,6 +25,7 @@ Cartlidge
 (?i)config
 Datadog
 (?i)ebpf
+(?i)exe
 (?i)fal
 (?i)fentry
 (?i)fexit
@@ -32,8 +33,10 @@ FPUs
 (?i)golab
 (?i)gopclntab
 gRPC
+Hiltner
 HTTP
 (?i)img
+Knyszek
 (?i)kprobe
 (?i)kprobes
 Kemal
@@ -43,6 +46,7 @@ Kroki
 (?i)linknames
 (?i)lockdown
 (?i)logpoint
+(?i)logpoints?
 Logrus
 (?i)macrobenchmark
 Marp
@@ -58,6 +62,7 @@ Parca
 (?i)pprof
 Quesma
 Readwise
+Rhys
 Salp
 Saqib
 SIGs
