@@ -601,15 +601,30 @@ section.dark .chip.caution { background: #6b0039; color: #ffe4f3; }
 [data-marpit-fragment] { transition: opacity .22s ease, filter .22s ease; }
 [data-bespoke-marp-fragment="inactive"] { opacity: .18; filter: saturate(.1); }
 @media print { section { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
-/* Scale external diagrams inside the content area above the footer band. */
-.center img[src^="https://kroki.io/mermaid/"] {
-    /* Kroki SVGs have a small native size. Fill the width, keep the aspect ratio. */
-    width: 100%;
+/* ───────────────────────────────────────────────────────── diagrams ── */
+
+/* Kroki draws each diagram on its own server and returns an image, so the theme
+   sets its size and its ground, never its interior. Marp wraps that image in
+   <marp-auto-scaling>, whose shadow container is `width: max-content`. A
+   percentage width therefore resolves to the natural width, and a small
+   diagram never grows. An explicit width upscales it to the content band, which
+   is what makes the labels legible from the back of the room. */
+section:has(marp-auto-scaling) {
+    /* Template art competes with thin diagram lines. Fade it on these slides. */
+    background-image: linear-gradient(rgba(245, 245, 245, 0.84), rgba(245, 245, 245, 0.84)), url("assets/bg-light.jpg");
+}
+section:has(marp-auto-scaling) marp-auto-scaling img {
+    /* 400px is the largest band that clears the footer on the tightest slide,
+       the one with two paragraphs under the picture. A 420px band moves those
+       paragraphs into the footer band, and the footer check fails. */
+    --diagram-band: 400px;
+    width: calc(1280px - 2 * var(--edge));
     height: auto;
-    max-height: 435px;
+    /* A tall diagram stops at the band and centres in the content width. A wide
+       one keeps its own height, so no letterbox space sits under it. */
+    max-height: var(--diagram-band);
     object-fit: contain;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 /* Existing deck inline colour names remain in Markdown until the talk edit. */
 .hl-blue { color: var(--reading) !important; }

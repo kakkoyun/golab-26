@@ -35,6 +35,10 @@ The slide-specific checks remain here:
 - `check_slide_footer.py` catches content that overlaps the footer band.
 - `check_code_headers.py` verifies source labels on code panels.
 - `check_slide_fragments.py` protects progressive-reveal markers.
+- `check_diagrams.py` fetches each Kroki diagram URL and fails when the service
+  does not answer. Marp renders the diagrams over the network, so without this
+  check a flaky connection leaves a broken image on a slide and the build still
+  reports success.
 
 `make check` runs them against both decks.
 
