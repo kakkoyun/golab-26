@@ -1,0 +1,72 @@
+# Vocabulary for the public GoLab 2026 content (decks, theme template,
+# READMEs). Only real, correctly spelled project and technical names.
+# Two entry classes:
+# - (?i) prefix: case-insensitive. Generic technical terms and file, CLI,
+#   or config names, where sentence-initial capitals ("Tracefs fallback",
+#   "Lockdown can change what works") are legitimate beside the lowercase
+#   token ("gls.orchestrion.yml", "ebpf.io", "theme: golab").
+# - Plain entry: exact casing enforced, any other casing is flagged with
+#   the accepted casing as the suggested replacement. Used for product
+#   and proper names where the casing is the point (Datadog, Marp, HTTP,
+#   gRPC, OBI, Beyla, people's names).
+(?i)allocs
+ABIInternal
+Akinshin
+Akkoyun
+ALUs
+Amdahl
+(?i)benchlab
+(?i)benchstat
+Beyla
+(?i)bg
+Cartlidge
+(?i)cgo
+(?i)classloader
+(?i)config
+Datadog
+(?i)ebpf
+(?i)fal
+(?i)fentry
+(?i)fexit
+FPUs
+(?i)golab
+(?i)gopclntab
+gRPC
+HTTP
+(?i)img
+(?i)kprobe
+(?i)kprobes
+Kemal
+Kroki
+(?i)libc
+(?i)libstapsdt
+(?i)linknames
+(?i)lockdown
+(?i)logpoint
+Logrus
+(?i)macrobenchmark
+Marp
+(?i)mathjax
+(?i)ns
+OBI
+(?i)orchestrion
+(?i)otelc
+Otava
+Parca
+(?i)pprof
+Quesma
+Readwise
+Salp
+Saqib
+SIGs
+(?i)sig's
+(?i)stddev
+(?i)sysfs
+(?i)tracefs
+(?i)tracepoint
+(?i)uprobe
+(?i)uprobes
+(?i)uretprobe
+(?i)uretprobes
+Usama
+(?i)zeroins
