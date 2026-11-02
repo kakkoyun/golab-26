@@ -17,7 +17,7 @@ MARP := npx marp
 .PHONY: all build/html build/pdf build/html/% build/pdf/% build/offline/% watch/% serve/% clean clean/% \
 	check check/fast check/slides check/css check/theme check/footer check/go check/fragments check/code-headers check/diagrams \
 	lint/md lint/md/% fix/md/% format/md format/md/% check/typos check/typos/% fix/typos/% \
-	pre-commit sync/theme hooks install help
+	pre-commit sync/theme sync/notes check/notes hooks install help
 
 all: check
 
@@ -47,7 +47,7 @@ clean/%:
 
 check: check/slides check/go
 
-check/fast: check/theme check/code-headers lint/md check/typos check/fragments
+check/fast: check/theme check/code-headers lint/md check/typos check/fragments check/notes
 
 check/slides: check/css check/code-headers lint/md check/typos check/fragments build/html check/diagrams check/footer
 
@@ -64,6 +64,14 @@ check/diagrams: build/html
 # Marp turns `*` bullets into progressive-reveal fragments. Prettier's markdown
 # printer rewrites them to `-`, silently destroying every reveal. `.prettierignore`
 # prevents that; this target is the tripwire if the ignore is ever bypassed.
+NOTES_TALK := talks/without-a-single-line
+
+sync/notes: ## Copy the SAY/DO script into the deck as presenter notes
+	python3 tools/sync_presenter_notes.py $(NOTES_TALK)/slides/presentation.md $(NOTES_TALK)/speaker-notes.md
+
+check/notes:
+	python3 tools/sync_presenter_notes.py --check $(NOTES_TALK)/slides/presentation.md $(NOTES_TALK)/speaker-notes.md
+
 check/fragments:
 	python3 tools/check_slide_fragments.py $(SLIDE_MARKDOWN)
 
@@ -150,6 +158,7 @@ help:
 	@printf '%s\n' 'Verify:'
 	@printf '%s\n' '  make check/fast          Theme, Markdown, and typo checks'
 	@printf '%s\n' '  make check               Full slides, footer, CSS/theme, and Go checks'
+	@printf '%s\n' '  make sync/notes          Copy the script into the deck as presenter notes'
 	@printf '%s\n' '  make check/diagrams      Fetch each diagram and fail when Kroki does not answer'
 	@printf '%s\n' '  make sync/theme          Stage output-local theme resources'
 	@printf '%s\n' ''

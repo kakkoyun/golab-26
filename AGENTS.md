@@ -25,6 +25,11 @@ short sentences, one idea each. `DO` lines are delivery cues, kept separate so
 the prose stays sayable. It is structured for memorisation — beats first, then
 the numbers — not as reference material.
 
+**Presenter notes are generated from the script.** Edit `speaker-notes.md`,
+then run `make sync/notes`. It writes each entry into its slide as a Marp
+presenter-view comment. `make check/notes` fails when they drift. Do not edit
+the notes comments in the deck by hand.
+
 **They must stay in sync.** Any change to a slide changes what gets said. When
 you edit one, edit the other in the same commit. Section headings in the script
 match slide titles verbatim so the speaker can find their place by what is on
