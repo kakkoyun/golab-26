@@ -317,6 +317,9 @@ The Go team calls this access pattern a "hall of shame," not an instrumentation 
 
 ## Compile time can reach Go internals! Dark Magic!
 
+<div class="columns">
+<div>
+
 ###### gls.orchestrion.yml
 
 ```yaml
@@ -327,6 +330,16 @@ advice:
       name: __dd_gls_v2
       type: any
 ```
+
+</div>
+<div class="center">
+
+<br>
+
+![width:220](../../assets/memes/palpatine-unlimited-power.gif)
+
+</div>
+</div>
 
 <div class="small">
 
@@ -532,6 +545,14 @@ DD_TRACE_DEBUG=1 \
 ## OBI *v1.0.0* shipped
 
 ### 30 October. Three days ago
+
+---
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../../assets/memes/somehow-palpatine-returned-poe.gif)
+
+somehow, it works
 
 ---
 
@@ -861,6 +882,14 @@ Go spans you write with `otel.Tracer` and no SDK: OBI can export them through th
 # But it still has a *cost*
 
 ---
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../../assets/memes/padme-for-the-better.gif)
+
+zero-touch means zero cost... right?
+
+---
 
 ## Uprobes have real costs
 
@@ -1005,6 +1034,14 @@ The signal is profiles. Choose the profiler by its coverage and deployment cost.
 <!-- _paginate: false -->
 
 # Traces and profiles. *Apart.*
+
+---
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../../assets/memes/spiderman-pointing.gif)
+
+each one points at the other
 
 ---
 <!-- _class: section -->

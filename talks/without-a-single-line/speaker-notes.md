@@ -389,6 +389,9 @@ engine.
 The aspect file belongs in dd-trace-go because it defines tracer-specific
 runtime context. That is why the path says dd-trace-go, not otelc.
 
+Give the Palpatine GIF one beat. It cackles at the dark magic with you. Do
+not name the film.
+
 ---
 
 ## `go:linkname` variables are fragile
@@ -623,6 +626,20 @@ Celebrate it. Smile, pause, let the room clap if it wants to. Ten seconds,
 no more. Do not explain "stable" here: the next slide does that. Do not name
 maintainers. If the talk moves off 2 November, change "Three days ago" on
 the slide.
+
+---
+
+## somehow, it works
+
+**SAY**
+
+Somehow, it works.
+
+**DO**
+
+Two seconds. The Palpatine GIF is the wink at the v1.0.0 news. Do not
+explain it. This is the first beat of a two-part gag: the callback lands
+after the pitfalls section, before Profiles.
 
 ---
 
@@ -931,6 +948,19 @@ Pause before the cost slide.
 
 ---
 
+## zero-touch means zero cost... right?
+
+**SAY**
+
+Zero-touch does not mean zero cost.
+
+**DO**
+
+Let the meme ask the question. The next slide answers with the table. Two
+seconds, then advance. Do not answer the meme aloud.
+
+---
+
 ## Uprobes have real costs
 
 **SAY**
@@ -1006,7 +1036,8 @@ Somehow, it works.
 **DO**
 
 Ten seconds. Do not explain the joke. Explaining the joke spends the time it
-bought. The caption is the punchline to the uprobe section. Advance.
+bought. The caption is the punchline to the uprobe section. This is the
+callback to the Palpatine gag at the v1.0.0 news. Advance.
 
 ---
 
@@ -1123,6 +1154,18 @@ Even with both signals, we can still miss the variable that explains the bug.
 
 Establish the correlation need. Keep the OTEP mechanism in the future section.
 Return to the opening bug as you enter live debugging.
+
+---
+
+## each one points at the other
+
+**SAY**
+
+Each signal points at the other one for the missing context.
+
+**DO**
+
+Two seconds. The Spider-Man GIF carries the beat. Advance.
 
 ---
 
