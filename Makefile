@@ -61,17 +61,24 @@ check/footer: build/pdf
 check/diagrams: build/html
 	python3 tools/check_diagrams.py $(SLIDE_HTML)
 
+# Both talks generate presenter notes. Set NOTES_TALK=talks/<talk> to limit
+# sync/notes or check/notes to one talk.
+NOTES_TALK :=
+NOTES_TALKS := $(or $(NOTES_TALK),$(foreach talk,$(TALKS),talks/$(talk)))
+
+sync/notes: ## Copy the SAY/DO script into the deck as presenter notes
+	@set -e; for talk in $(NOTES_TALKS); do \
+		python3 tools/sync_presenter_notes.py $$talk/slides/presentation.md $$talk/speaker-notes.md; \
+	done
+
+check/notes:
+	@set -e; for talk in $(NOTES_TALKS); do \
+		python3 tools/sync_presenter_notes.py --check $$talk/slides/presentation.md $$talk/speaker-notes.md; \
+	done
+
 # Marp turns `*` bullets into progressive-reveal fragments. Prettier's markdown
 # printer rewrites them to `-`, silently destroying every reveal. `.prettierignore`
 # prevents that; this target is the tripwire if the ignore is ever bypassed.
-NOTES_TALK := talks/without-a-single-line
-
-sync/notes: ## Copy the SAY/DO script into the deck as presenter notes
-	python3 tools/sync_presenter_notes.py $(NOTES_TALK)/slides/presentation.md $(NOTES_TALK)/speaker-notes.md
-
-check/notes:
-	python3 tools/sync_presenter_notes.py --check $(NOTES_TALK)/slides/presentation.md $(NOTES_TALK)/speaker-notes.md
-
 check/fragments:
 	python3 tools/check_slide_fragments.py $(SLIDE_MARKDOWN)
 
