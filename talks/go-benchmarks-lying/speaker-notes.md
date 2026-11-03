@@ -1,6 +1,6 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 77 pages.
+GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 86 pages.
 Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Each `##` heading below matches the slide
@@ -73,23 +73,99 @@ Do not introduce yourself yet. Advance.
 
 ---
 
-## A benchmark bot comment
+## "Not all fast software is world-class,
 
 **SAY**
 
-June this year. dd-trace-go, the Datadog Go tracer. I restructure one file and push.
+Before we talk about benchmarks, one question. Why should you care about speed at all?
 
-The benchmark bot answers: `BenchmarkOTLPProtoSize` is six to nine percent slower than main. Nothing in my diff goes near OTLP encoding.
+Tobi Lütke, who runs Shopify, said it better than I can. Read it with me. Not all fast software is world-class, but all world-class software is fast.
 
-So. Would you fix it?
-
-Most of us would. A red comment on your pull request feels like an accusation. So we open a profiler, find something that looks slow, and push a fix. The comment turns green, and everybody is happy.
-
-Keep that question. We come back to it.
+Speed is not decoration. It is part of what makes software good.
 
 **DO**
 
-Ask the question. Wait two seconds. Do not solve it. The answer comes in §03.
+Pause after the quote. Ledger row 12. If someone asks: the post needs an X login to open.
+
+---
+
+## Measure customer happiness,
+
+**SAY**
+
+But be careful what you chase. The goal is not CPU usage, or allocations, or requests per second. The goal is a happy user.
+
+Everything else is a proxy. A benchmark measures the proxy. So the proxy must be the right one.
+
+**DO**
+
+Slow down here. This is the frame for the whole talk.
+
+---
+
+## Latency and throughput
+
+**SAY**
+
+Two words that people use as if they were the same.
+
+Latency is one operation, start to finish. That is what a user feels. Throughput is operations per second. That is your ceiling.
+
+You can improve one and damage the other. Batching raises throughput and makes latency worse. Know which one your user pays for.
+
+**DO**
+
+Point at each card. No numbers.
+
+---
+
+## The cost of slowness
+
+**SAY**
+
+Rough thresholds, from Jakob Nielsen's usability work. Under two hundred milliseconds, nobody notices. Half a second feels a bit slow. Past one second, people notice that they wait. Past five seconds, they leave.
+
+Google measured it on search. Half a second of extra delay cost them twenty percent of the traffic.
+
+So speed is a product decision, not only an engineering one.
+
+**DO**
+
+Ledger rows 10 and 17. Say "Google". Do not name Marissa Mayer: that attribution is not confirmed.
+
+---
+
+## Before you optimize
+
+**SAY**
+
+Three questions before you write a single benchmark.
+
+Is it slow? Check in production, not in your head. In-process, that is pprof or a continuous profiler. Across the whole system, the OpenTelemetry eBPF profiler or Parca.
+
+Can it go faster? Slow does not mean improvable. The ceiling is the hardware: memory bandwidth, instruction latency. Headroom is the gap between you and that ceiling.
+
+Is it worth it? If you are inside your SLO and your error budget, optimizing is optional. And Amdahl: ten percent off code that runs one percent of the time is nothing.
+
+So benchmark the path that production says is hot. Not the one that looks interesting.
+
+**DO**
+
+Walk the three cards left to right. One sentence each if you are behind.
+
+---
+
+## Finding what to optimize
+
+**SAY**
+
+If you want the "what to optimize" half properly, watch Daniel Martí at GopherCon 2019. It is still the best talk on it.
+
+He covers what to optimize. I cover whether you can believe the number when you get there.
+
+**DO**
+
+Ledger row 28. Then advance to why Datadog cares.
 
 ---
 
@@ -108,6 +184,68 @@ We invest in this internally. The effort is called SpeedLab. This talk is the sp
 **DO**
 
 Say the SpeedLab name once. Ledger row 30 permits the name and its existence only. The practice comes in §05. The PGO number is one service, not all of production. Ledger row 47.
+
+---
+
+## dd-trace-go #4891
+
+**SAY**
+
+Now a real story. June this year, dd-trace-go, the Datadog Go tracer. This is my pull request. With Orchestrion, it moves goroutine-local storage out of the tracer source and weaves it in at build time.
+
+Four reviewers. More than three hundred checks. And one of those checks is a benchmark bot.
+
+**DO**
+
+Point at the title and the checks count. Do not read the summary table.
+
+---
+
+## A benchmark bot comment
+
+**SAY**
+
+The bot answers: `BenchmarkOTLPProtoSize` is six to nine percent slower than main. Nothing in my diff goes near OTLP encoding.
+
+So. Would you fix it?
+
+Most of us would. A red comment on your pull request feels like an accusation. So we open a profiler, find something that looks slow, and push a fix. The comment turns green, and everybody is happy.
+
+
+
+**DO**
+
+Ask the question. Wait two seconds. Do not solve it.
+
+---
+
+## The last bot run
+
+**SAY**
+
+I did not fix it. A week later, the bot ran again on the final commit. Same benchmark. Now it says six to eight percent faster.
+
+My pull request never touched that code. First slower, then faster.
+
+**DO**
+
+Let the contradiction land. Ledger row 52.
+
+---
+
+## The benchmark that matters
+
+**SAY**
+
+And this is the benchmark that matters for this change. I ran the GLS hot-path benchmarks myself, main against the pull request, ten runs each.
+
+The cost is about sixteen nanoseconds per push and pop, with no new allocations. That number I trust, because the benchmark calls the code I changed.
+
+So why did the bot say slower, and then faster, about code I never touched? Keep that question. The answer comes in section three.
+
+**DO**
+
+Point at the delta column. Do not read the rows. Ledger row 52.
 
 ---
 

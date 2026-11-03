@@ -57,6 +57,14 @@ style: |
   .bars .after.a4 { left: calc(4% + 10px); }
   section.meme.fit p:first-of-type { margin: 24px 0 0; }
   section.meme.fit p:first-of-type img { margin: 0 auto; }
+  .shot { overflow: hidden; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 18px rgba(16, 16, 16, 0.25); }
+  .shot p { margin: 0; }
+  .shot img { width: 100%; max-width: none; }
+  .shot.pr { width: 1120px; height: 420px; }
+  .shot.cmp { width: 1120px; height: 345px; }
+  .shot.cmp img { margin-top: -165px; }
+  .shot.bot { width: 960px; height: 436px; }
+  .shot.bot img { margin-top: -222px; }
   .checklist { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 0.5rem; align-items: baseline; font-size: 30px; }
 ---
 
@@ -86,43 +94,257 @@ Do not introduce yourself yet. Advance.
 
 ---
 
-<!-- _footer: "∙ " -->
-## A benchmark bot comment
+<!-- _class: vcenter -->
 
-<div class="big center">
+## "Not all fast software is world-class,
 
-`BenchmarkOTLPProtoSize`
-
-**6-9% slower than main**
-
-</div>
+## but all world-class software is fast."
 
 <br>
 
 <div class="center">
 
-Nothing in the diff touches OTLP encoding.
+**Performance is *the* killer feature.**
 
-**Would you fix it?**
+Tobi Lütke, Shopify · [X, 5 May 2024](https://x.com/tobi/status/1787139157078188180)
 
 </div>
 
 <!--
 SAY
 
-June this year. dd-trace-go, the Datadog Go tracer. I restructure one file and push.
+Before we talk about benchmarks, one question. Why should you care about speed at all?
 
-The benchmark bot answers: `BenchmarkOTLPProtoSize` is six to nine percent slower than main. Nothing in my diff goes near OTLP encoding.
+Tobi Lütke, who runs Shopify, said it better than I can. Read it with me. Not all fast software is world-class, but all world-class software is fast.
 
-So. Would you fix it?
-
-Most of us would. A red comment on your pull request feels like an accusation. So we open a profiler, find something that looks slow, and push a fix. The comment turns green, and everybody is happy.
-
-Keep that question. We come back to it.
+Speed is not decoration. It is part of what makes software good.
 
 DO
 
-Ask the question. Wait two seconds. Do not solve it. The answer comes in §03.
+Pause after the quote. Ledger row 12. If someone asks: the post needs an X login to open.
+-->
+
+---
+
+<!-- _class: vcenter -->
+
+## Measure customer happiness,
+
+## not CPU usage
+
+<div class="center">
+
+A benchmark measures a **proxy**. Pick the right one.
+
+</div>
+
+<!--
+SAY
+
+But be careful what you chase. The goal is not CPU usage, or allocations, or requests per second. The goal is a happy user.
+
+Everything else is a proxy. A benchmark measures the proxy. So the proxy must be the right one.
+
+DO
+
+Slow down here. This is the frame for the whole talk.
+-->
+
+---
+
+## Latency and throughput
+
+<div class="cols">
+<div class="card">
+
+### Latency
+
+One operation.
+
+*Users feel this.*
+
+</div>
+<div class="card measure">
+
+### Throughput
+
+Operations per second.
+
+*Your ceiling.*
+
+</div>
+</div>
+
+<div class="center big">
+
+Improve one, damage the other.
+
+</div>
+
+<!--
+SAY
+
+Two words that people use as if they were the same.
+
+Latency is one operation, start to finish. That is what a user feels. Throughput is operations per second. That is your ceiling.
+
+You can improve one and damage the other. Batching raises throughput and makes latency worse. Know which one your user pays for.
+
+DO
+
+Point at each card. No numbers.
+-->
+
+---
+
+## The cost of slowness
+
+<div class="flow">
+<div class="card">
+
+### 0.1–0.2 s
+
+barely noticeable
+
+</div>
+<div class="card measure">
+
+### 0.3–0.5 s
+
+slightly slow
+
+</div>
+<div class="card">
+
+### 1–3 s
+
+you notice the wait
+
+</div>
+<div class="card measure">
+
+### 5–10 s
+
+users leave
+
+</div>
+</div>
+
+<div class="center big">
+
+Half a second slower: **−20%** Google search traffic.
+
+</div>
+
+<div class="small center">
+
+Nielsen, *Usability Engineering* (1993) · Google, via [Coding Horror: Performance is a Feature](https://blog.codinghorror.com/performance-is-a-feature/)
+
+</div>
+
+<!--
+SAY
+
+Rough thresholds, from Jakob Nielsen's usability work. Under two hundred milliseconds, nobody notices. Half a second feels a bit slow. Past one second, people notice that they wait. Past five seconds, they leave.
+
+Google measured it on search. Half a second of extra delay cost them twenty percent of the traffic.
+
+So speed is a product decision, not only an engineering one.
+
+DO
+
+Ledger rows 10 and 17. Say "Google". Do not name Marissa Mayer: that attribution is not confirmed.
+-->
+
+---
+
+## Before you optimize
+
+<div class="columns3">
+<div class="card">
+
+### Is it slow?
+
+Profile production.
+
+<span class="small">`pprof` · [Continuous Profiler](https://docs.datadoghq.com/profiler/) · [OTel eBPF profiler](https://github.com/open-telemetry/opentelemetry-ebpf-profiler) · [Parca](https://www.parca.dev/)</span>
+
+</div>
+<div class="card measure">
+
+### Can it go faster?
+
+Headroom is the gap to the hardware ceiling.
+
+</div>
+<div class="card">
+
+### Is it worth it?
+
+SLO, error budget.
+
+Amdahl: only the hot path pays.
+
+</div>
+</div>
+
+<div class="center big">
+
+Benchmark what production says is **hot**.
+
+</div>
+
+<!--
+SAY
+
+Three questions before you write a single benchmark.
+
+Is it slow? Check in production, not in your head. In-process, that is pprof or a continuous profiler. Across the whole system, the OpenTelemetry eBPF profiler or Parca.
+
+Can it go faster? Slow does not mean improvable. The ceiling is the hardware: memory bandwidth, instruction latency. Headroom is the gap between you and that ceiling.
+
+Is it worth it? If you are inside your SLO and your error budget, optimizing is optional. And Amdahl: ten percent off code that runs one percent of the time is nothing.
+
+So benchmark the path that production says is hot. Not the one that looks interesting.
+
+DO
+
+Walk the three cards left to right. One sentence each if you are behind.
+-->
+
+---
+
+## Finding what to optimize
+
+<div class="columns">
+<div>
+
+[**Optimizing Go Code Without a Blindfold**](https://www.youtube.com/watch?v=oE_vm7KeV_E)
+
+Daniel Martí · GopherCon 2019
+
+He covers *what* to optimize.
+
+This talk covers *whether you can trust the number*.
+
+</div>
+<div class="center">
+
+![width:480](../assets/gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png)
+
+</div>
+</div>
+
+<!--
+SAY
+
+If you want the "what to optimize" half properly, watch Daniel Martí at GopherCon 2019. It is still the best talk on it.
+
+He covers what to optimize. I cover whether you can believe the number when you get there.
+
+DO
+
+Ledger row 28. Then advance to why Datadog cares.
 -->
 
 ---
@@ -174,6 +396,129 @@ We invest in this internally. The effort is called SpeedLab. This talk is the sp
 DO
 
 Say the SpeedLab name once. Ledger row 30 permits the name and its existence only. The practice comes in §05. The PGO number is one service, not all of production. Ledger row 47.
+-->
+
+---
+
+## dd-trace-go #4891
+
+<div class="shot pr">
+
+![](../assets/pr_4891.png)
+
+</div>
+
+<div class="small center">
+
+[dd-trace-go pull request #4891](https://github.com/DataDog/dd-trace-go/pull/4891) · June 2026
+
+</div>
+
+<!--
+SAY
+
+Now a real story. June this year, dd-trace-go, the Datadog Go tracer. This is my pull request. With Orchestrion, it moves goroutine-local storage out of the tracer source and weaves it in at build time.
+
+Four reviewers. More than three hundred checks. And one of those checks is a benchmark bot.
+
+DO
+
+Point at the title and the checks count. Do not read the summary table.
+-->
+
+---
+
+<!-- _footer: "∙ " -->
+## A benchmark bot comment
+
+<div class="big center">
+
+`BenchmarkOTLPProtoSize`
+
+**6-9% slower than main**
+
+</div>
+
+<br>
+
+<div class="center">
+
+Nothing in the diff touches OTLP encoding.
+
+**Would you fix it?**
+
+</div>
+
+<!--
+SAY
+
+The bot answers: `BenchmarkOTLPProtoSize` is six to nine percent slower than main. Nothing in my diff goes near OTLP encoding.
+
+So. Would you fix it?
+
+Most of us would. A red comment on your pull request feels like an accusation. So we open a profiler, find something that looks slow, and push a fix. The comment turns green, and everybody is happy.
+
+DO
+
+Ask the question. Wait two seconds. Do not solve it.
+-->
+
+---
+
+## The last bot run
+
+<div class="shot bot">
+
+![](../assets/pr_4891_final_improvements.png)
+
+</div>
+
+<div class="center">
+
+Same benchmark, final commit: **6–8% faster**.
+
+</div>
+
+<!--
+SAY
+
+I did not fix it. A week later, the bot ran again on the final commit. Same benchmark. Now it says six to eight percent faster.
+
+My pull request never touched that code. First slower, then faster.
+
+DO
+
+Let the contradiction land. Ledger row 52.
+-->
+
+---
+
+## The benchmark that matters
+
+<div class="shot cmp">
+
+![](../assets/pr_4891_comparison.png)
+
+</div>
+
+<div class="center">
+
+The code I changed: **~16 ns** per push and pop. No new allocations.
+
+</div>
+
+<!--
+SAY
+
+And this is the benchmark that matters for this change. I ran the GLS hot-path benchmarks myself, main against the pull request, ten runs each.
+
+The cost is about sixteen nanoseconds per push and pop, with no new allocations. That number I trust, because the benchmark calls the code I changed.
+
+So why did the bot say slower, and then faster, about code I never touched? Keep that question. The answer comes in section three.
+
+DO
+
+Point at the delta column. Do not read the rows. Ledger row 52.
 -->
 
 ---

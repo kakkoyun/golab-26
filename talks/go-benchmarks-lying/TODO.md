@@ -7,7 +7,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 77
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 86
 pages, 42 minutes presented, 3 minutes Q&A, fragment floor 3.
 
 ---
@@ -74,7 +74,6 @@ For marketing to help promote, once published.
 ### Decide what to do with the assets that the GoLab cut orphaned
 
 No slide references these files now: `bp-feedback-flow.png`,
-`gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png`,
 `go1.26_b_loop_change.png`, `golang_perf_dashboard_charts.png`,
 `golang_performance_dashboard.png`, `golang_performance_monitoring.png`,
 `golang_slowbot.png`, `golang_slowbot_quote.png`. Some are evidence for ledger

@@ -1,7 +1,7 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
 > **Format:** GoLab 2026, room 2, 10:45. 45-minute slot: 42 minutes presented, 3 minutes Q&A. Not recorded. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (77 pages, 3 reveals)
+> **Deck:** `slides/presentation.md` (86 pages, 3 reveals)
 > **Demonstrations:** no live demos. Every command and captured result stays in the repository.
 
 ## Throughline
@@ -42,8 +42,9 @@ visuals. A timed read must replace them (see `TODO.md`).
 
 | Section | Purpose | Monday action | Target | Cumulative |
 | --- | --- | --- | ---: | ---: |
-| Cold open | #4891 bot comment: "Would you fix it?" Plant, do not resolve | — | 1:30 | 1:30 |
-| Why Datadog cares | Code in your process. PGO −3.4% on one service. SpeedLab | — | 1:30 | 3:00 |
+| Why speed matters | Tobi quote. Customer happiness, not CPU. Latency and throughput. Cost of slowness. Before you optimize. Martí | Profile production first | 4:00 | 4:00 |
+| Why Datadog cares | Code in your process. PGO −3.4% on one service. SpeedLab | — | 1:30 | 5:30 |
+| Cold open | #4891: the PR, the bot comment ("Would you fix it?"), the last bot run (faster), the benchmark that matters (~16 ns). Plant, do not resolve | — | 2:30 | 8:00 |
 | **01 A Loose Cable** | OPERA: a result that could not be true. "Trivial things we are clever enough to rule out." The three questions. One basics slide | — | 4:30 | 7:30 |
 | **02 Is It Real Work?** | DCE capture, `ns/op` vs `allocs/op`, `b.Loop` and the Go 1.26 fix, the cache trap (Harsanyi) | `b.Loop`, `-benchmem`, Go 1.26 | 4:30 | 12:00 |
 | **03 The Regression That Was a Speedup** | Resolve #4891: same-machine A/B was faster. Code layout. One `benchstat` slide | Same-machine A/B before you touch code | 5:00 | 17:00 |
@@ -54,16 +55,18 @@ visuals. A timed read must replace them (see `TODO.md`).
 | **07 Agents Need Real Benchmarks** | PGO prediction vs production. DODO: production-grounded benchmarks for agents, the per-function results chart. `dodo-cli` | Give your agent production data | 5:00 | 38:00 |
 | Close | Benchmarking is not easy. On a hot path, invest. Now you know what to do. Talk repo | Invest | 3:30 | 41:30 |
 
-Thirty seconds of buffer to 42:00. The model is uncertain in both directions. If the timed read is short, use the stretch beats in the script.
+The rows after the cold open still carry their old targets, so this model now sums to about 46 minutes. The SAY word count says about 32 to 38 minutes. Trust neither: the timed read decides. If it runs long, cut the why slides first: Martí, then latency and throughput. The model is uncertain in both directions. If the timed read is short, use the stretch beats in the script.
 
 **Checkpoints:** §01 by 3:00 · §03 by 12:00 · §05 by 21:30 · §07 by 33:00 ·
 finish by 41:30. If §05 has not started by 24:00, apply the cut ladder live.
 
 ## Narrative order
 
-The bot comment opens the talk and stays unresolved until §03. Datadog's stake
-comes next, because "overhead is product correctness" is the reason the talk
-exists. OPERA follows as the physics version of the throughline: careful
+The talk opens on why speed matters, then Datadog's stake. The #4891 story
+follows: the PR, the bot comment, the last bot run that says faster, and the
+benchmark that measured the changed code. The puzzle stays unresolved until
+§03. Datadog's stake sits before the story, because "overhead is product
+correctness" is the reason the talk exists. OPERA follows as the physics version of the throughline: careful
 experts, a number that could not be true, and a trivial cause.
 
 The two incidents are mirror images. In #4891, CI said slower and the laptop
