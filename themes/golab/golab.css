@@ -582,6 +582,10 @@ section.punchline em { font-style: normal; color: var(--yellow); }
 section.punchline.pink { background-image: url("assets/bg-pink.jpg"); --fg: var(--ink); }
 section.punchline.pink em { color: var(--ink); text-decoration: underline; }
 section.punchline.teal { background-image: url("assets/bg-teal.jpg"); --fg: var(--ink); }
+/* The colour modifiers sit above this block, so yellow and light need their
+   own punchline rules. Without them the violet art from this block wins. */
+section.punchline.yellow, section.punchline.light { background-image: none; --fg: var(--ink); }
+section.punchline.yellow em, section.punchline.light em { color: var(--ink); text-decoration: underline; }
 section.vcenter { display: flex; flex-direction: column; justify-content: center; }
 section.vcenter.punchline { align-items: center; }
 
