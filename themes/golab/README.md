@@ -28,7 +28,9 @@ images and slide XML. The theme uses the following text colours on light slides:
 | Caution | deep pink `#B00060` | Warnings about code that must not ship |
 
 These text colours give a contrast ratio of at least 4.5:1 against the light background. The
-code panel has a white background and a dark syntax palette. You can use an accent colour as the background of a full slide. White text uses the violet background. Dark text
+code panel has a white background and a dark syntax palette. The source template also
+offers a dark code panel, but its own guidance recommends a light theme for projectors,
+so the theme keeps every code panel white. You can use an accent colour as the background of a full slide. White text uses the violet background. Dark text
 uses the other accent backgrounds. The yellow footer always uses dark text.
 
 ## Layouts
@@ -59,6 +61,18 @@ Add `yellow`, `pink`, `violet`, `teal`, or `light` to a class to change its
 background. The title defaults to yellow. The section uses a grey left panel
 and a teal right panel. The end and punchline layouts default to violet.
 The other layouts default to light grey.
+
+Add `left` to a section divider to mirror the split: the accent panel is on
+the left and carries the number and title, and the body keeps the light
+right panel. This is the template's second divider family. The `left`
+modifier works with `pink`, `violet`, and `teal`. The pink and violet left
+panels use white title text, as the template does. A `left` divider without
+a colour uses teal. `deck.md` ends with a colour matrix that shows every
+layout family on every accent background.
+
+Two template decorations are deliberately absent: the flat full-colour
+introductory backgrounds (the colour modifiers use the gopher-art
+backgrounds instead) and the small gopher watermark on content slides.
 
 The title and end layouts also accept `gopher-hero`, `gopher-rocket`,
 `gopher-network`, `gopher-sage`, `gopher-hiking`, `gopher-balloon`, and
