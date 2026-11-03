@@ -1,6 +1,6 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 85 pages.
+GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 88 pages.
 Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Each `##` heading below matches the slide
@@ -613,11 +613,23 @@ Section budget 4:30. Question 3: above the noise? Start by 17:00.
 
 ---
 
+## OpenTelemetry Go compile-time instrumentation #643
+
+**SAY**
+
+Second story, three weeks later. OpenTelemetry Go compile-time instrumentation. A boring pull request: I fold sixteen dependency bumps into one.
+
+**DO**
+
+Point at the title. Ledger row 18.
+
+---
+
 ## A second red number
 
 **SAY**
 
-Second story, three weeks later. OpenTelemetry Go compile-time instrumentation. I land a dependency fix and run the overhead benchmark on my laptop.
+Before I push, I run the overhead benchmark on my laptop.
 
 `multi`: two hundred thirty percent overhead, against a ceiling of one hundred fifty. `largeidle`: two hundred twelve.
 
@@ -638,6 +650,38 @@ That is the trick to take home: a control benchmark. Keep one benchmark that you
 **DO**
 
 The fix was to wait for CI. That job runs only in CI, on a dedicated runner.
+
+---
+
+## What CI said
+
+**SAY**
+
+So I waited for CI. On the dedicated runner, `largeidle` and `multi` sit well under their ceiling.
+
+But CI found something my laptop could not. The `baseline` scenario crossed its five hundred percent ceiling. I reran it. It failed again.
+
+Look at the two runs. The runner was sixty percent slower the second time. The overhead ratio moved by seven points. That is why you compare on the same machine, in the same run.
+
+**DO**
+
+Point at the plain column, then at the overhead column. Ledger row 53.
+
+---
+
+## The ceiling moved, on purpose
+
+**SAY**
+
+That one was real. The OpenTelemetry SDK got bigger between releases.
+
+So the maintainers made a decision. They did not hunt for a fix. They raised the ceiling, in its own pull request, with a reason.
+
+That is what a budget is for. It turns a number into a conversation.
+
+**DO**
+
+Ledger row 53. Then the mirror image.
 
 ---
 

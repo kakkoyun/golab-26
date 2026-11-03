@@ -66,6 +66,10 @@ style: |
   .shot.bot { width: 960px; height: 436px; }
   .shot.bot img { margin-top: -222px; }
   section.pink a { color: var(--ink); }
+  .shot.pr643 { width: 1120px; height: 390px; }
+  .shot.cmp643 { width: 1120px; height: 260px; }
+  .shot.cmp643 img { margin-top: -70px; }
+  .shot.slo643 { width: 900px; height: 400px; }
   .checklist { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 0.5rem; align-items: baseline; font-size: 30px; }
 ---
 
@@ -1305,6 +1309,32 @@ Section budget 4:30. Question 3: above the noise? Start by 17:00.
 
 ---
 
+## OpenTelemetry Go compile-time instrumentation #643
+
+<div class="shot pr643">
+
+![](../assets/otel_pr_643.png)
+
+</div>
+
+<div class="small center">
+
+[open-telemetry/opentelemetry-go-compile-instrumentation #643](https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/pull/643) · July 2026
+
+</div>
+
+<!--
+SAY
+
+Second story, three weeks later. OpenTelemetry Go compile-time instrumentation. A boring pull request: I fold sixteen dependency bumps into one.
+
+DO
+
+Point at the title. Ledger row 18.
+-->
+
+---
+
 ## A second red number
 
 <div class="bars">
@@ -1323,7 +1353,7 @@ A local run after a [dependency fix](https://github.com/open-telemetry/opentelem
 <!--
 SAY
 
-Second story, three weeks later. OpenTelemetry Go compile-time instrumentation. I land a dependency fix and run the overhead benchmark on my laptop.
+Before I push, I run the overhead benchmark on my laptop.
 
 `multi`: two hundred thirty percent overhead, against a ceiling of one hundred fifty. `largeidle`: two hundred twelve.
 
@@ -1361,6 +1391,66 @@ That is the trick to take home: a control benchmark. Keep one benchmark that you
 DO
 
 The fix was to wait for CI. That job runs only in CI, on a dedicated runner.
+-->
+
+---
+
+## What CI said
+
+<div class="shot cmp643">
+
+![](../assets/otel_pr_643_comparison.png)
+
+</div>
+
+<div class="center">
+
+`largeidle` **+105%**, `multi` **+81%**: under the ceiling. Only `baseline` failed, **twice**.
+
+</div>
+
+<!--
+SAY
+
+So I waited for CI. On the dedicated runner, `largeidle` and `multi` sit well under their ceiling.
+
+But CI found something my laptop could not. The `baseline` scenario crossed its five hundred percent ceiling. I reran it. It failed again.
+
+Look at the two runs. The runner was sixty percent slower the second time. The overhead ratio moved by seven points. That is why you compare on the same machine, in the same run.
+
+DO
+
+Point at the plain column, then at the overhead column. Ledger row 53.
+-->
+
+---
+
+## The ceiling moved, on purpose
+
+<div class="shot slo643">
+
+![](../assets/otel_pr_643_slo_change.png)
+
+</div>
+
+<div class="center">
+
+A real signal gets a **decision**, not a fix: [#650](https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/pull/650) raised it to 550%.
+
+</div>
+
+<!--
+SAY
+
+That one was real. The OpenTelemetry SDK got bigger between releases.
+
+So the maintainers made a decision. They did not hunt for a fix. They raised the ceiling, in its own pull request, with a reason.
+
+That is what a budget is for. It turns a number into a conversation.
+
+DO
+
+Ledger row 53. Then the mirror image.
 -->
 
 ---

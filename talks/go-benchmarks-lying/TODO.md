@@ -7,7 +7,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 85
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 88
 pages, 42 minutes presented, 3 minutes Q&A, fragment floor 0.
 
 ---

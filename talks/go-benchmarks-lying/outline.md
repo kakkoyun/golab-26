@@ -1,7 +1,7 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
 > **Format:** GoLab 2026, room 2, 10:45. 45-minute slot: 42 minutes presented, 3 minutes Q&A. Not recorded. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (85 pages, no reveals)
+> **Deck:** `slides/presentation.md` (88 pages, no reveals)
 > **Demonstrations:** no live demos. Every command and captured result stays in the repository.
 
 ## Throughline
