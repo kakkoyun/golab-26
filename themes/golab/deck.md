@@ -301,3 +301,461 @@ The left panel gives the title room to wrap.
 ### Speaker Name
 
 Go engineer
+
+---
+
+<!-- _class: section left -->
+
+###### IV
+
+# Colour options
+
+Every layout family on every accent background. The accent panel is on the left here.
+
+---
+
+<!-- _class: section left pink -->
+
+###### V
+
+# Left panel, pink
+
+The mirrored divider keeps the body on the light panel.
+
+---
+
+<!-- _class: section left violet -->
+
+###### VI
+
+# Left panel, violet
+
+The template uses white title text on this panel.
+
+---
+
+<!-- _class: section yellow -->
+
+###### VII
+
+# Full yellow divider
+
+No art: the yellow fills the whole slide.
+
+---
+
+<!-- _class: section light -->
+
+###### VIII
+
+# Full light divider
+
+The split stays, the accent goes.
+
+---
+
+<!-- _class: yellow -->
+
+# Content on yellow
+
+Text, tables, and code keep the dark palette on every accent.
+
+| Option | Reading |
+| --- | --- |
+| Yellow | dark text |
+
+---
+
+<!-- _class: pink -->
+
+# Content on pink
+
+| Option | Reading |
+| --- | --- |
+| Pink | dark text |
+
+---
+
+<!-- _class: violet -->
+
+# Content on violet
+
+| Option | Reading |
+| --- | --- |
+| Violet | white text |
+
+---
+
+<!-- _class: teal -->
+
+# Content on teal
+
+| Option | Reading |
+| --- | --- |
+| Teal | dark text |
+
+---
+
+<!-- _class: stat yellow -->
+
+# 42%
+
+of the requests paid the pool tax.
+
+---
+
+<!-- _class: stat pink -->
+
+# 42%
+
+of the requests paid the pool tax.
+
+---
+
+<!-- _class: stat violet -->
+
+# 42%
+
+of the requests paid the pool tax.
+
+---
+
+<!-- _class: stat teal -->
+
+# 42%
+
+of the requests paid the pool tax.
+
+---
+
+<!-- _class: compare yellow -->
+
+# Compare on yellow
+
+###### −42%
+
+> **Before**
+> `new(bytes.Buffer)`
+> ## 412 <small>ms</small>
+
+> **After**
+> `p.pool.Get()`
+> ## 88 <small>ms</small>
+
+---
+
+<!-- _class: compare pink -->
+
+# Compare on pink
+
+###### −42%
+
+> **Before**
+> `new(bytes.Buffer)`
+> ## 412 <small>ms</small>
+
+> **After**
+> `p.pool.Get()`
+> ## 88 <small>ms</small>
+
+---
+
+<!-- _class: compare violet -->
+
+# Compare on violet
+
+###### −42%
+
+> **Before**
+> `new(bytes.Buffer)`
+> ## 412 <small>ms</small>
+
+> **After**
+> `p.pool.Get()`
+> ## 88 <small>ms</small>
+
+---
+
+<!-- _class: compare teal -->
+
+# Compare on teal
+
+###### −42%
+
+> **Before**
+> `new(bytes.Buffer)`
+> ## 412 <small>ms</small>
+
+> **After**
+> `p.pool.Get()`
+> ## 88 <small>ms</small>
+
+---
+
+<!-- _class: chart yellow -->
+
+# Chart on yellow
+
+<div class="bars">
+  <div class="row"><span class="label">/checkout</span><span class="track"><span class="fill" style="width:92%"></span></span><span class="value">412</span></div>
+  <div class="row mark"><span class="label">/checkout*</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="value">88</span></div>
+</div>
+
+---
+
+<!-- _class: chart pink -->
+
+# Chart on pink
+
+<div class="bars">
+  <div class="row"><span class="label">/checkout</span><span class="track"><span class="fill" style="width:92%"></span></span><span class="value">412</span></div>
+  <div class="row mark"><span class="label">/checkout*</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="value">88</span></div>
+</div>
+
+---
+
+<!-- _class: chart violet -->
+
+# Chart on violet
+
+<div class="bars">
+  <div class="row"><span class="label">/checkout</span><span class="track"><span class="fill" style="width:92%"></span></span><span class="value">412</span></div>
+  <div class="row mark"><span class="label">/checkout*</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="value">88</span></div>
+</div>
+
+---
+
+<!-- _class: chart teal -->
+
+# Chart on teal
+
+<div class="bars">
+  <div class="row"><span class="label">/checkout</span><span class="track"><span class="fill" style="width:92%"></span></span><span class="value">412</span></div>
+  <div class="row mark"><span class="label">/checkout*</span><span class="track"><span class="fill" style="width:20%"></span></span><span class="value">88</span></div>
+</div>
+
+---
+
+<!-- _class: terminal yellow -->
+
+# Terminal on yellow
+
+```console
+$ go tool pprof cpu.pprof
+Saved profile in ~/pprof
+```
+
+---
+
+<!-- _class: terminal pink -->
+
+# Terminal on pink
+
+```console
+$ go tool pprof cpu.pprof
+Saved profile in ~/pprof
+```
+
+---
+
+<!-- _class: terminal violet -->
+
+# Terminal on violet
+
+```console
+$ go tool pprof cpu.pprof
+Saved profile in ~/pprof
+```
+
+---
+
+<!-- _class: terminal teal -->
+
+# Terminal on teal
+
+```console
+$ go tool pprof cpu.pprof
+Saved profile in ~/pprof
+```
+
+---
+
+<!-- _class: emoji yellow -->
+
+# Emoji on yellow
+
+* 🔥 wide bars are cost
+* 🧊 cold paths still bill
+
+---
+
+<!-- _class: emoji pink -->
+
+# Emoji on pink
+
+* 🔥 wide bars are cost
+* 🧊 cold paths still bill
+
+---
+
+<!-- _class: emoji violet -->
+
+# Emoji on violet
+
+* 🔥 wide bars are cost
+* 🧊 cold paths still bill
+
+---
+
+<!-- _class: emoji teal -->
+
+# Emoji on teal
+
+* 🔥 wide bars are cost
+* 🧊 cold paths still bill
+
+---
+
+<!-- _class: agenda yellow -->
+
+# Agenda on yellow
+
+1. Runtime internals
+2. **Reading a profile**
+3. Shipping it
+
+---
+
+<!-- _class: agenda pink -->
+
+# Agenda on pink
+
+1. Runtime internals
+2. **Reading a profile**
+3. Shipping it
+
+---
+
+<!-- _class: agenda violet -->
+
+# Agenda on violet
+
+1. Runtime internals
+2. **Reading a profile**
+3. Shipping it
+
+---
+
+<!-- _class: agenda teal -->
+
+# Agenda on teal
+
+1. Runtime internals
+2. **Reading a profile**
+3. Shipping it
+
+---
+
+<!-- _class: punchline yellow -->
+
+# One idea *per slide.*
+
+---
+
+<!-- _class: punchline pink -->
+
+# One idea *per slide.*
+
+---
+
+<!-- _class: punchline teal -->
+
+# One idea *per slide.*
+
+---
+
+<!-- _class: punchline light -->
+
+# One idea *per slide.*
+
+---
+
+<!-- _class: end violet gopher-hero -->
+<!-- _paginate: false -->
+
+# Thank you
+
+<div class="qr"><img src="assets/placeholder-qr.png" alt="slides"></div>
+
+* slides → example.dev/golab
+
+---
+
+<!-- _class: end pink gopher-balloon -->
+<!-- _paginate: false -->
+
+# Thank you
+
+* slides → example.dev/golab
+* code → github.com/handle/talk
+
+---
+
+<!-- _class: end light gopher-network -->
+<!-- _paginate: false -->
+
+# Thank you
+
+* slides → example.dev/golab
+* code → github.com/handle/talk
+
+---
+
+<!-- _class: title violet gopher-none -->
+
+# Opener on violet
+
+### Speaker Name
+
+Go engineer
+
+---
+
+<!-- _class: title teal gopher-hiking -->
+
+# Opener on teal
+
+##### GoLab · November 2026
+
+### Speaker Name
+
+Go engineer
+
+---
+
+<!-- _class: title light gopher-none -->
+
+# Opener on light
+
+### Speaker Name
+
+Go engineer
+
+---
+
+<!-- _class: speaker yellow -->
+
+![](assets/placeholder-headshot.png)
+
+# Speaker Name
+
+### Go engineer
+
+* social **@handle**
+* slides **example.dev/golab**
+
+---
+
+<!-- _class: vcenter teal -->
+
+This paragraph centres vertically on the teal background.
