@@ -26,6 +26,7 @@ Cartlidge
 (?i)config
 Datadog
 (?i)ebpf
+Ereditato
 (?i)exe
 (?i)fal
 (?i)fentry
@@ -52,6 +53,7 @@ Logrus
 Marp
 (?i)mathjax
 (?i)musl
+(?i)nowrap
 (?i)ns
 OBI
 (?i)orchestrion

@@ -1,7 +1,7 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
 > **Format:** GoLab 2026, room 2, 10:45. 45-minute slot: 42 minutes presented, 3 minutes Q&A. Not recorded. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (54 pages, 3 reveals)
+> **Deck:** `slides/presentation.md` (64 pages, 3 reveals)
 > **Demonstrations:** no live demos. Every command and captured result stays in the repository.
 
 ## Throughline
@@ -26,6 +26,14 @@ on one action the audience can take on Monday:
 | Above the noise? | the laptop has a ceiling | shared runners move |
 
 **No maths on stage.** Say why a check matters, not how the statistics work.
+Prefer charts and diagrams to numbers.
+
+## Message
+
+Benchmarking is not easy. It needs investment, maths, tooling, and a keen
+eye. The value is huge: Datadog does it, and the Go team does it. If you ship
+a library, a tool, or a service on a hot path, invest. Now you know what to
+do.
 
 ## Beat sheet
 
@@ -36,18 +44,20 @@ visuals. A timed read must replace them (see `TODO.md`).
 | --- | --- | --- | ---: | ---: |
 | Cold open | #4891 bot comment: "Would you fix it?" Plant, do not resolve | — | 1:30 | 1:30 |
 | Why Datadog cares | Code in your process. PGO −3.4% on one service. SpeedLab | — | 1:30 | 3:00 |
-| **01 A Loose Cable** | OPERA: a result that could not be true. "Trivial things we are clever enough to rule out." The three questions. One basics slide | — | 5:00 | 8:00 |
-| **02 Is It Real Work?** | DCE capture, `ns/op` vs `allocs/op`, `b.Loop` and the Go 1.26 fix | `b.Loop`, `-benchmem`, Go 1.26 | 6:00 | 14:00 |
-| **03 The Regression That Was a Speedup** | Resolve #4891: same-machine A/B was faster. Code layout. One `benchstat` slide | Same-machine A/B before you touch code | 7:00 | 21:00 |
-| **04 It Was the Machine** | #643: `largeidle` could not have moved. One local container run. macOS caveat | A control benchmark | 5:00 | 26:00 |
-| **05 How We Run It at Datadog** | Dedicated hardware, SMT and DFS data, workloads, budgets, release gate | Bare metal, SMT and boost off, budget gates | 7:30 | 33:30 |
-| **06 Detecting Change Over Time** | A/B cannot see drift. Change points. Go team baseline quote. Two patterns | Nightly trend plus a small PR gate | 4:00 | 37:30 |
-| Ledger and close | False-positive ledger, minimum discipline, 3×2 recap, talk repo | Write down every false alarm | 3:30 | 41:00 |
+| **01 A Loose Cable** | OPERA: a result that could not be true. "Trivial things we are clever enough to rule out." The three questions. One basics slide | — | 4:30 | 7:30 |
+| **02 Is It Real Work?** | DCE capture, `ns/op` vs `allocs/op`, `b.Loop` and the Go 1.26 fix | `b.Loop`, `-benchmem`, Go 1.26 | 4:30 | 12:00 |
+| **03 The Regression That Was a Speedup** | Resolve #4891: same-machine A/B was faster. Code layout. One `benchstat` slide | Same-machine A/B before you touch code | 5:00 | 17:00 |
+| **04 It Was the Machine** | #643: `largeidle` could not have moved. One local container run. macOS caveat | A control benchmark | 4:30 | 21:30 |
+| **05 How We Run It at Datadog** | Dedicated hardware, SMT and DFS charts, Gregg, workloads, budgets, release gate | Bare metal, SMT and boost off, budget gates | 6:00 | 27:30 |
+| **06 Detecting Change Over Time** | A/B cannot see drift. Change points. Go team quote and dashboard. Two patterns | Nightly trend plus a small PR gate | 4:30 | 32:00 |
+| Ledger | #4891 fires again. Write it down | Write down every false alarm | 1:00 | 33:00 |
+| **07 Agents Need Real Benchmarks** | PGO prediction vs production. DODO: production-grounded benchmarks for agents. `dodo-cli` | Give your agent production data | 5:00 | 38:00 |
+| Close | Benchmarking is not easy. On a hot path, invest. Now you know what to do. Talk repo | Invest | 3:30 | 41:30 |
 
-One minute of buffer to 42:00.
+Thirty seconds of buffer to 42:00. The model is uncertain in both directions. If the timed read is short, use the stretch beats in the script.
 
-**Checkpoints:** §01 by 3:00 · §03 by 14:00 · §05 by 26:00 · ledger by 37:30 ·
-finish by 41:00. If §05 has not started by 28:00, apply the cut ladder live.
+**Checkpoints:** §01 by 3:00 · §03 by 12:00 · §05 by 21:30 · §07 by 33:00 ·
+finish by 41:30. If §05 has not started by 24:00, apply the cut ladder live.
 
 ## Narrative order
 
@@ -66,25 +76,35 @@ per-SDK overhead budgets, several workloads per SDK, and gating on the
 release. The archetype table is the public FOSDEM taxonomy (row 20). It is not
 a statement of which archetypes Datadog runs.
 
-The close answers the opening: OPERA's coordinator said a result is never a
-discovery until other people confirm it. Benchmarks are the same.
+§07 is the newest material. Agents optimise whatever the benchmark measures,
+so a wrong benchmark now fails faster. DODO grounds the benchmark in
+production data (ledger rows 48 and 49). The PGO slide is the bridge: a
+benchmark is a prediction, and production is the answer.
+
+The close states the message: benchmarking is not easy, it is worth it,
+Datadog and the Go team do it, so invest if you are on a hot path. It ends
+on OPERA's coordinator: a result is never a discovery until other people
+confirm it.
 
 ## Cut ladder
 
 Apply in this order if the timed read runs long:
 
-1. "A known phenomenon" (−0:20). Say the Berger reference in one sentence on
+1. "Noise goes all the way down" (−0:15). Fun, not load-bearing.
+2. "A known phenomenon" (−0:20). Say the Berger reference in one sentence on
    "The mechanism".
-2. "What's the impact of disabling DFS?" (−0:30). "Three sysfs writes" keeps the
+3. "What's the impact of disabling DFS?" (−0:30). "Three sysfs writes" keeps the
    point.
-3. "What regressions look like" (−0:20).
-4. "The macOS caveat" (−0:30). Keep one spoken sentence on "5.25% is not a
+4. "What regressions look like" (−0:20).
+5. "The macOS caveat" (−0:30). Keep one spoken sentence on "5.25% is not a
    triumph".
-5. "One command, two habits" (−0:30). Last resort: §02 uses `-benchmem`.
+6. "`dodo-cli` · internal beta" (−0:40). Keep the DODO diagrams.
+7. "One command, two habits" (−0:30). Last resort: §02 uses `-benchmem`.
 
 **Never cut without review:** either opening incident, the OPERA quote, the DCE
 capture, "What we do at Datadog", the SMT impact data, the false-positive
-ledger, the 3×2 recap, or any of the three memes. The memes cost ten seconds
+ledger, the DODO diagrams, "Benchmarking is not easy", the 3×2 recap, or any
+of the three memes. The memes cost ten seconds
 each.
 
 ## Public results and sources to preserve
@@ -98,7 +118,10 @@ each.
 * Local container run: `demo/results/cv-summary.txt`, one run, August 2026 (row 8).
 * FOSDEM SMT and DFS data: rows 1-3. Workload archetypes: row 20.
 * Datadog practice shape: row 23. SpeedLab name: row 30.
-* Go team baseline and SlowBots quotes: rows 34 and 38. Change points: row 21.
+* Go team baseline and SlowBots quotes: rows 34 and 38. Dashboard: row 36.
+  Change points: row 21. Gregg: row 24.
+* PGO benchmark −5.4% vs production −3.4%: row 47.
+* DODO: Datadog blog, June 2026 (row 48). `dodo-cli` features: row 49.
 
 ## Audience resources
 

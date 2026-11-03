@@ -7,7 +7,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 54
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 64
 pages, 42 minutes presented, 3 minutes Q&A, fragment floor 3.
 
 ---
@@ -17,7 +17,8 @@ pages, 42 minutes presented, 3 minutes Q&A, fragment floor 3.
 ### Time the GoLab cut against a clock
 
 The times in `outline.md` are a word-count model. Earlier estimates in this
-repository were wrong three times. Read the script aloud at delivery pace with
+repository were wrong three times. This cut may run short: the SAY text is
+about 3,000 words. If it does, use the stretch beats in the script. Read the script aloud at delivery pace with
 the final deck. Record the time at each divider. Write the real numbers into
 `outline.md` and `speaker-notes.md`. If the total is over 42 minutes, apply the
 cut ladder in `outline.md`.
@@ -63,7 +64,6 @@ For marketing to help promote, once published.
 ### Decide what to do with the assets that the GoLab cut orphaned
 
 No slide references these files now: `bp-feedback-flow.png`,
-`brendan-gregg-shouting-at-datacenter.png`,
 `fosdem26_ka_how_to_reliabliy_measure_performance.png`,
 `gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png`,
 `go1.26_b_loop_change.png`, `golang_perf_dashboard_charts.png`,
@@ -83,7 +83,15 @@ them being "fixed" again.
   material and most Go basics were cut on purpose. The audience is
   Intermediate, and 92 pages in 45 minutes was too dense for the other talk.
 * **No maths on stage.** No formulas, no p-values, no CV definition. Say why a
-  check matters, not how the statistics work.
+  check matters, not how the statistics work. Prefer bar charts and diagrams
+  to tables of numbers. The bars are plain HTML with classes: Marp strips
+  inline `style` attributes.
+* **The message is "invest".** Benchmarking is not easy: investment, maths,
+  tooling, a keen eye. Datadog and the Go team do it. The close says so. Do
+  not bring back "under an hour", which contradicts it.
+* **DODO uses the public blog only** (row 48). `dodo-cli` gets its name, beta
+  status, and features (row 49). No dollar figures, no install steps, no PR
+  links from the internal Confluence space.
 * **Own tooling stays off the slides.** The benchlab panels and the tool list
   were cut. The close points at the talk repository only.
 * **OPERA stays.** Drop it only if another story replaces it. The Ereditato
@@ -112,6 +120,12 @@ them being "fixed" again.
   fix, not the regression. What 1.26 removed is the inlining suppression that
   1.24 and 1.25 used to implement keepalive. The keepalive remains. Ledger rows
   39 to 41.
+* **`allocs/op` is a second witness, not proof.** In the DCE benchmark,
+  `make([]byte, 64)` does not escape after inlining
+  (`demo/results/gcflags-m-m.txt`). The deck says "the work is gone", not
+  "`make` cannot skip allocating". Ledger row 50.
+* **SMT off is "under 0.25%", not "0.04%".** The two no-SMT runs were 0.044%
+  and 0.235%. "~100×" only holds for the range. Ledger row 2.
 * **The #4891 "~390 ns" figure is gone.** The war-story notes give ~390 ns per
   iteration and an 883 ns table side by side. The slide now says
   "sub-microsecond" so it does not depend on either.
