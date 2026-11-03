@@ -508,6 +508,15 @@ section.section p { grid-column: 2; grid-row: 2; font-size: 28px; padding: 0 35p
 section.section.teal { background-image: url("assets/bg-section-teal.jpg"); }
 /* This split has room for full words and longer section labels. */
 
+/* The template's second divider family mirrors the split: the accent panel
+   is on the left and carries the title. The body keeps the light right panel.
+   The template uses white title text on the violet and pink panels, and dark
+   text on teal. */
+section.section.left { background-image: url("assets/bg-section-left-teal.jpg"); }
+section.section.left.pink { background-image: url("assets/bg-section-left-pink.jpg"); --fg: #fff; }
+section.section.left.violet { background-image: url("assets/bg-section-left-violet.jpg"); --fg: #fff; }
+section.section.left.pink p, section.section.left.violet p { color: var(--ink); }
+
 section.dark { --fg: #fff; --bg: var(--violet); --mute: #fff; background-image: url("assets/bg-violet.jpg"); }
 section.dark code { color: var(--ink); background: var(--yellow); }
 section.dark td { border-bottom-color: rgba(255,255,255,.35); }
