@@ -1727,6 +1727,8 @@ And the mean got slower. Turbo is fast, and inconsistent. A benchmark must be co
 echo off         | sudo tee /sys/devices/system/cpu/smt/control
 echo performance | sudo tee /sys/.../scaling_governor
 echo 0           | sudo tee /sys/devices/system/cpu/cpufreq/boost
+# Intel with intel_pstate: no cpufreq/boost, use this instead
+echo 1           | sudo tee /sys/devices/system/cpu/intel_pstate/no_turbo
 ```
 
 <div class="columns">
@@ -2265,7 +2267,7 @@ Fast. Strict. Every PR.
 
 Benchmarks that regressed before.
 
-`-count=6`, same-machine A/B
+`-count=10`, same-machine A/B
 
 </div>
 <div>
