@@ -65,6 +65,7 @@ style: |
   .shot.cmp img { margin-top: -165px; }
   .shot.bot { width: 960px; height: 436px; }
   .shot.bot img { margin-top: -222px; }
+  section.pink a { color: var(--ink); }
   .checklist { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 0.5rem; align-items: baseline; font-size: 30px; }
 ---
 
@@ -94,7 +95,7 @@ Do not introduce yourself yet. Advance.
 
 ---
 
-<!-- _class: vcenter -->
+<!-- _class: vcenter yellow -->
 
 ## "Not all fast software is world-class,
 
@@ -126,7 +127,7 @@ Pause after the quote. Ledger row 12. If someone asks: the post needs an X login
 
 ---
 
-<!-- _class: vcenter -->
+<!-- _class: vcenter teal -->
 
 ## Measure customer happiness,
 
@@ -564,7 +565,7 @@ Let the headline stand for a beat before you speak. Ledger row 46 holds the quot
 ---
 
 <!-- _footer: "∙ " -->
-<!-- _class: vcenter -->
+<!-- _class: vcenter pink -->
 
 ## "Trivial things we are
 
@@ -743,7 +744,7 @@ Thirty seconds. Do not teach the flags.
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section left pink -->
 <!-- _paginate: false -->
 
 ###### 02
@@ -850,7 +851,7 @@ Point at the allocations column.
 ---
 
 <!-- _footer: "◦ " -->
-<!-- _class: vcenter -->
+<!-- _class: vcenter yellow -->
 
 ## `ns/op` can lie
 
@@ -1013,7 +1014,7 @@ Ledger row 45. Say the idea, not his numbers. Do not explain the cache mechanism
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section violet -->
 <!-- _paginate: false -->
 
 ###### 03
@@ -1158,7 +1159,7 @@ This is well known. Emery Berger's talk, Performance Matters, shows that code la
 
 ---
 
-<!-- _class: vcenter -->
+<!-- _class: vcenter pink -->
 
 ## A noisy result can be
 
@@ -1287,7 +1288,7 @@ Ten seconds. The next section is about the other button.
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section left violet -->
 <!-- _paginate: false -->
 
 ###### 04
@@ -1332,7 +1333,7 @@ Both fail. It looks like I broke something badly.
 ---
 
 <!-- _footer: "◦ " -->
-<!-- _class: vcenter -->
+<!-- _class: vcenter teal -->
 
 ## `largeidle` shares
 
@@ -1479,7 +1480,7 @@ This is one local run from August. Do not call it a general result. The platform
 
 ---
 
-<!-- _class: vcenter -->
+<!-- _class: vcenter yellow -->
 
 ## 5.25% is not a triumph
 
@@ -1510,7 +1511,7 @@ Do not compare this number with the bare-metal results. They come from a differe
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section pink -->
 <!-- _paginate: false -->
 
 ###### 05
@@ -1973,7 +1974,7 @@ The example values come from the second story, not from Datadog budgets.
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section left -->
 <!-- _paginate: false -->
 
 ###### 06
@@ -2349,7 +2350,7 @@ Budget 0:45. Start by 32:00.
 ---
 
 <!-- _footer: "◆ " -->
-<!-- _class: section -->
+<!-- _class: section violet -->
 <!-- _paginate: false -->
 
 ###### 07
@@ -2400,7 +2401,7 @@ Ledger row 47. One service, not all of production.
 ---
 
 <!-- _footer: "∙ " -->
-<!-- _class: vcenter -->
+<!-- _class: vcenter violet -->
 
 ## "Get the benchmark wrong, and the agent
 
