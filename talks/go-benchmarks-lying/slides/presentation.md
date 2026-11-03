@@ -55,8 +55,6 @@ style: |
   .bars .w82 { width: 82%; }
   .bars .after { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-weight: 700; font-size: 20px; }
   .bars .after.a4 { left: calc(4% + 10px); }
-  section.meme.fit p:first-of-type { margin: 24px 0 0; }
-  section.meme.fit p:first-of-type img { margin: 0 auto; }
   .shot { overflow: hidden; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 18px rgba(16, 16, 16, 0.25); }
   .shot p { margin: 0; }
   .shot img { width: 100%; max-width: none; }
@@ -66,6 +64,8 @@ style: |
   .shot.bot { width: 960px; height: 436px; }
   .shot.bot img { margin-top: -222px; }
   section.pink a { color: var(--ink); }
+  /* Keep meme GIFs above the caption band, so burned-in subtitles stay visible. */
+  section.meme [data-marpit-advanced-background-container] { height: calc(100% - 204px) !important; }
   .shot.pr643 { width: 1120px; height: 390px; }
   .shot.cmp643 { width: 1120px; height: 260px; }
   .shot.cmp643 img { margin-top: -70px; }
@@ -1513,10 +1513,10 @@ This is the throughline. Say the last line slowly.
 
 ---
 
-<!-- _class: meme fit -->
+<!-- _class: meme -->
 <!-- _paginate: false -->
 
-![height:500](../assets/meme-same-picture.gif)
+![bg contain](../assets/meme-same-picture.gif)
 
 PR #4891 and PR #643
 
@@ -1851,10 +1851,10 @@ In a VM, the write can succeed and do nothing. That is worse than an error.
 
 ---
 
-<!-- _class: meme fit -->
+<!-- _class: meme -->
 <!-- _paginate: false -->
 
-![height:500](../assets/meme-captain-now.gif)
+![bg contain](../assets/meme-captain-now.gif)
 
 you, after three sysfs writes
 
