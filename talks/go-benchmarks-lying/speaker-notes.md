@@ -1,6 +1,6 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 86 pages.
+GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 85 pages.
 Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Each `##` heading below matches the slide
@@ -210,8 +210,6 @@ The bot answers: `BenchmarkOTLPProtoSize` is six to nine percent slower than mai
 So. Would you fix it?
 
 Most of us would. A red comment on your pull request feels like an accusation. So we open a profiler, find something that looks slow, and push a fix. The comment turns green, and everybody is happy.
-
-
 
 **DO**
 
@@ -695,25 +693,11 @@ Five percent is not a good number. It is the best this laptop can do.
 
 For this benchmark, under this load, a change smaller than that is invisible. For a smaller change, you need a different machine. That is the next section.
 
+One aside for Mac users. Docker on macOS runs inside a VM. Pinning gives you isolation from your neighbours, not control of the hardware.
+
 **DO**
 
 Do not compare this number with the bare-metal results. They come from a different benchmark on a different machine. Ledger row 8.
-
----
-
-## The macOS caveat
-
-**SAY**
-
-One caveat. On macOS, Docker runs in a Linux VM. `--cpuset-cpus` pins a virtual CPU.
-
-The VM can still move it across physical cores. Nothing in the container can turn off SMT or pin the clock.
-
-You get isolation from your other processes. You do not get controlled hardware.
-
-**DO**
-
-Do not soften this.
 
 ---
 

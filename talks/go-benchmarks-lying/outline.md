@@ -1,7 +1,7 @@
 # Talk outline: Why Your Go Benchmarks Are Lying
 
 > **Format:** GoLab 2026, room 2, 10:45. 45-minute slot: 42 minutes presented, 3 minutes Q&A. Not recorded. Intermediate Go audience.
-> **Deck:** `slides/presentation.md` (86 pages, 3 reveals)
+> **Deck:** `slides/presentation.md` (85 pages, no reveals)
 > **Demonstrations:** no live demos. Every command and captured result stays in the repository.
 
 ## Throughline
@@ -48,7 +48,7 @@ visuals. A timed read must replace them (see `TODO.md`).
 | **01 A Loose Cable** | OPERA: a result that could not be true. "Trivial things we are clever enough to rule out." The three questions. One basics slide | — | 4:30 | 7:30 |
 | **02 Is It Real Work?** | DCE capture, `ns/op` vs `allocs/op`, `b.Loop` and the Go 1.26 fix, the cache trap (Harsanyi) | `b.Loop`, `-benchmem`, Go 1.26 | 4:30 | 12:00 |
 | **03 The Regression That Was a Speedup** | Resolve #4891: same-machine A/B was faster. Code layout. One `benchstat` slide | Same-machine A/B before you touch code | 5:00 | 17:00 |
-| **04 It Was the Machine** | #643: `largeidle` could not have moved. One local container run. macOS caveat | A control benchmark | 4:30 | 21:30 |
+| **04 It Was the Machine** | #643: `largeidle` could not have moved. One local container run. macOS aside in the script | A control benchmark | 4:30 | 21:30 |
 | **05 How We Run It at Datadog** | Dedicated hardware, FOSDEM credit, SMT and DFS charts, prombench, Gregg, workloads, coordinated omission, budgets | Bare metal, SMT and boost off, budget gates | 6:00 | 27:30 |
 | **06 Detecting Change Over Time** | A/B cannot see drift. Change points, Netflix, Henrik Ingo. Go team quote, dashboard, SlowBots. Two patterns | Nightly trend plus a small PR gate | 4:30 | 32:00 |
 | Ledger | #4891 fires again. Write it down | Write down every false alarm | 1:00 | 33:00 |

@@ -1,7 +1,7 @@
 ---
 marp: true
 theme: golab
-# fragment-floor: 3. `*` is the ONLY list marker allowed on slides. Every list
+# fragment-floor: 0. `*` is the ONLY list marker allowed on slides. Every list
 # is an intentional Marp reveal; a `-` bullet here is a bug. `make check/fragments`
 # guards the count against formatters that rewrite markers.
 math: mathjax
@@ -367,7 +367,7 @@ customer's budget.
 
 ### <span class="hl-blue">−3.4%</span> CPU
 
-on one large service, from PGO alone.
+on one large service, from [PGO alone](https://www.datadoghq.com/blog/datadog-pgo-go/).
 
 </div>
 </div>
@@ -543,7 +543,7 @@ Section budget 4:30, including the basics slide. Start by 3:00.
 
 <div class="center">
 
-![width:660](../assets/particles-break-light-speed-headline.png)
+[![width:660](../assets/particles-break-light-speed-headline.png)](https://www.nature.com/articles/news.2011.554)
 
 </div>
 
@@ -574,7 +574,7 @@ Let the headline stand for a beat before you speak. Ledger row 46 holds the quot
 
 <div class="center">
 
-Antonio Ereditato, OPERA coordinator · *The Guardian*, 22 Sep 2011
+Antonio Ereditato, OPERA coordinator · [*The Guardian*, 22 Sep 2011](https://www.theguardian.com/science/2011/sep/22/faster-than-light-particles-neutrinos)
 
 </div>
 
@@ -609,7 +609,7 @@ and *partly offset* it
 <div class="small">
 
 CERN, 22 Feb 2012 · Cartlidge,
-*Science* 335(6072):1027
+[*Science* 335(6072):1027](https://doi.org/10.1126/science.335.6072.1027)
 
 </div>
 
@@ -916,7 +916,7 @@ func BenchmarkHash_BLoop(b *testing.B) {
 
 <div class="center">
 
-**Go 1.26** stopped blocking inlining in the loop. Upgrade first.
+[**Go 1.26**](https://go.dev/doc/go1.26) stopped blocking inlining in the loop. Upgrade first.
 
 </div>
 
@@ -951,7 +951,7 @@ Ledger rows 39 and 40. Go 1.26 is the fix, not the regression. Do not say it bac
 
 <div class="center">
 
-Must be written literally as `b.Loop()`.
+Must be written literally as `b.Loop()`. · [`testing.B.Loop`](https://pkg.go.dev/testing#B.Loop)
 
 </div>
 
@@ -1248,6 +1248,8 @@ Is B different from A, beyond the noise?
 
 It cannot tell you whether the **machine** is trustworthy.
 
+<span class="small">[golang.org/x/perf/cmd/benchstat](https://pkg.go.dev/golang.org/x/perf/cmd/benchstat)</span>
+
 </div>
 
 <!--
@@ -1313,7 +1315,7 @@ Section budget 4:30. Question 3: above the noise? Start by 17:00.
 
 <div class="center">
 
-A local run after a dependency fix. It looks like a serious regression.
+A local run after a [dependency fix](https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/pull/643). It looks like a serious regression.
 
 </div>
 
@@ -1368,7 +1370,7 @@ The fix was to wait for CI. That job runs only in CI, on a dedicated runner.
 <div class="columns">
 <div>
 
-### `#4891`
+### [`#4891`](https://github.com/DataDog/dd-trace-go/pull/4891)
 
 CI said slower.
 
@@ -1379,7 +1381,7 @@ Cause: **code layout**.
 </div>
 <div>
 
-### `#643`
+### [`#643`](https://github.com/open-telemetry/opentelemetry-go-compile-instrumentation/pull/643)
 
 The laptop said slower.
 
@@ -1459,7 +1461,7 @@ Run-to-run **spread**. Shorter is better.
 <div class="small center">
 
 One local run, August 2026 · Apple M4 Max · container under
-Apple Virtualization.framework · `demo/results/cv-summary.txt`
+Apple Virtualization.framework · [`demo/results/cv-summary.txt`](https://github.com/kakkoyun/golab-26/blob/main/talks/go-benchmarks-lying/demo/results/cv-summary.txt)
 
 </div>
 
@@ -1498,39 +1500,11 @@ Five percent is not a good number. It is the best this laptop can do.
 
 For this benchmark, under this load, a change smaller than that is invisible. For a smaller change, you need a different machine. That is the next section.
 
+One aside for Mac users. Docker on macOS runs inside a VM. Pinning gives you isolation from your neighbours, not control of the hardware.
+
 DO
 
 Do not compare this number with the bare-metal results. They come from a different benchmark on a different machine. Ledger row 8.
--->
-
----
-
-## The macOS caveat
-
-* `--cpuset-cpus=0` pins a **vCPU inside a VM**
-* The VM can still migrate it across physical cores
-* Nothing inside can disable host SMT or pin the clock
-
-<br>
-
-<div class="center">
-
-**Get:** isolation from neighbours. **Don't get:** controlled hardware.
-
-</div>
-
-<!--
-SAY
-
-One caveat. On macOS, Docker runs in a Linux VM. `--cpuset-cpus` pins a virtual CPU.
-
-The VM can still move it across physical cores. Nothing in the container can turn off SMT or pin the clock.
-
-You get isolation from your other processes. You do not get controlled hardware.
-
-DO
-
-Do not soften this.
 -->
 
 ---
@@ -1670,6 +1644,12 @@ Credit Augusto by name. Ledger rows 1 to 3 and 29.
 
 ## What's the impact of disabling SMT?
 
+<div class="small">
+
+**SMT**: simultaneous multithreading, two hardware threads per core
+
+</div>
+
 <div class="columns">
 <div>
 
@@ -1687,7 +1667,7 @@ Spread: <span class="hl-blue">**~24%**</span> → <span class="hl-orange">**unde
 
 <div class="small center">
 
-AWS m5.metal, FOSDEM 2026 experiment
+AWS m5.metal, [FOSDEM 2026 experiment](https://github.com/igoragoli/fosdem-2026-software-performance)
 
 </div>
 
@@ -1702,6 +1682,12 @@ Spread: about twenty-four percent with SMT on. Under a quarter of a percent with
 ---
 
 ## What's the impact of disabling DFS?
+
+<div class="small">
+
+**DFS**: dynamic frequency scaling, the clock follows load and heat
+
+</div>
 
 <div class="columns">
 <div>
@@ -1720,7 +1706,7 @@ Spread: <span class="hl-blue">**0.38%**</span> → <span class="hl-orange">**0.0
 
 <div class="small center">
 
-AWS m5.metal, FOSDEM 2026 experiment
+AWS m5.metal, [FOSDEM 2026 experiment](https://github.com/igoragoli/fosdem-2026-software-performance)
 
 </div>
 
@@ -2087,11 +2073,11 @@ Ignores one-off spikes.
 
 ### Implementations
 
-**ED-PELT** · Akinshin
+**ED-PELT** · [Akinshin](https://aakinshin.net/posts/edpelt/)
 
-**e-divisive** · Apache Otava, Nyrkiö
+**e-divisive** · [Apache Otava](https://otava.apache.org/), [Nyrkiö](https://github.com/nyrkio/nyrkio)
 
-Netflix, at scale
+[Netflix](https://netflixtechblog.com/fixing-performance-regressions-before-they-happen-eab2602b86fe), at scale
 
 </div>
 </div>
@@ -2424,7 +2410,7 @@ Ledger row 47. One service, not all of production.
 
 <div class="center">
 
-Datadog engineering blog, June 2026
+[Datadog engineering blog, June 2026](https://www.datadoghq.com/blog/ai/production-grounded-code-optimization/)
 
 </div>
 
@@ -2471,7 +2457,7 @@ Ten seconds. Let the laugh land, then go to the DODO diagram.
 
 <div class="center">
 
-**DODO:** Datadog Observability-Driven Optimizer
+**DODO:** [Datadog Observability-Driven Optimizer](https://www.datadoghq.com/blog/ai/production-grounded-code-optimization/)
 
 </div>
 
@@ -2601,7 +2587,7 @@ Ledger row 48. Say "on the order of ten thousand cores". Do not give a dollar fi
 
 <div class="small center">
 
-CPU saved in each function, one mature Datadog service · Datadog blog, June 2026
+CPU saved in each function, one mature Datadog service · [Datadog blog, June 2026](https://www.datadoghq.com/blog/ai/production-grounded-code-optimization/)
 
 </div>
 
