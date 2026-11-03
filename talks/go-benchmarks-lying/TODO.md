@@ -26,17 +26,7 @@ cut ladder in `outline.md`.
 ### Test the presenter setup offline
 
 Serve the offline HTML with the network off. Check presenter view, the clicker,
-reveals, fonts, images, and notes. Keep the PDF and the script on the laptop.
-
-### Finish the meme layout
-
-Deferred by the speaker. The two `meme fit` slides ("PR #4891 and PR #643" and
-"you, after three sysfs writes") show the GIF at the left edge, not centred.
-The deck rule `section.meme.fit p:first-of-type` does not take effect in the
-PDF. Find out why before you add more CSS. With `bg contain`, the GIF
-subtitles go under the caption band. The first frame of `meme-captain-now.gif`
-is almost empty, so the PDF handout shows a blank-looking frame. Check every
-meme in the bespoke HTML, where GIFs animate.
+fonts, images, notes, and that every meme GIF animates. Keep the PDF and the script on the laptop.
 
 ---
 
