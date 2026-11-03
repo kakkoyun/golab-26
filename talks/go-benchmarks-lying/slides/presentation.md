@@ -31,6 +31,11 @@ style: |
   .bars .bar.mute { background: transparent; color: #454545; justify-content: flex-start; padding-left: 14px; border: 3px dashed #9a9a9a; font-weight: 500; }
   .bars .limit { position: absolute; top: -10px; bottom: -10px; left: 60%; border-left: 5px dashed #101010; }
   .bars .limit span { position: absolute; bottom: -36px; left: 8px; white-space: nowrap; font-size: 20px; font-weight: 600; }
+  .bars.tight { gap: 8px 22px; margin: 14px 0 24px; }
+  .bars.tight .track { height: 36px; }
+  .bars.tight .label, .bars.tight .bar { font-size: 20px; }
+  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+  .flow .card { min-height: 150px; }
   .bars .w24 { width: 24%; }
   .bars .w26 { width: 26%; }
   .bars .w57 { width: 57%; }
@@ -40,6 +45,18 @@ style: |
   .bars .w93 { width: 93%; }
   .bars .w94 { width: 94%; }
   .bars .w98 { width: 98%; }
+  .bars .w4 { width: 4%; }
+  .bars .w15 { width: 15%; }
+  .bars .w22 { width: 22%; }
+  .bars .w27 { width: 27%; }
+  .bars .w40 { width: 40%; }
+  .bars .w75 { width: 75%; }
+  .bars .w76 { width: 76%; }
+  .bars .w82 { width: 82%; }
+  .bars .after { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-weight: 700; font-size: 20px; }
+  .bars .after.a4 { left: calc(4% + 10px); }
+  section.meme.fit p:first-of-type { margin: 24px 0 0; }
+  section.meme.fit p:first-of-type img { margin: 0 auto; }
   .checklist { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 0.5rem; align-items: baseline; font-size: 30px; }
 ---
 
@@ -607,6 +624,49 @@ Do not read the table. Point at two rows.
 
 ---
 
+## The cache can lie too
+
+<div class="cols">
+<div class="card">
+
+### Same input every iteration
+
+The cache remembers it.
+
+You measure the **cache**.
+
+</div>
+<div class="card measure">
+
+### Fresh input every iteration
+
+The fake 50% speedup **disappears**.
+
+</div>
+</div>
+
+<div class="small center">
+
+Teiva Harsanyi · [How to Write Accurate Benchmarks in Go](https://p99conf.io/2023/08/16/how-to-write-accurate-benchmarks-in-go/) · *100 Go Mistakes* #91
+
+</div>
+
+<!--
+SAY
+
+One more trap for real work, and `b.Loop` does not fix it. If you give the benchmark the same input every iteration, the CPU cache remembers it. You measure the cache, not your function.
+
+Teiva Harsanyi shows this in Go. With one reused input, one matrix size looked about fifty percent faster than its neighbour. With fresh input each iteration, the gap disappeared.
+
+Production does not call your function with warm data every time. Your benchmark should not either.
+
+DO
+
+Ledger row 45. Say the idea, not his numbers. Do not explain the cache mechanism: the post does not.
+-->
+
+---
+
 <!-- _footer: "◆ " -->
 <!-- _class: section -->
 <!-- _paginate: false -->
@@ -805,6 +865,25 @@ One run is one point. You need a sample.
 
 ---
 
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../assets/meme-math-lady.gif)
+
+you, when someone says "p-value"
+
+<!--
+SAY
+
+I know. Statistics in a conference talk. Do not worry, I will not show you a single formula. One tool does the maths for you.
+
+DO
+
+Ten seconds. Then click to `benchstat`.
+-->
+
+---
+
 ## `benchstat`
 
 ```bash
@@ -992,6 +1071,25 @@ Neither place is right by default. And the tell was the same both times: a bench
 DO
 
 This is the throughline. Say the last line slowly.
+-->
+
+---
+
+<!-- _class: meme fit -->
+<!-- _paginate: false -->
+
+![height:500](../assets/meme-same-picture.gif)
+
+PR #4891 and PR #643
+
+<!--
+SAY
+
+Different causes, opposite directions. The same tell.
+
+DO
+
+Ten seconds. Then move on to the container run.
 -->
 
 ---
@@ -1194,6 +1292,37 @@ Read the quote aloud. Ledger row 38.
 
 ---
 
+## FOSDEM 2026, Software Performance devroom
+
+<div class="columns">
+<div>
+
+[**How to Reliably Measure Software Performance**](https://youtu.be/8211fNI_nc4)
+
+Kemal Akkoyun & Augusto de Oliveira
+
+The SMT and DFS experiments on the next slides come from this talk.
+
+</div>
+<div class="center">
+
+![width:420](../assets/fosdem26_ka_how_to_reliabliy_measure_performance.png)
+
+</div>
+</div>
+
+<!--
+SAY
+
+The next data comes from the talk Augusto de Oliveira and I gave at FOSDEM this year. Augusto ran the experiments on bare-metal cloud machines. The video has the full method, if you want more than two charts.
+
+DO
+
+Credit Augusto by name. Ledger rows 1 to 3 and 29.
+-->
+
+---
+
 ## What's the impact of disabling SMT?
 
 <div class="columns">
@@ -1298,6 +1427,78 @@ In a VM, the write can succeed and do nothing. That is worse than an error.
 
 ---
 
+<!-- _class: meme fit -->
+<!-- _paginate: false -->
+
+![height:500](../assets/meme-captain-now.gif)
+
+you, after three sysfs writes
+
+<!--
+SAY
+
+Three writes to sysfs, and you are in charge of the hardware.
+
+DO
+
+Ten seconds. The next slide is for teams without root on bare metal.
+-->
+
+---
+
+## No bare metal? Rent the scarce machine
+
+<div class="flow">
+<div class="card">
+
+### 1
+
+`/prombench` comment on a PR
+
+</div>
+<div class="card measure">
+
+### 2
+
+Dedicated nodes come up
+
+</div>
+<div class="card">
+
+### 3
+
+PR vs baseline, same workload
+
+</div>
+<div class="card measure">
+
+### 4
+
+Results, then the nodes go away
+
+</div>
+</div>
+
+<div class="small center">
+
+Prometheus · [prometheus/test-infra](https://github.com/prometheus/test-infra)
+
+</div>
+
+<!--
+SAY
+
+"We do not have bare metal" is the usual answer. Prometheus shows another way. A maintainer comments `/prombench` on a pull request. The automation creates dedicated nodes, runs the pull request against a baseline under the same workload, publishes the results, and deletes the nodes.
+
+Dedicated for one run, and paid for one run. That is how an open-source project gets the scarce machine.
+
+DO
+
+Ledger row 44. Keep it short.
+-->
+
+---
+
 ## Noise goes all the way down
 
 <div class="center">
@@ -1352,6 +1553,59 @@ Remember the second story. `largeidle` is Idle. `multi` is Enterprise. Different
 DO
 
 Ledger row 20. Do not say which archetypes Datadog runs.
+-->
+
+---
+
+## The load generator can lie too
+
+<div class="flow">
+<div class="card">
+
+### Server stalls
+
+</div>
+<div class="card measure">
+
+### Generator waits
+
+</div>
+<div class="card">
+
+### Stall never recorded
+
+</div>
+<div class="card measure">
+
+### p99 looks **better**
+
+</div>
+</div>
+
+<div class="center big">
+
+Less measured, better numbers.
+
+</div>
+
+<div class="small center">
+
+Gil Tene · [How NOT to Measure Latency](https://www.youtube.com/watch?v=lJ8ydIuPFeU) · coordinated omission
+
+</div>
+
+<!--
+SAY
+
+A macrobenchmark needs a load generator, and the load generator can lie too. Gil Tene calls this coordinated omission.
+
+The server stalls. A simple load generator waits for the reply before it sends the next request. So the requests that would have hit the stall are never sent, and never measured. Your p99 looks better, because you measured less.
+
+If your workload is about latency, check how your load generator behaves when the server is slow. Watch Gil's talk.
+
+DO
+
+Ledger rows 13 and 22. No numbers. Walk the four boxes left to right.
 -->
 
 ---
@@ -1513,6 +1767,62 @@ No statistics. Say what it finds, not how.
 
 ---
 
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../../assets/memes/jack-nicholson-nodding.gif)
+
+you, nodding along to change-point detection
+
+<!--
+SAY
+
+You do not need the maths. You need the tool that does it, and the history to feed it.
+
+DO
+
+Ten seconds. This is the release valve after the statistics. Smile, then continue.
+-->
+
+---
+
+## Change points in the wild
+
+<div class="cols">
+<div class="card">
+
+### Netflix TV UI
+
+Static thresholds out. Anomaly and change-point detection in CI.
+
+<span class="small">[Fixing Performance Regressions Before They Happen](https://netflixtechblog.com/fixing-performance-regressions-before-they-happen-eab2602b86fe)</span>
+
+</div>
+<div class="card measure">
+
+### Henrik Ingo · FOSDEM 2026
+
+Same devroom. Continuous benchmarking with change points and fewer false positives.
+
+<span class="small">[Continuous Performance Engineering HowTo](https://archive.fosdem.org/2026/schedule/event/YNB7KR-continuous-perf-engineering/)</span>
+
+</div>
+</div>
+
+<!--
+SAY
+
+This is not only a Datadog idea. Netflix's TV UI team wrote about dropping static thresholds for their performance tests. A fixed limit fired on noise, and it missed slow regressions. They moved to anomaly detection and change-point detection in CI.
+
+And in the same FOSDEM room as our talk, Henrik Ingo gave a whole talk on continuous performance engineering: how to set up the infrastructure for low noise, and how to use change-point detection to alert with fewer false positives. If this section interests you, watch that talk next.
+
+DO
+
+Ledger rows 21 and 51. Do not claim more than the talk abstract says.
+-->
+
+---
+
 ## Why a baseline, not a pair
 
 <div class="small">
@@ -1571,6 +1881,47 @@ Do not read the charts. Let the shape make the point: a time series, not a pair.
 
 ---
 
+## Before merge, on request
+
+<div class="cols">
+<div class="card">
+
+### `perf_vs_parent`
+
+the change, in isolation
+
+</div>
+<div class="card measure">
+
+### `perf_vs_tip`
+
+the change, against today's tip
+
+</div>
+</div>
+
+<div class="center">
+
+Opt-in per change, on the scarce builders. The trusted signal is still the time series.
+
+<span class="small">[go.dev/wiki/PerformanceMonitoring](https://go.dev/wiki/PerformanceMonitoring)</span>
+
+</div>
+
+<!--
+SAY
+
+And before merge? If you contribute to Go, you can ask for performance results on your change. There are two SlowBot builders. `perf_vs_parent` measures your change in isolation. `perf_vs_tip` measures it against the current tip.
+
+It is opt-in, because those machines are scarce. The cheap pairwise check runs before merge. The signal they trust is the time series after merge. That is the same split as our two patterns.
+
+DO
+
+Ledger row 37. A practical tip for Go contributors in the room.
+-->
+
+---
+
 ## Two patterns
 
 <div class="columns">
@@ -1612,6 +1963,25 @@ So, two patterns. A PR gate: fast and strict. A small set of benchmarks that reg
 A nightly suite: complete and slow. Pinned hardware, all controls on, and change-point detection. Before a release, the budget gate.
 
 CI detects. To explain a result, you still measure on a controlled machine, like I did with the first bot comment.
+-->
+
+---
+
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../../assets/memes/somehow-palpatine-returned-poe.gif)
+
+BenchmarkOTLPProtoSize, eleven days later
+
+<!--
+SAY
+
+And then, somehow, our old friend came back.
+
+DO
+
+Ten seconds. The next slide is the payoff.
 -->
 
 ---
@@ -1723,6 +2093,25 @@ That is the problem. It optimises exactly what the benchmark measures. Our team 
 DO
 
 Read the quote slowly. Ledger row 48.
+-->
+
+---
+
+<!-- _class: meme -->
+<!-- _paginate: false -->
+
+![bg contain](../assets/meme-stonks.gif)
+
+the agent, after it made the benchmark faster
+
+<!--
+SAY
+
+Faster, yes. Better? Only if the benchmark looks like production.
+
+DO
+
+Ten seconds. Let the laugh land, then go to the DODO diagram.
 -->
 
 ---
@@ -1840,6 +2229,47 @@ My favourite one: about a quarter of real tags contain uppercase letters. The ag
 DO
 
 Ledger row 48. Say "on the order of ten thousand cores". Do not give a dollar figure.
+-->
+
+---
+
+## Even optimized code had room
+
+<div class="bars tight">
+<div class="label"><code>filterTags</code></div>
+<div class="track"><div class="bar w82">82%</div></div>
+<div class="label"><code>writeTagsetsMut</code></div>
+<div class="track"><div class="bar w76">76%</div></div>
+<div class="label"><code>FilterPayloads</code></div>
+<div class="track"><div class="bar w75">75%</div></div>
+<div class="label"><code>intern</code></div>
+<div class="track"><div class="bar w40">40%</div></div>
+<div class="label"><code>ComputeTagsHash</code></div>
+<div class="track"><div class="bar w27">27%</div></div>
+<div class="label"><code>NormalizeTags</code></div>
+<div class="track"><div class="bar w22">22%</div></div>
+<div class="label"><code>HandleFromSorted…</code></div>
+<div class="track"><div class="bar w15">15%</div></div>
+<div class="label"><code>MergeTags</code></div>
+<div class="track"><div class="bar w4"></div><div class="after a4">4%</div></div>
+</div>
+
+<div class="small center">
+
+CPU saved in each function, one mature Datadog service · Datadog blog, June 2026
+
+</div>
+
+<!--
+SAY
+
+Here is every target from the first evaluation. Each bar is how much of its CPU cost one function saved. These functions sit in a service that we had already tuned for years.
+
+The team expected little left in the hottest code, and they were surprised. Some functions lost most of their CPU cost. One saved four percent. The benchmark decided which ideas were real, not the agent's confidence.
+
+DO
+
+Do not read the bars. Point at the top and the bottom. Ledger row 48.
 -->
 
 ---

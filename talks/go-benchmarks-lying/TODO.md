@@ -7,7 +7,7 @@ Companion files: `outline.md` (structure, timing, cut ladder) ·
 `speaker-notes.md` (the spoken script) · `slides/presentation.md` (the deck) ·
 `../../research/go-benchmarks-lying/claims-ledger.md` (every factual claim).
 
-**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 64
+**Delivered at GopherCon UK 2026** at 127 pages. The GoLab 2026 cut is 77
 pages, 42 minutes presented, 3 minutes Q&A, fragment floor 3.
 
 ---
@@ -27,6 +27,16 @@ cut ladder in `outline.md`.
 
 Serve the offline HTML with the network off. Check presenter view, the clicker,
 reveals, fonts, images, and notes. Keep the PDF and the script on the laptop.
+
+### Finish the meme layout
+
+Deferred by the speaker. The two `meme fit` slides ("PR #4891 and PR #643" and
+"you, after three sysfs writes") show the GIF at the left edge, not centred.
+The deck rule `section.meme.fit p:first-of-type` does not take effect in the
+PDF. Find out why before you add more CSS. With `bg contain`, the GIF
+subtitles go under the caption band. The first frame of `meme-captain-now.gif`
+is almost empty, so the PDF handout shows a blank-looking frame. Check every
+meme in the bespoke HTML, where GIFs animate.
 
 ---
 
@@ -64,7 +74,6 @@ For marketing to help promote, once published.
 ### Decide what to do with the assets that the GoLab cut orphaned
 
 No slide references these files now: `bp-feedback-flow.png`,
-`fosdem26_ka_how_to_reliabliy_measure_performance.png`,
 `gcuk19_daniel_marti_optimizing_go_code_without_blindfold.png`,
 `go1.26_b_loop_change.png`, `golang_perf_dashboard_charts.png`,
 `golang_performance_dashboard.png`, `golang_performance_monitoring.png`,

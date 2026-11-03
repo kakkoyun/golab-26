@@ -16,6 +16,7 @@ Akkoyun
 ALUs
 Amdahl
 Arial
+Augusto
 (?i)benchlab
 (?i)benchstat
 Beyla
@@ -25,6 +26,7 @@ Cartlidge
 (?i)classloader
 (?i)config
 Datadog
+(?i)devroom
 (?i)ebpf
 Ereditato
 (?i)exe
@@ -35,9 +37,11 @@ FPUs
 (?i)golab
 (?i)gopclntab
 gRPC
+Harsanyi
 Helvetica
 HTTP
 (?i)img
+Ingo
 (?i)kprobe
 (?i)kprobes
 Kemal
@@ -56,6 +60,7 @@ Marp
 (?i)nowrap
 (?i)ns
 OBI
+Oliveira
 (?i)orchestrion
 (?i)otelc
 Otava
@@ -70,6 +75,8 @@ SIGs
 (?i)sig's
 (?i)stddev
 (?i)sysfs
+Teiva
+Tene
 (?i)tracefs
 (?i)tracepoint
 (?i)uprobe

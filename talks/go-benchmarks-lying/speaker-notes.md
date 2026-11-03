@@ -1,6 +1,6 @@
 # Script: Why Your Go Benchmarks Are Lying
 
-GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 64 pages.
+GoLab 2026. 45-minute slot: 42 minutes presented, 3 minutes Q&A. 77 pages.
 Intermediate Go audience.
 
 Deck: `slides/presentation.md`. Each `##` heading below matches the slide
@@ -333,6 +333,22 @@ Do not read the table. Point at two rows.
 
 ---
 
+## The cache can lie too
+
+**SAY**
+
+One more trap for real work, and `b.Loop` does not fix it. If you give the benchmark the same input every iteration, the CPU cache remembers it. You measure the cache, not your function.
+
+Teiva Harsanyi shows this in Go. With one reused input, one matrix size looked about fifty percent faster than its neighbour. With fresh input each iteration, the gap disappeared.
+
+Production does not call your function with warm data every time. Your benchmark should not either.
+
+**DO**
+
+Ledger row 45. Say the idea, not his numbers. Do not explain the cache mechanism: the post does not.
+
+---
+
 ## The Regression That Was a Speedup
 
 **DO**
@@ -410,6 +426,18 @@ Here is how noisy one number is. Same binary, same machine, a few runs apart. Th
 A forty-three percent swing, and nothing changed.
 
 One run is one point. You need a sample.
+
+---
+
+## you, when someone says "p-value"
+
+**SAY**
+
+I know. Statistics in a conference talk. Do not worry, I will not show you a single formula. One tool does the maths for you.
+
+**DO**
+
+Ten seconds. Then click to `benchstat`.
 
 ---
 
@@ -492,6 +520,18 @@ Neither place is right by default. And the tell was the same both times: a bench
 **DO**
 
 This is the throughline. Say the last line slowly.
+
+---
+
+## PR #4891 and PR #643
+
+**SAY**
+
+Different causes, opposite directions. The same tell.
+
+**DO**
+
+Ten seconds. Then move on to the container run.
 
 ---
 
@@ -579,6 +619,18 @@ Read the quote aloud. Ledger row 38.
 
 ---
 
+## FOSDEM 2026, Software Performance devroom
+
+**SAY**
+
+The next data comes from the talk Augusto de Oliveira and I gave at FOSDEM this year. Augusto ran the experiments on bare-metal cloud machines. The video has the full method, if you want more than two charts.
+
+**DO**
+
+Credit Augusto by name. Ledger rows 1 to 3 and 29.
+
+---
+
 ## What's the impact of disabling SMT?
 
 **SAY**
@@ -611,6 +663,32 @@ In a VM, the write can succeed and do nothing. That is worse than an error.
 
 ---
 
+## you, after three sysfs writes
+
+**SAY**
+
+Three writes to sysfs, and you are in charge of the hardware.
+
+**DO**
+
+Ten seconds. The next slide is for teams without root on bare metal.
+
+---
+
+## No bare metal? Rent the scarce machine
+
+**SAY**
+
+"We do not have bare metal" is the usual answer. Prometheus shows another way. A maintainer comments `/prombench` on a pull request. The automation creates dedicated nodes, runs the pull request against a baseline under the same workload, publishes the results, and deletes the nodes.
+
+Dedicated for one run, and paid for one run. That is how an open-source project gets the scarce machine.
+
+**DO**
+
+Ledger row 44. Keep it short.
+
+---
+
 ## Noise goes all the way down
 
 **SAY**
@@ -636,6 +714,22 @@ Remember the second story. `largeidle` is Idle. `multi` is Enterprise. Different
 **DO**
 
 Ledger row 20. Do not say which archetypes Datadog runs.
+
+---
+
+## The load generator can lie too
+
+**SAY**
+
+A macrobenchmark needs a load generator, and the load generator can lie too. Gil Tene calls this coordinated omission.
+
+The server stalls. A simple load generator waits for the reply before it sends the next request. So the requests that would have hit the stall are never sent, and never measured. Your p99 looks better, because you measured less.
+
+If your workload is about latency, check how your load generator behaves when the server is slow. Watch Gil's talk.
+
+**DO**
+
+Ledger rows 13 and 22. No numbers. Walk the four boxes left to right.
 
 ---
 
@@ -699,6 +793,32 @@ No statistics. Say what it finds, not how.
 
 ---
 
+## you, nodding along to change-point detection
+
+**SAY**
+
+You do not need the maths. You need the tool that does it, and the history to feed it.
+
+**DO**
+
+Ten seconds. This is the release valve after the statistics. Smile, then continue.
+
+---
+
+## Change points in the wild
+
+**SAY**
+
+This is not only a Datadog idea. Netflix's TV UI team wrote about dropping static thresholds for their performance tests. A fixed limit fired on noise, and it missed slow regressions. They moved to anomaly detection and change-point detection in CI.
+
+And in the same FOSDEM room as our talk, Henrik Ingo gave a whole talk on continuous performance engineering: how to set up the infrastructure for low noise, and how to use change-point detection to alert with fewer false positives. If this section interests you, watch that talk next.
+
+**DO**
+
+Ledger rows 21 and 51. Do not claim more than the talk abstract says.
+
+---
+
 ## Why a baseline, not a pair
 
 **SAY**
@@ -727,6 +847,20 @@ Do not read the charts. Let the shape make the point: a time series, not a pair.
 
 ---
 
+## Before merge, on request
+
+**SAY**
+
+And before merge? If you contribute to Go, you can ask for performance results on your change. There are two SlowBot builders. `perf_vs_parent` measures your change in isolation. `perf_vs_tip` measures it against the current tip.
+
+It is opt-in, because those machines are scarce. The cheap pairwise check runs before merge. The signal they trust is the time series after merge. That is the same split as our two patterns.
+
+**DO**
+
+Ledger row 37. A practical tip for Go contributors in the room.
+
+---
+
 ## Two patterns
 
 **SAY**
@@ -736,6 +870,18 @@ So, two patterns. A PR gate: fast and strict. A small set of benchmarks that reg
 A nightly suite: complete and slow. Pinned hardware, all controls on, and change-point detection. Before a release, the budget gate.
 
 CI detects. To explain a result, you still measure on a controlled machine, like I did with the first bot comment.
+
+---
+
+## BenchmarkOTLPProtoSize, eleven days later
+
+**SAY**
+
+And then, somehow, our old friend came back.
+
+**DO**
+
+Ten seconds. The next slide is the payoff.
 
 ---
 
@@ -793,6 +939,18 @@ Read the quote slowly. Ledger row 48.
 
 ---
 
+## the agent, after it made the benchmark faster
+
+**SAY**
+
+Faster, yes. Better? Only if the benchmark looks like production.
+
+**DO**
+
+Ten seconds. Let the laugh land, then go to the DODO diagram.
+
+---
+
 ## Ground the benchmark in production
 
 **SAY**
@@ -834,6 +992,20 @@ My favourite one: about a quarter of real tags contain uppercase letters. The ag
 **DO**
 
 Ledger row 48. Say "on the order of ten thousand cores". Do not give a dollar figure.
+
+---
+
+## Even optimized code had room
+
+**SAY**
+
+Here is every target from the first evaluation. Each bar is how much of its CPU cost one function saved. These functions sit in a service that we had already tuned for years.
+
+The team expected little left in the hottest code, and they were surprised. Some functions lost most of their CPU cost. One saved four percent. The benchmark decided which ideas were real, not the agent's confidence.
+
+**DO**
+
+Do not read the bars. Point at the top and the bottom. Ledger row 48.
 
 ---
 
